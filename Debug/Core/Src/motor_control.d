@@ -47,7 +47,8 @@ Core/Src/motor_control.o: ../Core/Src/motor_control.c \
  /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/FreeRTOS/include/task.h \
  /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/FreeRTOS/include/list.h \
  ../Core/Inc/encoder_reader.h ../Core/Inc/common.h \
- /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/RTT/RTT/SEGGER_RTT.h
+ /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/RTT/RTT/SEGGER_RTT.h \
+ ../Core/Inc/odometry.h
 ../Core/Inc/motor_control.h:
 ../Core/Inc/main.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
@@ -99,3 +100,4 @@ Core/Src/motor_control.o: ../Core/Src/motor_control.c \
 ../Core/Inc/encoder_reader.h:
 ../Core/Inc/common.h:
 /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/RTT/RTT/SEGGER_RTT.h:
+../Core/Inc/odometry.h:

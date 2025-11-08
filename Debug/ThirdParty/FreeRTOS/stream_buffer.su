@@ -7,7 +7,7 @@
 ../ThirdParty/FreeRTOS/stream_buffer.c:720:12:xStreamBufferSetTriggerLevel	32	static,ignoring_inline_asm
 ../ThirdParty/FreeRTOS/stream_buffer.c:754:8:xStreamBufferSpacesAvailable	32	static,ignoring_inline_asm
 ../ThirdParty/FreeRTOS/stream_buffer.c:791:8:xStreamBufferBytesAvailable	32	static,ignoring_inline_asm
-../ThirdParty/FreeRTOS/stream_buffer.c:808:8:xStreamBufferSend	88	static,ignoring_inline_asm
+../ThirdParty/FreeRTOS/stream_buffer.c:808:8:xStreamBufferSend	80	static,ignoring_inline_asm
 ../ThirdParty/FreeRTOS/stream_buffer.c:943:8:xStreamBufferSendFromISR	72	static,ignoring_inline_asm
 ../ThirdParty/FreeRTOS/stream_buffer.c:1000:15:prvWriteMessageToBuffer	40	static,ignoring_inline_asm
 ../ThirdParty/FreeRTOS/stream_buffer.c:1053:8:xStreamBufferReceive	64	static,ignoring_inline_asm

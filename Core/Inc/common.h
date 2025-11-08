@@ -16,4 +16,7 @@ typedef enum {
 } activity_status_t;
 
 
+
+
+
 #endif /* INC_COMMON_H_ */

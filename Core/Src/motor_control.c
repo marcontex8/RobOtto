@@ -17,15 +17,19 @@
 #include "common.h"
 #include "SEGGER_RTT.h"
 #include <stdbool.h>
-
+#include "odometry.h"
 
 extern TIM_HandleTypeDef htim1;
+
+
+
+
+
 
 void MotorControlTask(void *argument)
 {
 	activity_status_t activity_status = ACTIVITY_STATUS_INIT;
-	const TickType_t period = pdMS_TO_TICKS(10);
-
+	const TickType_t period = pdMS_TO_TICKS(5);
 
 	TickType_t lastWakeTime = xTaskGetTickCount();
 	for (;;)
@@ -49,6 +53,9 @@ void MotorControlTask(void *argument)
 				activity_status = ACTIVITY_STATUS_ERROR;
 				continue;
 			};
+
+			calculateSpeed(encoder_status.angle, xTaskGetTickCount()); // initialize speed calculator
+
 			activity_status = ACTIVITY_STATUS_RUNNING;
 		}
 		else if(activity_status == ACTIVITY_STATUS_RUNNING)
@@ -62,15 +69,18 @@ void MotorControlTask(void *argument)
 				continue;
 			}
 
-			SEGGER_RTT_printf(0, "Motor 2: %d\n", (int)motor2_angle);
+			TickType_t tick = xTaskGetTickCount();
+			float speed = calculateSpeed(motor2_angle, tick);
+
+			SEGGER_RTT_printf(0, "%u;%u;%d\n", tick, (int)(motor2_angle*1000), (int)(speed*1000));
 
 
-			if(counter % 100 < 50U) {
+			if(counter % 1000 < 500U) {
 				TIM1->CCR1 = 0;
 				TIM1->CCR2 = 0;
 			} else {
-				TIM1->CCR1 = 450;
-				TIM1->CCR2 = 450;
+				TIM1->CCR1 = 499;
+				TIM1->CCR2 = 499;
 			}
 			counter++;
 		}

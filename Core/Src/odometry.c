@@ -7,24 +7,22 @@
 #include "odometry.h"
 
 
-float calculateSpeed(float angle, TickType_t tick)
+bool updateWheelStatus(WheelStatus* encoder, float angle, TickType_t tick)
 {
-    static float lastAngle = 0.0f;
-    static TickType_t lastTick = 0;
-    static int firstCall = 1;
+    if (!encoder->initialized) {
+    	encoder->lastAngle = angle;
+    	encoder->lastSpeed = 0.0f;
+    	encoder->lastTick = tick;
+    	encoder->initialized = true;
 
-    if (firstCall) {
-        lastAngle = angle;
-        lastTick = tick;
-        firstCall = 0;
-        return 0.0f; // no speed on first call
+    	return false;
     }
 
-    TickType_t deltaTick = tick - lastTick;
+    TickType_t deltaTick = tick - encoder->lastTick;
     if (deltaTick == 0)
-        return 0.0f;
+        return false;
 
-    float deltaAngle = angle - lastAngle;
+    float deltaAngle = angle - encoder->lastAngle;
 
     // Handle wrap-around (0–360)
     if (deltaAngle > 180.0f)
@@ -35,11 +33,8 @@ float calculateSpeed(float angle, TickType_t tick)
     // Convert tick difference to seconds
     float deltaTime = deltaTick * (portTICK_PERIOD_MS / 1000.0f);
 
-    float speed = deltaAngle / deltaTime; // degrees per second
-
-    // Update stored values
-    lastAngle = angle;
-    lastTick = tick;
-
-    return speed;
+    encoder->lastSpeed = deltaAngle / deltaTime; // degrees per second
+	encoder->lastAngle = angle;
+	encoder->lastTick = tick;
+    return true;
 }

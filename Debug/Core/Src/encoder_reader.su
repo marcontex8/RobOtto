@@ -1,2 +1,2 @@
-../Core/Src/encoder_reader.c:10:6:read_angle	40	static
-../Core/Src/encoder_reader.c:23:6:read_full_encoder	40	static
+../Core/Src/encoder_reader.c:10:18:readAngle	40	static
+../Core/Src/encoder_reader.c:23:18:readFullEncoder	40	static

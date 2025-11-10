@@ -10,8 +10,19 @@
 
 #include "FreeRTOS.h"
 #include "task.h"
+#include <stdbool.h>
 
-float calculateSpeed(float angle, TickType_t tick);
+
+typedef struct{
+    float lastAngle;
+    float lastSpeed;
+    TickType_t lastTick;
+    bool initialized;
+} WheelStatus;
+
+
+
+bool updateWheelStatus(WheelStatus* encoder, float angle, TickType_t tick);
 
 
 #endif /* INC_ODOMETRY_H_ */

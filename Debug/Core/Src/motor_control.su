@@ -1,1 +1,6 @@
-../Core/Src/motor_control.c:29:6:MotorControlTask	72	static
+../Core/Src/motor_control.c:46:6:setWheelDirection	16	static
+../Core/Src/motor_control.c:77:6:setWheelNormalizedPWM	24	static
+../Core/Src/motor_control.c:101:16:motorControlStatusInit	40	static
+../Core/Src/motor_control.c:130:18:updateWheelsStatus	24	static
+../Core/Src/motor_control.c:152:16:motorControlStatusRunning	8	static
+../Core/Src/motor_control.c:189:6:runMotorControlStateMachine	8	static

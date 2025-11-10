@@ -11,9 +11,7 @@
 #include <stdbool.h>
 
 #include "stm32f4xx_hal.h"
-
-extern I2C_HandleTypeDef hi2c2;
-
+#include "robotto_common.h"
 
 typedef struct {
     uint8_t magnet_detected;
@@ -21,10 +19,10 @@ typedef struct {
     uint8_t too_weak;
     float automatic_gain_control;
     float angle;
-} encoder_reading_t;
+} EncoderStatus;
 
 
-bool read_angle(I2C_HandleTypeDef* ic2_handle, float* out);
-bool read_full_encoder(I2C_HandleTypeDef* ic2_handle, encoder_reading_t* out);
+RobottoErrorCode readAngle(I2C_HandleTypeDef* i2c_handle, float* out);
+RobottoErrorCode readFullEncoder(I2C_HandleTypeDef* i2c_handle, EncoderStatus* out);
 
 #endif /* INC_ENCODER_READER_H_ */

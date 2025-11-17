@@ -22,11 +22,13 @@ typedef enum {
 } ActivityStatus;
 
 
-
 typedef struct {
 	float left;
 	float right;
 } WheelSpeedSetPoint;
+
+
+
 
 
 

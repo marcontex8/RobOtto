@@ -1,0 +1,5 @@
+../Core/Src/wheels_control.c:28:18:readAngleAndUpdateWheelsStatus	32	static
+../Core/Src/wheels_control.c:58:16:runWheelsControlStatusInit	40	static
+../Core/Src/wheels_control.c:85:5:floatTo3Dec	16	static
+../Core/Src/wheels_control.c:91:16:runWheelsControlStatusRunning	80	static
+../Core/Src/wheels_control.c:159:6:runWheelsControlStateMachine	8	static

@@ -17,6 +17,7 @@ RM := rm -rf
 -include ThirdParty/FreeRTOS/portable/MemMang/subdir.mk
 -include ThirdParty/FreeRTOS/portable/GCC/ARM_CM4F/subdir.mk
 -include ThirdParty/FreeRTOS/subdir.mk
+-include SensorsAndActuators/src/subdir.mk
 -include Drivers/STM32F4xx_HAL_Driver/Src/subdir.mk
 -include Core/Startup/subdir.mk
 -include Core/Src/subdir.mk

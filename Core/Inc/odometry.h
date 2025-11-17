@@ -12,17 +12,17 @@
 #include "task.h"
 #include <stdbool.h>
 
-
 typedef struct{
-    float lastAngle;
-    float lastSpeed;
-    TickType_t lastTick;
+    float last_angle;
+    float last_speed;
+    TickType_t last_tick;
     bool initialized;
 } WheelStatus;
 
 
 
-bool updateWheelStatus(WheelStatus* encoder, float angle, TickType_t tick);
+
+bool updateWheelStatusEstimation(WheelStatus* wheel_status, float angle, TickType_t tick);
 
 
 #endif /* INC_ODOMETRY_H_ */

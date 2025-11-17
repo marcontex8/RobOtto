@@ -1,6 +1,0 @@
-../Core/Src/motor_control.c:46:6:setWheelDirection	5
-../Core/Src/motor_control.c:77:6:setWheelNormalizedPWM	6
-../Core/Src/motor_control.c:101:16:motorControlStatusInit	5
-../Core/Src/motor_control.c:130:18:updateWheelsStatus	3
-../Core/Src/motor_control.c:152:16:motorControlStatusRunning	4
-../Core/Src/motor_control.c:189:6:runMotorControlStateMachine	3

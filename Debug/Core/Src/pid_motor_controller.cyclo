@@ -1,0 +1,2 @@
+../Core/Src/pid_motor_controller.c:18:7:calculatePIDResponse	1
+../Core/Src/pid_motor_controller.c:26:18:calculateRequiredDutyCycle	1

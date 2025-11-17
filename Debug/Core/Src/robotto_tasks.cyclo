@@ -1,0 +1,4 @@
+../Core/Src/robotto_tasks.c:43:6:startLedBlinkTask	1
+../Core/Src/robotto_tasks.c:52:6:motorControlTask	1
+../Core/Src/robotto_tasks.c:64:6:motionPlanningTask	1
+../Core/Src/robotto_tasks.c:79:18:createRobottoTasks	5

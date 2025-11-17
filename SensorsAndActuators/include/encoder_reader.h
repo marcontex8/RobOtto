@@ -13,6 +13,9 @@
 #include "stm32f4xx_hal.h"
 #include "robotto_common.h"
 
+#include "sensors_and_actuators_common.h"
+
+
 typedef struct {
     uint8_t magnet_detected;
     uint8_t too_strong;
@@ -22,7 +25,7 @@ typedef struct {
 } EncoderStatus;
 
 
-RobottoErrorCode readAngle(I2C_HandleTypeDef* i2c_handle, float* out);
-RobottoErrorCode readFullEncoder(I2C_HandleTypeDef* i2c_handle, EncoderStatus* out);
+RobottoErrorCode readAngleRad(Wheel wheel, float* out);
+RobottoErrorCode readFullEncoder(Wheel wheel, EncoderStatus* out);
 
 #endif /* INC_ENCODER_READER_H_ */

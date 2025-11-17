@@ -16,6 +16,16 @@ extern QueueHandle_t speed_set_points_queue_handle;
 static char* last_error = NULL;
 
 
+
+
+
+/////////////////////////////////////////////////////////////////
+//////////////////////   STATE MACHINE     //////////////////////
+/////////////////////////////////////////////////////////////////
+
+
+
+
 ActivityStatus motionPlanningStatusInit()
 {
 	return ACTIVITY_STATUS_RUNNING;
@@ -24,11 +34,32 @@ ActivityStatus motionPlanningStatusInit()
 ActivityStatus motionPlanningStatusRunning()
 {
 	WheelSpeedSetPoint speed_set_point = {0};
+
+	static unsigned int setpoint = 0;
+	if (setpoint == 1)
+	{
+		speed_set_point.left = 6.28;
+	}
+	else if (setpoint == 2)
+	{
+		speed_set_point.right = 6.28;
+	}
+	else if (setpoint == 3)
+	{
+		speed_set_point.left = 6.28;
+		speed_set_point.right = 6.28;
+	}
+	else
+	{
+		speed_set_point.left = 0;
+		speed_set_point.right = 0;
+	}
+	/*
 	static uint32_t counter = 0;
 	if(counter < 20U)
 	{
-		speed_set_point.left = 1;
-		speed_set_point.right = 1;
+		speed_set_point.left = 800;
+		speed_set_point.right = 800;
 	}
 	else if (counter < 40U)
 	{
@@ -37,24 +68,25 @@ ActivityStatus motionPlanningStatusRunning()
 	}
 	else if (counter < 60U)
 	{
-		speed_set_point.left = -1;
-		speed_set_point.right = 1;
+		speed_set_point.left = -800;
+		speed_set_point.right =  800;
 	}
 	else if (counter < 80U)
 	{
-		speed_set_point.left = 1;
-		speed_set_point.right = -1;
+		speed_set_point.left =  800;
+		speed_set_point.right = -800;
 	}
 	else if (counter < 100U)
 	{
-		speed_set_point.left = -1;
-		speed_set_point.right = -1;
+		speed_set_point.left = -800;
+		speed_set_point.right = -800;
 	}
 	else
 	{
 		counter = 0;
 	}
 	counter++;
+	*/
 
 	if (xQueueSend(speed_set_points_queue_handle, &speed_set_point, 0) != pdPASS)
 	{

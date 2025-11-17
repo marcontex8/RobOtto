@@ -1,0 +1,2 @@
+../Core/Src/pid_motor_controller.c:18:7:calculatePIDResponse	32	static
+../Core/Src/pid_motor_controller.c:26:18:calculateRequiredDutyCycle	24	static

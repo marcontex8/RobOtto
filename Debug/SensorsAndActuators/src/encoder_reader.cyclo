@@ -1,0 +1,3 @@
+../SensorsAndActuators/src/encoder_reader.c:16:20:getI2CHandle	2
+../SensorsAndActuators/src/encoder_reader.c:28:18:readAngleRad	3
+../SensorsAndActuators/src/encoder_reader.c:48:18:readFullEncoder	4

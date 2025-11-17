@@ -1,0 +1,3 @@
+../SensorsAndActuators/src/encoder_reader.c:16:20:getI2CHandle	16	static
+../SensorsAndActuators/src/encoder_reader.c:28:18:readAngleRad	40	static
+../SensorsAndActuators/src/encoder_reader.c:48:18:readFullEncoder	48	static

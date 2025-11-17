@@ -5,36 +5,37 @@
  *      Author: marco
  */
 #include "odometry.h"
+#include <math.h>
 
 
-bool updateWheelStatus(WheelStatus* encoder, float angle, TickType_t tick)
+bool updateWheelStatusEstimation(WheelStatus* wheel_status, float angle, TickType_t tick)
 {
-    if (!encoder->initialized) {
-    	encoder->lastAngle = angle;
-    	encoder->lastSpeed = 0.0f;
-    	encoder->lastTick = tick;
-    	encoder->initialized = true;
+    if (!wheel_status->initialized) {
+    	wheel_status->last_angle = angle;
+    	wheel_status->last_speed = 0.0f;
+    	wheel_status->last_tick = tick;
+    	wheel_status->initialized = true;
 
     	return false;
     }
 
-    TickType_t deltaTick = tick - encoder->lastTick;
-    if (deltaTick == 0)
+    TickType_t delta_tick = tick - wheel_status->last_tick;
+    if (delta_tick == 0)
         return false;
 
-    float deltaAngle = angle - encoder->lastAngle;
+    float delta_angle = angle - wheel_status->last_angle;
 
-    // Handle wrap-around (0–360)
-    if (deltaAngle > 180.0f)
-        deltaAngle -= 360.0f;
-    else if (deltaAngle < -180.0f)
-        deltaAngle += 360.0f;
+    // Handle wrap-around (0–2PI)
+    if (delta_angle > M_PI)
+        delta_angle -= M_TWOPI;
+    else if (delta_angle < -M_PI)
+        delta_angle += M_TWOPI;
 
     // Convert tick difference to seconds
-    float deltaTime = deltaTick * (portTICK_PERIOD_MS / 1000.0f);
+    float delta_time = delta_tick * (portTICK_PERIOD_MS / 1000.0f);
 
-    encoder->lastSpeed = deltaAngle / deltaTime; // degrees per second
-	encoder->lastAngle = angle;
-	encoder->lastTick = tick;
+    wheel_status->last_speed = delta_angle / delta_time;
+	wheel_status->last_angle = angle;
+	wheel_status->last_tick = tick;
     return true;
 }

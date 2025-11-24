@@ -16,5 +16,4 @@ void initializeMotorDriver();
 
 void setMotorDutyCycle(Wheel wheel, float normalized_duty_cycle);
 
-
 #endif /* SENSORSANDACTUATORS_INCLUDE_MOTOR_DRIVER_H_ */

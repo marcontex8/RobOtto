@@ -10,7 +10,7 @@
 #include "encoder_reader.h"
 #include "motor_driver.h"
 
-#include "odometry.h"
+#include "wheel_status_estimator.h"
 #include "pid_motor_controller.h"
 #include "robotto_common.h"
 #include "SEGGER_RTT.h"
@@ -18,8 +18,8 @@
 
 
 
-extern QueueHandle_t speed_set_points_queue_handle;
-
+extern QueueHandle_t wheels_speed_set_points_queue_handle;
+extern QueueHandle_t wheels_status_queue_handle;
 static char* last_error = NULL;
 
 
@@ -60,32 +60,41 @@ ActivityStatus runWheelsControlStatusInit(WheelStatus* left_wheel_status, WheelS
 	initializeMotorDriver();
 
 	EncoderStatus left_encoder_status = {0};
-	if(ROBOTTO_OK != readFullEncoder(WHEEL_LEFT, &left_encoder_status) || 0 == left_encoder_status.magnet_detected)
+	EncoderStatus right_encoder_status = {0};
+
+	if(ROBOTTO_OK != readFullEncoder(WHEEL_LEFT, &left_encoder_status))
 	{
-		last_error = "ERROR WHILE READING LEFT ENCODER";
+		last_error = "INITIALIZATION ERROR, IMPOSSIBLE TO READ LEFT ENCODER";
+		return ACTIVITY_STATUS_ERROR;
+	};
+	if(ROBOTTO_OK != readFullEncoder(WHEEL_RIGHT, &right_encoder_status))
+	{
+		last_error = "INITIALIZATION ERROR, IMPOSSIBLE TO READ RIGHT ENCODER";
 		return ACTIVITY_STATUS_ERROR;
 	};
 
-	EncoderStatus right_encoder_status = {0};
-	if(ROBOTTO_OK != readFullEncoder(WHEEL_RIGHT, &right_encoder_status) || 0 == right_encoder_status.magnet_detected)
+	if(0 == left_encoder_status.magnet_detected)
 	{
-		last_error = "ERROR WHILE READING RIGHT ENCODER";
+		last_error = "INITIALIZATION ERROR, LEFT MAGNET NOT DETECTED";
 		return ACTIVITY_STATUS_ERROR;
 	};
+	if(0 == right_encoder_status.magnet_detected)
+	{
+		last_error = "INITIALIZATION ERROR, RIGHT MAGNET NOT DETECTED";
+		return ACTIVITY_STATUS_ERROR;
+	};
+
 
 	if(ROBOTTO_OK != readAngleAndUpdateWheelsStatus(left_wheel_status, right_wheel_status))
 	{
-		last_error = "ERROR WHILE UPDATING STATE";
+		last_error = "ERROR WHILE INITIALIZING ENCODERS STATE";
 		return ACTIVITY_STATUS_ERROR;
 	}
 
 	return ACTIVITY_STATUS_RUNNING;
 }
 
-int floatTo3Dec(float input)
-{
-	return (int)(input*1000);
-}
+
 
 
 ActivityStatus runWheelsControlStatusRunning(WheelStatus* left_wheel_status, WheelStatus* right_wheel_status)
@@ -94,8 +103,8 @@ ActivityStatus runWheelsControlStatusRunning(WheelStatus* left_wheel_status, Whe
 	static WheelSpeedSetPoint speed_set_point = {0};
 	static int missing_setpoint_counter = 0;
 
-
-	if (xQueueReceive(speed_set_points_queue_handle, &speed_set_point, 0) == pdPASS)
+	SEGGER_SYSVIEW_MarkStart(10);
+	if (xQueueReceive(wheels_speed_set_points_queue_handle, &speed_set_point, 0) == pdPASS)
 	{
 		missing_setpoint_counter = 0;
 	}
@@ -106,11 +115,11 @@ ActivityStatus runWheelsControlStatusRunning(WheelStatus* left_wheel_status, Whe
 
 	if(missing_setpoint_counter > 6)
 	{
-		last_error = "MISSING UPDATES OF SPEED SET POINTS";
-		return ACTIVITY_STATUS_ERROR;
+		last_error = "Missing Speed SetPoint";
+		SEGGER_SYSVIEW_WarnfTarget("%s\n", last_error);
 	}
 
-
+	SEGGER_SYSVIEW_MarkStop(10);
 	// READ WHEEL STATUS FROM ENCODERS
 	if(ROBOTTO_OK != readAngleAndUpdateWheelsStatus(left_wheel_status, right_wheel_status))
 	{
@@ -120,36 +129,31 @@ ActivityStatus runWheelsControlStatusRunning(WheelStatus* left_wheel_status, Whe
 
 
 	// RUN CONTROL LOOP AND ACTUATE
-	float left_duty, right_duty;
-	if(calculateRequiredDutyCycle(&speed_set_point, left_wheel_status, right_wheel_status, &left_duty, &right_duty) != ROBOTTO_OK)
+	if(!speed_set_point.active)
 	{
-		return ACTIVITY_STATUS_ERROR;
+		setMotorDutyCycle(WHEEL_LEFT, 0);
+		setMotorDutyCycle(WHEEL_RIGHT, 0);
+		resetController();
+	}
+	else
+	{
+		float left_duty, right_duty;
+		calculateRequiredDutyCycle(&speed_set_point, left_wheel_status, right_wheel_status, &left_duty, &right_duty);
+
+		setMotorDutyCycle(WHEEL_LEFT, left_duty);
+		setMotorDutyCycle(WHEEL_RIGHT, right_duty);
 	}
 
-	setMotorDutyCycle(WHEEL_LEFT, left_duty);
-	setMotorDutyCycle(WHEEL_RIGHT, right_duty);
-	/*
-	 *
-	* c: Print the argument as one char
-	* d: Print the argument as a signed integer
-	* u: Print the argument as an unsigned integer
-	* x: Print the argument as an hexadecimal integer
-	* s: Print the string pointed to by the argument
-	* p: Print the argument as an 8-digit hexadecimal integer.
-	 */
-	SEGGER_RTT_printf(0, "%u;%5d;%5d;%5d;%5d;%5d;%5d\n",
-			xTaskGetTickCount(),
-			floatTo3Dec(speed_set_point.left),
-			floatTo3Dec(left_wheel_status->last_speed),
-			//floatTo3Dec(left_wheel_status->last_angle),
-			floatTo3Dec(left_duty),
-			floatTo3Dec(speed_set_point.right),
-			floatTo3Dec(right_wheel_status->last_speed),
-			//floatTo3Dec(right_wheel_status->last_angle),
-			floatTo3Dec(right_duty));
-
-
-
+	// SEND UPDATES TO POSE ESTIMATION
+	WheelsMovementUpdate wheels_movement_update;
+	wheels_movement_update.timestamp = left_wheel_status->last_tick;
+	wheels_movement_update.delta_angle_left = left_wheel_status->delta_angle;
+	wheels_movement_update.delta_angle_right = right_wheel_status->delta_angle;
+	if(pdPASS != xQueueSendToBack(wheels_status_queue_handle, &wheels_movement_update, 0))
+	{
+		last_error = "wheels_status_queue_handle IS FULL";
+		SEGGER_SYSVIEW_WarnfTarget("%s\n", last_error);
+	}
 	return ACTIVITY_STATUS_RUNNING;
 }
 
@@ -177,5 +181,6 @@ void runWheelsControlStateMachine()
 		// ACTIVITY_STATUS_ERROR
 		setMotorDutyCycle(WHEEL_RIGHT, 0);
 		setMotorDutyCycle(WHEEL_LEFT, 0);
+		SEGGER_SYSVIEW_ErrorfTarget("%s\n", last_error);
 	}
 }

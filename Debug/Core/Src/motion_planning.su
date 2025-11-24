@@ -1,3 +1,3 @@
-../Core/Src/motion_planning.c:29:16:motionPlanningStatusInit	4	static
-../Core/Src/motion_planning.c:34:16:motionPlanningStatusRunning	16	static
-../Core/Src/motion_planning.c:84:6:runMotionPlanningStateMachine	8	static
+../Core/Src/motion_planning.c:34:16:motionPlanningStatusInit	4	static
+../Core/Src/motion_planning.c:40:16:motionPlanningStatusRunning	40	static
+../Core/Src/motion_planning.c:76:6:runMotionPlanningStateMachine	8	static

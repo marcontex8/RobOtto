@@ -1,0 +1,3 @@
+../SensorsAndActuators/src/imu_reader.c:50:18:verifyIMUCommunication	24	static
+../SensorsAndActuators/src/imu_reader.c:67:7:toFloat	24	static
+../SensorsAndActuators/src/imu_reader.c:73:18:readIMUData	40	static

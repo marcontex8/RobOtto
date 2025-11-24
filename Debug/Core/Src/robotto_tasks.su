@@ -1,4 +1,9 @@
-../Core/Src/robotto_tasks.c:43:6:startLedBlinkTask	24	static
-../Core/Src/robotto_tasks.c:52:6:motorControlTask	24	static
-../Core/Src/robotto_tasks.c:64:6:motionPlanningTask	24	static
-../Core/Src/robotto_tasks.c:79:18:createRobottoTasks	16	static
+../Core/Src/robotto_tasks.c:58:6:HAL_GPIO_EXTI_Callback	24	static,ignoring_inline_asm
+../Core/Src/robotto_tasks.c:80:6:ledBlinkTask	24	static
+../Core/Src/robotto_tasks.c:89:6:buttonTask	16	static
+../Core/Src/robotto_tasks.c:107:6:motionPlanningTask	24	static
+../Core/Src/robotto_tasks.c:119:6:wheelsControlTask	24	static
+../Core/Src/robotto_tasks.c:131:6:poseEstimationTask	24	static
+../Core/Src/robotto_tasks.c:143:18:createQueues	8	static
+../Core/Src/robotto_tasks.c:171:18:createTasks	16	static
+../Core/Src/robotto_tasks.c:201:18:setupRobotto	8	static

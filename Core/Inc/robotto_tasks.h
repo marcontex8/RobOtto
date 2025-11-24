@@ -10,6 +10,6 @@
 
 #include "robotto_common.h"
 
-RobottoErrorCode createRobottoTasks();
+RobottoErrorCode setupRobotto();
 
 #endif /* INC_ROBOTTO_TASKS_H_ */

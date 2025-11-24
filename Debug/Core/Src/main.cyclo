@@ -4,5 +4,5 @@
 ../Core/Src/main.c:215:13:MX_I2C2_Init	2
 ../Core/Src/main.c:249:13:MX_TIM1_Init	8
 ../Core/Src/main.c:328:13:MX_GPIO_Init	1
-../Core/Src/main.c:383:6:HAL_TIM_PeriodElapsedCallback	2
-../Core/Src/main.c:401:6:Error_Handler	1
+../Core/Src/main.c:387:6:HAL_TIM_PeriodElapsedCallback	2
+../Core/Src/main.c:405:6:Error_Handler	1

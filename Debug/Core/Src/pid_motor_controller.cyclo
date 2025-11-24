@@ -1,2 +1,3 @@
-../Core/Src/pid_motor_controller.c:18:7:calculatePIDResponse	1
-../Core/Src/pid_motor_controller.c:26:18:calculateRequiredDutyCycle	1
+../Core/Src/pid_motor_controller.c:24:7:calculatePIDResponse	3
+../Core/Src/pid_motor_controller.c:49:6:calculateRequiredDutyCycle	1
+../Core/Src/pid_motor_controller.c:56:6:resetController	1

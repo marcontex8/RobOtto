@@ -6,29 +6,35 @@
  */
 
 #include "encoder_reader.h"
+#include "i2c_busses.h"
+
 #include <math.h>
 
+#include "FreeRTOS.h"
+#include "semphr.h"
 
-extern I2C_HandleTypeDef hi2c1;
-extern I2C_HandleTypeDef hi2c2;
 
+#define I2C_AS5600_ADDRESS 0x36
+#define AS5600_ANGLE 0x0E
+#define AS5600_STATUS 0x0B
+#define AS5600_AGC 0x1A
 
-I2C_HandleTypeDef* getI2CHandle(Wheel wheel)
+RobottoI2CDevice getEncoderDevice(Wheel wheel)
 {
 	if (WHEEL_LEFT == wheel)
 	{
-		return &hi2c1;
+		return ROBOTTO_DEVICE_LEFT_ENCODER;
 	}
 	else
 	{
-		return &hi2c2;
+		return ROBOTTO_DEVICE_RIGHT_ENCODER;
 	}
 }
 
 RobottoErrorCode readAngleRad(Wheel wheel, float* out)
 {
-	uint8_t buffer[2];
-	if(HAL_I2C_Mem_Read(getI2CHandle(wheel), 0x36 << 1, 0x0E, 1, buffer, 2, 100) != HAL_OK)
+    uint8_t buffer[2];
+	if (ROBOTTO_OK != ReadI2C(getEncoderDevice(wheel), I2C_AS5600_ADDRESS, AS5600_ANGLE, buffer, 2))
 	{
 		return ROBOTTO_ERROR;
 	}
@@ -41,6 +47,8 @@ RobottoErrorCode readAngleRad(Wheel wheel, float* out)
 	{
 		*out = M_TWOPI - *out;
 	}
+
+
 	return ROBOTTO_OK;
 }
 
@@ -51,10 +59,10 @@ RobottoErrorCode readFullEncoder(Wheel wheel, EncoderStatus* out)
 	uint8_t automatic_gain_control = 0;
 	float angle = 0.0f;
 
-	I2C_HandleTypeDef* i2c_handle = getI2CHandle(wheel);
+	RobottoI2CDevice device = getEncoderDevice(wheel);
 
-	if (HAL_I2C_Mem_Read(i2c_handle, 0x36 << 1, 0x0B, 1, &status, 1, 100) != HAL_OK
-		|| HAL_I2C_Mem_Read(i2c_handle, 0x36 << 1, 0x1A, 1, &automatic_gain_control, 1, 100) != HAL_OK
+	if (ReadI2C(device, I2C_AS5600_ADDRESS, AS5600_STATUS, &status, 1) != ROBOTTO_OK
+		|| ReadI2C(device, I2C_AS5600_ADDRESS, AS5600_AGC, &automatic_gain_control, 1) != ROBOTTO_OK
 		|| readAngleRad(wheel, &angle) != ROBOTTO_OK)
 	{
 		return ROBOTTO_ERROR;

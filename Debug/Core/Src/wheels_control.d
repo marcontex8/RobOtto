@@ -49,8 +49,8 @@ Core/Src/wheels_control.o: ../Core/Src/wheels_control.c \
  ../Core/Inc/robotto_common.h \
  /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/SensorsAndActuators/include/sensors_and_actuators_common.h \
  /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/SensorsAndActuators/include/motor_driver.h \
- ../Core/Inc/odometry.h ../Core/Inc/pid_motor_controller.h \
- ../Core/Inc/robotto_common.h ../Core/Inc/odometry.h \
+ /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/SensorsAndActuators/include/wheel_status_estimator.h \
+ ../Core/Inc/pid_motor_controller.h ../Core/Inc/robotto_common.h \
  /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/RTT/RTT/SEGGER_RTT.h \
  /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/FreeRTOS/include/queue.h \
  /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/FreeRTOS/include/task.h
@@ -104,10 +104,9 @@ Core/Src/wheels_control.o: ../Core/Src/wheels_control.c \
 ../Core/Inc/robotto_common.h:
 /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/SensorsAndActuators/include/sensors_and_actuators_common.h:
 /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/SensorsAndActuators/include/motor_driver.h:
-../Core/Inc/odometry.h:
+/home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/SensorsAndActuators/include/wheel_status_estimator.h:
 ../Core/Inc/pid_motor_controller.h:
 ../Core/Inc/robotto_common.h:
-../Core/Inc/odometry.h:
 /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/RTT/RTT/SEGGER_RTT.h:
 /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/FreeRTOS/include/queue.h:
 /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/FreeRTOS/include/task.h:

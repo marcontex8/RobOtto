@@ -9,9 +9,13 @@
 #include "task.h"
 #include "robotto_common.h"
 #include "queue.h"
+#include "imu_reader.h"
+#include "SEGGER_RTT.h"
 
+extern QueueHandle_t behavior_queue_handle;
+extern QueueHandle_t robotto_pose_queue_handle;
 
-extern QueueHandle_t speed_set_points_queue_handle;
+extern QueueHandle_t wheels_speed_set_points_queue_handle;
 
 static char* last_error = NULL;
 
@@ -24,7 +28,8 @@ static char* last_error = NULL;
 /////////////////////////////////////////////////////////////////
 
 
-
+#define TEST_SPEED 6.28
+#define MAX_ESTIMATED_POSE_DELAY 50
 
 ActivityStatus motionPlanningStatusInit()
 {
@@ -33,65 +38,34 @@ ActivityStatus motionPlanningStatusInit()
 
 ActivityStatus motionPlanningStatusRunning()
 {
-	WheelSpeedSetPoint speed_set_point = {0};
-
-	static unsigned int setpoint = 0;
-	if (setpoint == 1)
+	uint8_t behavior = 0;
+	xQueuePeek(behavior_queue_handle, &behavior, 0);
+	RobottoPose estimated_pose;
+	if (pdTRUE != xQueuePeek(robotto_pose_queue_handle, &estimated_pose, 0) || (xTaskGetTickCount() - estimated_pose.timestamp) > MAX_ESTIMATED_POSE_DELAY)
 	{
-		speed_set_point.left = 6.28;
-	}
-	else if (setpoint == 2)
-	{
-		speed_set_point.right = 6.28;
-	}
-	else if (setpoint == 3)
-	{
-		speed_set_point.left = 6.28;
-		speed_set_point.right = 6.28;
-	}
-	else
-	{
-		speed_set_point.left = 0;
-		speed_set_point.right = 0;
-	}
-	/*
-	static uint32_t counter = 0;
-	if(counter < 20U)
-	{
-		speed_set_point.left = 800;
-		speed_set_point.right = 800;
-	}
-	else if (counter < 40U)
-	{
-		speed_set_point.left = 0;
-		speed_set_point.right = 0;
-	}
-	else if (counter < 60U)
-	{
-		speed_set_point.left = -800;
-		speed_set_point.right =  800;
-	}
-	else if (counter < 80U)
-	{
-		speed_set_point.left =  800;
-		speed_set_point.right = -800;
-	}
-	else if (counter < 100U)
-	{
-		speed_set_point.left = -800;
-		speed_set_point.right = -800;
-	}
-	else
-	{
-		counter = 0;
-	}
-	counter++;
-	*/
-
-	if (xQueueSend(speed_set_points_queue_handle, &speed_set_point, 0) != pdPASS)
-	{
-		last_error = "ERROR WHILE PUSHING TO THE QUEUE";
+		last_error = "Missing updates from pose estimation. Cannot compute motion planning";
 		return ACTIVITY_STATUS_ERROR;
+	}
+
+	// max speed ~= 20rad/s
+	WheelSpeedSetPoint speed_set_point = {0};
+	if (behavior == 1)
+	{
+		speed_set_point.active = true;
+		speed_set_point.left = TEST_SPEED;
+		speed_set_point.right = -TEST_SPEED;
+	}
+	else
+	{
+		speed_set_point.active = false;
+		speed_set_point.left = 0;
+		speed_set_point.right = 0;
+	}
+
+	if (xQueueSend(wheels_speed_set_points_queue_handle, &speed_set_point, 0) != pdPASS)
+	{
+		last_error = "wheels_speed_set_points_queue_handle IS FULL";
+		SEGGER_SYSVIEW_WarnfTarget("%s\n", last_error);
 	}
 	return ACTIVITY_STATUS_RUNNING;
 }
@@ -112,7 +86,7 @@ void runMotionPlanningStateMachine()
 	}
 	else // ACTIVITY_STATUS_ERROR
 	{
-
+		SEGGER_SYSVIEW_ErrorfTarget("%s\n", last_error);
 	}
 
 

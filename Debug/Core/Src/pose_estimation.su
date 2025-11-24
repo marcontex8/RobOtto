@@ -1,0 +1,4 @@
+../Core/Src/pose_estimation.c:27:6:removeBias	16	static
+../Core/Src/pose_estimation.c:38:16:poseEstimationStatusInit	8	static
+../Core/Src/pose_estimation.c:70:16:poseEstimationStatusRunning	72	static
+../Core/Src/pose_estimation.c:113:6:runPoseEstimationStateMachine	8	static

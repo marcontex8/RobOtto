@@ -44,7 +44,6 @@ void initializeMotorDriver()
 	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
 }
 
-
 void setWheelDirection(Wheel wheel, WheelDirection direction)
 {
 	if(WHEEL_RIGHT == wheel)
@@ -64,13 +63,13 @@ void setWheelDirection(Wheel wheel, WheelDirection direction)
 	{
 		if(WHEEL_FORWARD == direction)
 		{
-			HAL_GPIO_WritePin(MOTOR_L_UP_GPIO_Port, MOTOR_L_UP_Pin, 0);
-			HAL_GPIO_WritePin(MOTOR_L_DOWN_GPIO_Port, MOTOR_L_DOWN_Pin, 1);
+			HAL_GPIO_WritePin(MOTOR_L_UP_GPIO_Port, MOTOR_L_UP_Pin, 1);
+			HAL_GPIO_WritePin(MOTOR_L_DOWN_GPIO_Port, MOTOR_L_DOWN_Pin, 0);
 		}
 		else
 		{
-			HAL_GPIO_WritePin(MOTOR_L_UP_GPIO_Port, MOTOR_L_UP_Pin, 1);
-			HAL_GPIO_WritePin(MOTOR_L_DOWN_GPIO_Port, MOTOR_L_DOWN_Pin, 0);
+			HAL_GPIO_WritePin(MOTOR_L_UP_GPIO_Port, MOTOR_L_UP_Pin, 0);
+			HAL_GPIO_WritePin(MOTOR_L_DOWN_GPIO_Port, MOTOR_L_DOWN_Pin, 1);
 		}
 	}
 }

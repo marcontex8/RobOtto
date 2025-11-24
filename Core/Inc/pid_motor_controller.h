@@ -10,10 +10,11 @@
 
 
 #include "robotto_common.h"
-#include "odometry.h"
+#include "wheel_status_estimator.h"
 
 
+void calculateRequiredDutyCycle(const WheelSpeedSetPoint* speed_set_point, const WheelStatus* left_wheel_status, const WheelStatus* right_wheel_status, float* out_left_duty, float* out_right_duty);
 
-RobottoErrorCode calculateRequiredDutyCycle(const WheelSpeedSetPoint* speed_set_point, const WheelStatus* left_wheel_status, const WheelStatus* right_wheel_status, float* out_left_duty, float* out_right_duty);
+void resetController();
 
 #endif /* INC_PID_MOTOR_CONTROLLER_H_ */

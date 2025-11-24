@@ -1,3 +1,3 @@
 ../SensorsAndActuators/src/motor_driver.c:39:6:initializeMotorDriver	1
-../SensorsAndActuators/src/motor_driver.c:48:6:setWheelDirection	5
-../SensorsAndActuators/src/motor_driver.c:78:6:setMotorDutyCycle	6
+../SensorsAndActuators/src/motor_driver.c:47:6:setWheelDirection	5
+../SensorsAndActuators/src/motor_driver.c:77:6:setMotorDutyCycle	6

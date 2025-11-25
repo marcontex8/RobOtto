@@ -1,6 +1,7 @@
-SensorsAndActuators/src/wheel_status_estimator.o: \
- ../SensorsAndActuators/src/wheel_status_estimator.c \
- /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/SensorsAndActuators/include/wheel_status_estimator.h \
+Logic/src/pid_motor_controller.o: ../Logic/src/pid_motor_controller.c \
+ /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/Logic/include/pid_motor_controller.h \
+ /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/Common/include/robotto_common.h \
+ /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/Logic/include/wheel_status_estimator.h \
  /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/FreeRTOS/include/FreeRTOS.h \
  ../Core/Inc/FreeRTOSConfig.h \
  /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/SystemView/FreeRTOSV11/SEGGER_SYSVIEW_FreeRTOS.h \
@@ -18,7 +19,9 @@ SensorsAndActuators/src/wheel_status_estimator.o: \
  /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/FreeRTOS/include/newlib-freertos.h \
  /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/FreeRTOS/include/task.h \
  /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/FreeRTOS/include/list.h
-/home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/SensorsAndActuators/include/wheel_status_estimator.h:
+/home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/Logic/include/pid_motor_controller.h:
+/home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/Common/include/robotto_common.h:
+/home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/Logic/include/wheel_status_estimator.h:
 /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/FreeRTOS/include/FreeRTOS.h:
 ../Core/Inc/FreeRTOSConfig.h:
 /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/SystemView/FreeRTOSV11/SEGGER_SYSVIEW_FreeRTOS.h:

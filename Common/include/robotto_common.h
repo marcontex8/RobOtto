@@ -8,19 +8,11 @@
 #ifndef INC_ROBOTTO_COMMON_H_
 #define INC_ROBOTTO_COMMON_H_
 
-#include "FreeRTOS.h"
-#include "task.h"
+
+#define TickType_t uint32_t
+
 #include <stdbool.h>
-
-// wheel radius [m]
-#define WHEELS_RADIUS 0.0334
-
-// maximum angular wheel speed achievable without load [rad/s]
-#define MAX_ANGULAR_WHEEL_SPEED 20.7
-
-// distance between the wheels (width)
-#define WHEELS_DISTANCE 0.186
-
+#include <stdint.h>
 
 
 typedef enum {
@@ -55,5 +47,16 @@ typedef struct {
 	float y;
 	float theta;
 } RobottoPose;
+
+typedef struct {
+	TickType_t timestamp;
+    float acc_x;
+    float acc_y;
+    float acc_z;
+
+    float gyro_x;
+    float gyro_y;
+    float gyro_z;
+} ImuData;
 
 #endif /* INC_ROBOTTO_COMMON_H_ */

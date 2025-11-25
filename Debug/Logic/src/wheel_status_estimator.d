@@ -1,5 +1,5 @@
-Core/Src/pid_motor_controller.o: ../Core/Src/pid_motor_controller.c \
- ../Core/Inc/pid_motor_controller.h ../Core/Inc/robotto_common.h \
+Logic/src/wheel_status_estimator.o: ../Logic/src/wheel_status_estimator.c \
+ /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/Logic/include/wheel_status_estimator.h \
  /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/FreeRTOS/include/FreeRTOS.h \
  ../Core/Inc/FreeRTOSConfig.h \
  /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/SystemView/FreeRTOSV11/SEGGER_SYSVIEW_FreeRTOS.h \
@@ -16,11 +16,8 @@ Core/Src/pid_motor_controller.o: ../Core/Src/pid_motor_controller.c \
  /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/FreeRTOS/include/mpu_wrappers.h \
  /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/FreeRTOS/include/newlib-freertos.h \
  /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/FreeRTOS/include/task.h \
- /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/FreeRTOS/include/list.h \
- /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/SensorsAndActuators/include/wheel_status_estimator.h \
- /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/RTT/RTT/SEGGER_RTT.h
-../Core/Inc/pid_motor_controller.h:
-../Core/Inc/robotto_common.h:
+ /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/FreeRTOS/include/list.h
+/home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/Logic/include/wheel_status_estimator.h:
 /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/FreeRTOS/include/FreeRTOS.h:
 ../Core/Inc/FreeRTOSConfig.h:
 /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/SystemView/FreeRTOSV11/SEGGER_SYSVIEW_FreeRTOS.h:
@@ -38,5 +35,3 @@ Core/Src/pid_motor_controller.o: ../Core/Src/pid_motor_controller.c \
 /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/FreeRTOS/include/newlib-freertos.h:
 /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/FreeRTOS/include/task.h:
 /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/FreeRTOS/include/list.h:
-/home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/SensorsAndActuators/include/wheel_status_estimator.h:
-/home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/RTT/RTT/SEGGER_RTT.h:

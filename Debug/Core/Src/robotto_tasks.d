@@ -50,7 +50,8 @@ Core/Src/robotto_tasks.o: ../Core/Src/robotto_tasks.c \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h \
  /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/Common/include/i2c_busses.h \
- ../Core/Inc/robotto_common.h \
+ /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/Common/include/robotto_common.h \
+ /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/Common/include/robotto_common.h \
  /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/RTT/RTT/SEGGER_RTT.h
 /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/FreeRTOS/include/FreeRTOS.h:
 ../Core/Inc/FreeRTOSConfig.h:
@@ -103,5 +104,6 @@ Core/Src/robotto_tasks.o: ../Core/Src/robotto_tasks.c \
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h:
 /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/Common/include/i2c_busses.h:
-../Core/Inc/robotto_common.h:
+/home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/Common/include/robotto_common.h:
+/home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/Common/include/robotto_common.h:
 /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/RTT/RTT/SEGGER_RTT.h:

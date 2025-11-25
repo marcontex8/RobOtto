@@ -1,0 +1,55 @@
+---
+:source:
+  :file: test/test_odometry.c
+  :dirname: test
+  :basename: test_odometry.c
+:successes:
+- :test: test_NoMovement
+  :line: 11
+  :message: ''
+  :unity_test_time: 0
+- :test: test_BothForward
+  :line: 25
+  :message: ''
+  :unity_test_time: 0
+- :test: test_BothBackard
+  :line: 38
+  :message: ''
+  :unity_test_time: 0
+- :test: test_LeftWheelForwardMovement
+  :line: 51
+  :message: ''
+  :unity_test_time: 0
+- :test: test_RightWheelForwardMovement
+  :line: 65
+  :message: ''
+  :unity_test_time: 0
+- :test: test_LeftWheelBackwardMovement
+  :line: 79
+  :message: ''
+  :unity_test_time: 0
+- :test: test_RightWheelBackwardMovement
+  :line: 93
+  :message: ''
+  :unity_test_time: 0
+- :test: test_PureLeftTurn
+  :line: 107
+  :message: ''
+  :unity_test_time: 0
+- :test: test_PureRightTurn
+  :line: 121
+  :message: ''
+  :unity_test_time: 0
+- :test: test_CumulativeUpdates
+  :line: 136
+  :message: ''
+  :unity_test_time: 0
+:failures: []
+:ignores: []
+:counts:
+  :total: 10
+  :passed: 10
+  :failed: 0
+  :ignored: 0
+:stdout: []
+:time: 0.001507852000031562

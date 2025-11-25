@@ -46,7 +46,8 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/FreeRTOS/include/newlib-freertos.h \
  /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/FreeRTOS/include/task.h \
  /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/FreeRTOS/include/list.h \
- ../Core/Inc/robotto_tasks.h ../Core/Inc/robotto_common.h
+ ../Core/Inc/robotto_tasks.h \
+ /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/Common/include/robotto_common.h
 ../Core/Inc/main.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
 ../Core/Inc/stm32f4xx_hal_conf.h:
@@ -96,4 +97,4 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/FreeRTOS/include/task.h:
 /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/FreeRTOS/include/list.h:
 ../Core/Inc/robotto_tasks.h:
-../Core/Inc/robotto_common.h:
+/home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/Common/include/robotto_common.h:

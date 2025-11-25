@@ -30,7 +30,10 @@ SensorsAndActuators/src/encoder_reader.o: \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h \
- ../Core/Inc/robotto_common.h \
+ /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/Common/include/robotto_common.h \
+ /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/SensorsAndActuators/include/sensors_and_actuators_common.h \
+ /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/Common/include/i2c_busses.h \
+ /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/Common/include/robotto_common.h \
  /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/FreeRTOS/include/FreeRTOS.h \
  ../Core/Inc/FreeRTOSConfig.h \
  /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/SystemView/FreeRTOSV11/SEGGER_SYSVIEW_FreeRTOS.h \
@@ -46,13 +49,10 @@ SensorsAndActuators/src/encoder_reader.o: \
  /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h \
  /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/FreeRTOS/include/mpu_wrappers.h \
  /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/FreeRTOS/include/newlib-freertos.h \
- /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/FreeRTOS/include/task.h \
- /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/FreeRTOS/include/list.h \
- /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/SensorsAndActuators/include/sensors_and_actuators_common.h \
- /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/Common/include/i2c_busses.h \
  /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/FreeRTOS/include/semphr.h \
  /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/FreeRTOS/include/queue.h \
- /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/FreeRTOS/include/task.h
+ /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/FreeRTOS/include/task.h \
+ /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/FreeRTOS/include/list.h
 /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/SensorsAndActuators/include/encoder_reader.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
 ../Core/Inc/stm32f4xx_hal_conf.h:
@@ -83,7 +83,10 @@ SensorsAndActuators/src/encoder_reader.o: \
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h:
-../Core/Inc/robotto_common.h:
+/home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/Common/include/robotto_common.h:
+/home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/SensorsAndActuators/include/sensors_and_actuators_common.h:
+/home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/Common/include/i2c_busses.h:
+/home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/Common/include/robotto_common.h:
 /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/FreeRTOS/include/FreeRTOS.h:
 ../Core/Inc/FreeRTOSConfig.h:
 /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/SystemView/FreeRTOSV11/SEGGER_SYSVIEW_FreeRTOS.h:
@@ -99,10 +102,7 @@ SensorsAndActuators/src/encoder_reader.o: \
 /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h:
 /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/FreeRTOS/include/mpu_wrappers.h:
 /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/FreeRTOS/include/newlib-freertos.h:
-/home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/FreeRTOS/include/task.h:
-/home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/FreeRTOS/include/list.h:
-/home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/SensorsAndActuators/include/sensors_and_actuators_common.h:
-/home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/Common/include/i2c_busses.h:
 /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/FreeRTOS/include/semphr.h:
 /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/FreeRTOS/include/queue.h:
 /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/FreeRTOS/include/task.h:
+/home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/FreeRTOS/include/list.h:

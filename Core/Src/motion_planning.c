@@ -33,6 +33,16 @@ static char* last_error = NULL;
 
 ActivityStatus motionPlanningStatusInit()
 {
+	RobottoPose estimated_pose;
+	if (pdTRUE != xQueuePeek(robotto_pose_queue_handle, &estimated_pose, 0))
+	{
+		WheelSpeedSetPoint speed_set_point = {0};
+		xQueueSend(wheels_speed_set_points_queue_handle, &speed_set_point, 0);
+
+		last_error = "Initializing... waiting for pose estimation.";
+		SEGGER_SYSVIEW_WarnfTarget("%s\n", last_error);
+		return ACTIVITY_STATUS_INIT;
+	}
 	return ACTIVITY_STATUS_RUNNING;
 }
 
@@ -53,7 +63,19 @@ ActivityStatus motionPlanningStatusRunning()
 	{
 		speed_set_point.active = true;
 		speed_set_point.left = TEST_SPEED;
+		speed_set_point.right = TEST_SPEED;
+	}
+	else if (behavior == 2)
+	{
+		speed_set_point.active = true;
+		speed_set_point.left = TEST_SPEED;
 		speed_set_point.right = -TEST_SPEED;
+	}
+	else if (behavior == 3)
+	{
+		speed_set_point.active = true;
+		speed_set_point.left = -TEST_SPEED;
+		speed_set_point.right = TEST_SPEED;
 	}
 	else
 	{

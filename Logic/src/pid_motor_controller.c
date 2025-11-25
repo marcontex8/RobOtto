@@ -5,7 +5,6 @@
  *      Author: marco
  */
 #include "pid_motor_controller.h"
-#include "SEGGER_RTT.h"
 
 // ASSUME FIXED 10ms PERIOD
 #define PERIOD 0.01

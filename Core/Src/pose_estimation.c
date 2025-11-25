@@ -13,7 +13,7 @@
 #include "SEGGER_RTT.h"
 #include "task.h"
 
-
+#include "odometry.h"
 
 extern QueueHandle_t wheels_status_queue_handle;
 extern QueueHandle_t robotto_pose_queue_handle;
@@ -21,6 +21,7 @@ extern QueueHandle_t robotto_pose_queue_handle;
 static char* last_error = NULL;
 
 static ImuData imu_bias = {0};
+#define MEASURES_FOR_BIAS_ESTIMATION 100
 
 #define DECIMALS 100000
 
@@ -35,35 +36,45 @@ void removeBias(ImuData* data)
 	data->gyro_z -= imu_bias.gyro_z;
 }
 
+
+void addMeasureToBias(ImuData* imu_bias, unsigned int counter, const ImuData* current_reading)
+{
+	imu_bias->acc_x = (imu_bias->acc_x*counter + current_reading->acc_x)/(counter+1);
+	imu_bias->acc_y = (imu_bias->acc_y*counter + current_reading->acc_y)/(counter+1);
+	imu_bias->acc_z = (imu_bias->acc_z*counter + current_reading->acc_z)/(counter+1);
+
+	imu_bias->gyro_x = (imu_bias->gyro_x*counter + current_reading->gyro_x)/(counter+1);
+	imu_bias->gyro_y = (imu_bias->gyro_y*counter + current_reading->gyro_y)/(counter+1);
+	imu_bias->gyro_z = (imu_bias->gyro_z*counter + current_reading->gyro_z)/(counter+1);
+}
+
+
 ActivityStatus poseEstimationStatusInit()
 {
-	if(ROBOTTO_OK != verifyIMUCommunication())
-	{
-		last_error = "Impossible to setup IMU communication";
-		return ACTIVITY_STATUS_ERROR;
-	}
 	static unsigned int counter = 0;
-
-	static ImuData current_reading = {0};
-	if(ROBOTTO_OK != readIMUData(&current_reading))
-	{
-		last_error = "Error while reading IMU data";
-		return ACTIVITY_STATUS_ERROR;
-	}
-	imu_bias.acc_x = (imu_bias.acc_x*counter + current_reading.acc_x)/(counter+1);
-	imu_bias.acc_y = (imu_bias.acc_y*counter + current_reading.acc_y)/(counter+1);
-	imu_bias.acc_z = (imu_bias.acc_z*counter + current_reading.acc_z)/(counter+1);
-
-	imu_bias.gyro_x = (imu_bias.gyro_x*counter + current_reading.gyro_x)/(counter+1);
-	imu_bias.gyro_y = (imu_bias.gyro_y*counter + current_reading.gyro_y)/(counter+1);
-	imu_bias.gyro_z = (imu_bias.gyro_z*counter + current_reading.gyro_z)/(counter+1);
-
 	++counter;
-	if (counter > 100)
+	if (counter <= MEASURES_FOR_BIAS_ESTIMATION)
 	{
-		return ACTIVITY_STATUS_RUNNING;
+		ImuData current_reading = {0};
+		if(ROBOTTO_OK != readIMUData(&current_reading))
+		{
+			last_error = "Error while reading IMU data";
+			return ACTIVITY_STATUS_ERROR;
+		}
+		addMeasureToBias(&imu_bias, counter, &current_reading);
+
+		return ACTIVITY_STATUS_INIT;
 	}
-	return ACTIVITY_STATUS_INIT;
+
+	WheelsMovementUpdate wheels_movement_update;
+	if (pdPASS != xQueueReceive(wheels_status_queue_handle, &wheels_movement_update, 0))
+	{
+		last_error = "Initializing... waiting for wheel status";
+		SEGGER_SYSVIEW_WarnfTarget("%s\n", last_error);
+		return ACTIVITY_STATUS_INIT;
+	}
+	return ACTIVITY_STATUS_RUNNING;
+
 }
 
 
@@ -72,39 +83,31 @@ ActivityStatus poseEstimationStatusRunning()
 	ImuData imu_data = {0};
 	if(ROBOTTO_OK != readIMUData(&imu_data))
 	{
-		last_error = "Error while reading IMU data";
+		last_error = "Impossible to read IMU data";
 		return ACTIVITY_STATUS_ERROR;
 	}
 	removeBias(&imu_data);
 
-	WheelsMovementUpdate wheels_movement_update;
-	float travelled_angle_left = 0.0f;
-	float travelled_angle_right = 0.0f;
 
-	unsigned int counter = 0;
-	while(pdPASS == xQueueReceive(wheels_status_queue_handle, &wheels_movement_update, 0))
+	if(0 == uxQueueMessagesWaiting(wheels_status_queue_handle))
 	{
-		travelled_angle_left += wheels_movement_update.delta_angle_left;
-		travelled_angle_right += wheels_movement_update.delta_angle_right;
-		++counter;
-	}
-	if (counter == 0)
-	{
-		last_error = "NO DATA PROVIDED BY WHEELS CONTROL";
+		last_error = "No wheels encoders data available";
 		return ACTIVITY_STATUS_ERROR;
 	}
 
-	/*
-	TickType_t time = xTaskGetTickCount();
-    SEGGER_RTT_printf(0, "\t;%u;\t%d;\t%d;\t%d;\t%d;\t%d\n", time,
-    		(int)(DECIMALS*travelled_angle_left),
-    		(int)(DECIMALS*travelled_angle_right),
-			(int)(DECIMALS*imu_data.gyro_x),
-			(int)(DECIMALS*imu_data.gyro_y),
-			(int)(DECIMALS*imu_data.gyro_z));
-	*/
+	static RobottoPose estimated_pose = {0};
+	WheelsMovementUpdate wheels_movement_update;
+	while(pdPASS == xQueueReceive(wheels_status_queue_handle, &wheels_movement_update, 0))
+	{
+		updateOdometry(&wheels_movement_update, &imu_data, &estimated_pose);
+	}
+	estimated_pose.timestamp = xTaskGetTickCount();
 
-	RobottoPose estimated_pose = {.timestamp = xTaskGetTickCount(), .x = 10, .y=100, .theta=3.14};
+    SEGGER_RTT_printf(0, "\t\t\t;%u;\t\t\t%d;\t\t\t%d;\t\t\t%d\n",
+    		estimated_pose.timestamp,
+			(int)(DECIMALS*estimated_pose.x),
+			(int)(DECIMALS*estimated_pose.y),
+			(int)(DECIMALS*estimated_pose.theta));
 	xQueueOverwrite(robotto_pose_queue_handle, &estimated_pose);
 
 	return ACTIVITY_STATUS_RUNNING;
@@ -124,7 +127,7 @@ void runPoseEstimationStateMachine()
 	}
 	else // ACTIVITY_STATUS_ERROR
 	{
-		SEGGER_SYSVIEW_ErrorfTarget("ERROR - PoseEstimationStateMachine: %s\n", last_error);
+		SEGGER_SYSVIEW_ErrorfTarget("%s\n", last_error);
 	}
 
 

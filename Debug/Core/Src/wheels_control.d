@@ -46,11 +46,12 @@ Core/Src/wheels_control.o: ../Core/Src/wheels_control.c \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h \
- ../Core/Inc/robotto_common.h \
+ /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/Common/include/robotto_common.h \
  /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/SensorsAndActuators/include/sensors_and_actuators_common.h \
  /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/SensorsAndActuators/include/motor_driver.h \
- /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/SensorsAndActuators/include/wheel_status_estimator.h \
- ../Core/Inc/pid_motor_controller.h ../Core/Inc/robotto_common.h \
+ /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/Logic/include/wheel_status_estimator.h \
+ /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/Logic/include/pid_motor_controller.h \
+ /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/Logic/include/wheel_status_estimator.h \
  /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/RTT/RTT/SEGGER_RTT.h \
  /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/FreeRTOS/include/queue.h \
  /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/FreeRTOS/include/task.h
@@ -101,12 +102,12 @@ Core/Src/wheels_control.o: ../Core/Src/wheels_control.c \
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h:
-../Core/Inc/robotto_common.h:
+/home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/Common/include/robotto_common.h:
 /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/SensorsAndActuators/include/sensors_and_actuators_common.h:
 /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/SensorsAndActuators/include/motor_driver.h:
-/home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/SensorsAndActuators/include/wheel_status_estimator.h:
-../Core/Inc/pid_motor_controller.h:
-../Core/Inc/robotto_common.h:
+/home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/Logic/include/wheel_status_estimator.h:
+/home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/Logic/include/pid_motor_controller.h:
+/home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/Logic/include/wheel_status_estimator.h:
 /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/RTT/RTT/SEGGER_RTT.h:
 /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/FreeRTOS/include/queue.h:
 /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/FreeRTOS/include/task.h:

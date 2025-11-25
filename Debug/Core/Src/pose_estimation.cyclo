@@ -1,4 +1,5 @@
-../Core/Src/pose_estimation.c:27:6:removeBias	1
-../Core/Src/pose_estimation.c:38:16:poseEstimationStatusInit	4
-../Core/Src/pose_estimation.c:70:16:poseEstimationStatusRunning	4
-../Core/Src/pose_estimation.c:113:6:runPoseEstimationStateMachine	3
+../Core/Src/pose_estimation.c:28:6:removeBias	1
+../Core/Src/pose_estimation.c:40:6:addMeasureToBias	1
+../Core/Src/pose_estimation.c:52:16:poseEstimationStatusInit	4
+../Core/Src/pose_estimation.c:81:16:poseEstimationStatusRunning	4
+../Core/Src/pose_estimation.c:116:6:runPoseEstimationStateMachine	3

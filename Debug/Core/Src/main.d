@@ -28,6 +28,7 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h \
+ ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h \
  /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/RTT/RTT/SEGGER_RTT.h \
  /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/RTT/Config/SEGGER_RTT_Conf.h \
  /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/FreeRTOS/include/FreeRTOS.h \
@@ -46,7 +47,7 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/FreeRTOS/include/newlib-freertos.h \
  /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/FreeRTOS/include/task.h \
  /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/FreeRTOS/include/list.h \
- ../Core/Inc/robotto_tasks.h \
+ /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/Tasks/include/robotto_tasks.h \
  /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/Common/include/robotto_common.h
 ../Core/Inc/main.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
@@ -78,6 +79,7 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h:
+../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h:
 /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/RTT/RTT/SEGGER_RTT.h:
 /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/RTT/Config/SEGGER_RTT_Conf.h:
 /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/FreeRTOS/include/FreeRTOS.h:
@@ -96,5 +98,5 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/FreeRTOS/include/newlib-freertos.h:
 /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/FreeRTOS/include/task.h:
 /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/ThirdParty/FreeRTOS/include/list.h:
-../Core/Inc/robotto_tasks.h:
+/home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/Tasks/include/robotto_tasks.h:
 /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/Common/include/robotto_common.h:

@@ -1,0 +1,5 @@
+../Tasks/src/pose_estimation.c:28:6:removeBias	1
+../Tasks/src/pose_estimation.c:40:6:addMeasureToBias	1
+../Tasks/src/pose_estimation.c:52:16:poseEstimationStatusInit	4
+../Tasks/src/pose_estimation.c:81:16:poseEstimationStatusRunning	4
+../Tasks/src/pose_estimation.c:116:6:runPoseEstimationStateMachine	3

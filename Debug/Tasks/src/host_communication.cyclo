@@ -1,0 +1,5 @@
+../Tasks/src/host_communication.c:26:13:clearReadBuffer	1
+../Tasks/src/host_communication.c:33:5:uartSendAndWaitResponse	2
+../Tasks/src/host_communication.c:46:16:hostCommunicationStatusInit	2
+../Tasks/src/host_communication.c:64:16:hostCommunicationStatusRunning	1
+../Tasks/src/host_communication.c:71:6:runHostCommunicationStateMachine	3

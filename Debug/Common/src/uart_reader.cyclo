@@ -1,0 +1,4 @@
+../Common/src/uart_reader.c:31:6:UART4_IRQHandler	1
+../Common/src/uart_reader.c:36:6:HAL_UARTEx_RxEventCallback	4
+../Common/src/uart_reader.c:52:6:ESP_UART_RxInit	1
+../Common/src/uart_reader.c:58:6:ESP_UART_fetchAndParseNewData	3

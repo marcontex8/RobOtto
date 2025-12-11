@@ -29,6 +29,7 @@ SensorsAndActuators/src/motor_driver.o: \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h \
+ ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h \
  /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/SensorsAndActuators/include/motor_driver.h \
  /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/SensorsAndActuators/include/sensors_and_actuators_common.h
 ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h:
@@ -60,5 +61,6 @@ SensorsAndActuators/src/motor_driver.o: \
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h:
+../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h:
 /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/SensorsAndActuators/include/motor_driver.h:
 /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/SensorsAndActuators/include/sensors_and_actuators_common.h:

@@ -1,0 +1,3 @@
+../Common/src/network_communication.c:55:21:performInitStep	24	static
+../Common/src/network_communication.c:79:21:initNetworkCommunication	8	static
+../Common/src/network_communication.c:96:6:parseNewData	8	static

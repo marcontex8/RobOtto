@@ -1,0 +1,5 @@
+../Tasks/src/host_communication.c:26:13:clearReadBuffer	8	static
+../Tasks/src/host_communication.c:33:5:uartSendAndWaitResponse	16	static
+../Tasks/src/host_communication.c:46:16:hostCommunicationStatusInit	8	static
+../Tasks/src/host_communication.c:64:16:hostCommunicationStatusRunning	4	static
+../Tasks/src/host_communication.c:71:6:runHostCommunicationStateMachine	8	static

@@ -28,6 +28,7 @@ Core/Startup \
 Drivers/STM32F4xx_HAL_Driver/Src \
 Logic/src \
 SensorsAndActuators/src \
+Tasks/src \
 ThirdParty/FreeRTOS \
 ThirdParty/FreeRTOS/portable/GCC/ARM_CM4F \
 ThirdParty/FreeRTOS/portable/MemMang \

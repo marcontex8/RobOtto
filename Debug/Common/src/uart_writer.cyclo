@@ -1,0 +1,2 @@
+../Common/src/uart_writer.c:30:18:SendMessage	4
+../Common/src/uart_writer.c:50:6:HAL_UART_TxCpltCallback	2

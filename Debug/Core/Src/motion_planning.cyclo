@@ -1,3 +1,0 @@
-../Core/Src/motion_planning.c:34:16:motionPlanningStatusInit	2
-../Core/Src/motion_planning.c:49:16:motionPlanningStatusRunning	7
-../Core/Src/motion_planning.c:97:6:runMotionPlanningStateMachine	3

@@ -10,54 +10,31 @@
 #include "uart_reader.h"
 #include "at_state_machine.h"
 
+#include "stm32f4xx.h"
+#include "stm32f4xx_hal_gpio.h"
+
+#include "FreeRTOS.h"
+#include "task.h"
+
 #define MAX_COMMAND_REPETITIONS 3
-/*
-#ifndef ESP_RESET_Pin
-  #define ESP_RESET_Pin GPIO_PIN_14
-#endif
-#ifndef ESP_RESET_GPIO_Port
-  #define ESP_RESET_GPIO_Port GPIOC
-#endif
-*/
+
+#define ESP_RESET_Pin GPIO_PIN_14
+#define ESP_RESET_GPIO_Port GPIOC
+
+
 void activateESP()
 {
 	HAL_GPIO_WritePin(ESP_RESET_GPIO_Port, ESP_RESET_Pin, GPIO_PIN_SET);
 }
 
-static char* error_description = NULL;
-/*
-AtRequestStatus sendAT_CWMODE_1(AtAnswer* answer);
-go to station mode
-AT+CWMODE=1
->
->OK
+static const char* error_description = NULL;
 
-connect to wifi
-AT+CWJAP="SOPPALCO","scalaApioli!"
->WIFI CONNECTED
->WIFI GOT IP
->
->OK
+static NetworkInitializationStatus network_initialization_status = NET_INIT_IDLE;
 
-AT+MQTTUSERCFG=0,1,"RobOTTO","","",0,0,""
->
->OK
-
-AT+MQTTCONN=0,"192.168.1.140",1884,0
->+MQTTCONNECTED:0,1,"192.168.1.140","1884","",0
->
->OK
-
-
-
-AT+MQTTPUB=0,"test/topic","hello from esp01",0,0
->
->OK
-*/
 
 static const char* init_commands[]={
-		"",
 		"AT",
+		"ATE0",
 		"AT+CWMODE=1",
 		"AT+CWJAP=\"SOPPALCO\",\"scalaApioli!\"",
 		"AT+MQTTUSERCFG=0,1,\"RobOTTO\",\"\",\"\",0,0,\"\"",
@@ -65,59 +42,71 @@ static const char* init_commands[]={
 		"AT+MQTTPUB=0,\"test/topic\",\"hello from esp01\",0,0"
 };
 
-CommunicationStatus performInitStep(uint8_t* command_index)
+static const size_t NUMBER_OF_INITIALIZATION_STEPS =
+    sizeof(init_commands) / sizeof(init_commands[0]);
+
+
+NetworkInitializationStatus performInitSteps()
 {
-	ATAnswer answer = {0};
-	ATStatus request_status = ATSM_runRequest(init_commands[*command_index], &answer);
-	if(AT_STATUS_DONE != request_status)
+	static uint8_t current_command_index = 0;
+	static uint8_t command_repetition = 0;
+
+	NetworkInitializationStatus next_status = NET_INIT_IN_PROGRESS;
+
+	SEGGER_SYSVIEW_PrintfHost("Initialization command index %u, %s", current_command_index, init_commands[current_command_index]);
+	if(current_command_index >= NUMBER_OF_INITIALIZATION_STEPS)
 	{
-		return COMM_STATUS_IN_PROGRESS;
-	}
-
-	if(AT_ANSWER_OK == answer)
-	{
-		++(*command_index);
-		return COMM_STATUS_DONE;
-	}
-
-	static uint8_t counter = 0;
-	if(++counter > MAX_COMMAND_REPETITIONS)
-	{
-		return COMM_STATUS_ERROR;
-	}
-	return COMM_STATUS_IN_PROGRESS;
-}
-
-
-CommunicationStatus initNetworkCommunication()
-{
-	static uint8_t command_index = 0;
-
-	if(0 == command_index)
-	{
-		activateESP();
-		ESP_UART_RxInit();
-		++command_index;
-		return COMM_STATUS_IN_PROGRESS;
+		next_status = NET_INIT_SUCCESS;
 	}
 	else
 	{
-		CommunicationStatus init_status = performInitStep(&command_index);
-		if(COMM_STATUS_ERROR == init_status)
+		ATAnswer answer = ATSM_runRequest(init_commands[current_command_index]);
+		if(AT_ANSWER_OK == answer)
 		{
-			error_description = init_commands[command_index];
+			SEGGER_SYSVIEW_Print("Request Complete OK");
+			++current_command_index;
+			command_repetition = 0;
 		}
-		return init_status;
+		else if(AT_ANSWER_ERROR == answer)
+		{
+			SEGGER_SYSVIEW_Print("Request Complete ERROR");
+			if(command_repetition < MAX_COMMAND_REPETITIONS)
+			{
+				++command_repetition;
+			}
+			else
+			{
+				error_description = init_commands[current_command_index];
+				next_status = NET_INIT_ERROR;
+			}
+		}
 	}
+	return next_status;
 }
 
 
-void parseNewData()
+NetworkInitializationStatus initNetworkCommunication()
+{
+	if(NET_INIT_IDLE == network_initialization_status)
+	{
+		SEGGER_SYSVIEW_Print("Activate UART");
+		ESP_UART_RxInit();
+		network_initialization_status = NET_INIT_IN_PROGRESS;
+	}
+	else if(NET_INIT_IN_PROGRESS == network_initialization_status)
+	{
+		network_initialization_status = performInitSteps();
+	}
+	return network_initialization_status;
+}
+
+
+void parseNewDataIfAny()
 {
 	ESP_UART_fetchAndParseNewData();
 }
 
-char* getError()
+const char* getError()
 {
 	return error_description;
 }

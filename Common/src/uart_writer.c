@@ -22,9 +22,8 @@ extern UART_HandleTypeDef huart4;
 #define ESP_UART_DMA_TX_BUF_SIZE 1024
 uint8_t esp_uart_dma_tx_buf[ESP_UART_DMA_TX_BUF_SIZE];
 
-static bool complete = false;
+static bool complete = true;
 
-extern TaskHandle_t communication_manager_handles;
 
 
 RobottoErrorCode SendMessage(const char* message)

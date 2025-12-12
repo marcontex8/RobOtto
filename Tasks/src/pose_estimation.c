@@ -18,7 +18,7 @@
 extern QueueHandle_t wheels_status_queue_handle;
 extern QueueHandle_t robotto_pose_queue_handle;
 
-static char* last_error = NULL;
+static const char* last_error = NULL;
 
 static ImuData imu_bias = {0};
 #define MEASURES_FOR_BIAS_ESTIMATION 100

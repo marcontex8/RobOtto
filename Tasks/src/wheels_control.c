@@ -20,7 +20,7 @@
 
 extern QueueHandle_t wheels_speed_set_points_queue_handle;
 extern QueueHandle_t wheels_status_queue_handle;
-static char* last_error = NULL;
+static const char* last_error = NULL;
 
 
 

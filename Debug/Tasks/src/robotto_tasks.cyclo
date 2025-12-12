@@ -5,6 +5,6 @@
 ../Tasks/src/robotto_tasks.c:125:6:wheelsControlTask	1
 ../Tasks/src/robotto_tasks.c:137:6:poseEstimationTask	1
 ../Tasks/src/robotto_tasks.c:150:6:communicationManagerTask	1
-../Tasks/src/robotto_tasks.c:163:18:createQueues	5
-../Tasks/src/robotto_tasks.c:191:18:createTasks	7
-../Tasks/src/robotto_tasks.c:226:18:setupRobotto	3
+../Tasks/src/robotto_tasks.c:164:18:createQueues	5
+../Tasks/src/robotto_tasks.c:192:18:createTasks	7
+../Tasks/src/robotto_tasks.c:227:18:setupRobotto	3

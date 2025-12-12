@@ -62,9 +62,11 @@ void ESP_UART_fetchAndParseNewData()
 
 	if (head_ptr == tail_ptr)
 	{
+		SEGGER_SYSVIEW_Print("No new data");
 		return;
 	}
 
+	SEGGER_SYSVIEW_Print("New data!");
 	if (head_ptr > tail_ptr)
 	{
 		uint16_t new_data_length = head_ptr - tail_ptr;

@@ -12,19 +12,15 @@
 #include "robotto_common.h"
 
 
-typedef enum{
-	AT_STATUS_IDLE,
-	AT_STATUS_WAITING,
-	AT_STATUS_DONE,
-} ATStatus;
 
 typedef enum{
+	AT_ANSWER_NONE,
 	AT_ANSWER_ERROR,
 	AT_ANSWER_OK,
 } ATAnswer;
 
 
-ATStatus ATSM_runRequest(const char* command, ATAnswer* answer);
+ATAnswer ATSM_runRequest(const char* command);
 
 void ATSM_processNewData();
 

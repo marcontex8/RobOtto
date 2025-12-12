@@ -116,7 +116,7 @@ void motionPlanningTask(void *argument)
 
 	TickType_t last_wake_time = xTaskGetTickCount();
 	for (;;) {
-		runMotionPlanningStateMachine();
+		//runMotionPlanningStateMachine();
 		vTaskDelayUntil(&last_wake_time, period);
 	}
 }
@@ -129,7 +129,7 @@ void wheelsControlTask(void *argument)
 	TickType_t last_wake_time = xTaskGetTickCount();
 	for (;;)
 	{
-		runWheelsControlStateMachine();
+		//runWheelsControlStateMachine();
 		vTaskDelayUntil(&last_wake_time, period);
 	}
 }
@@ -141,7 +141,7 @@ void poseEstimationTask(void *argument)
 	TickType_t last_wake_time = xTaskGetTickCount();
 	for (;;)
 	{
-		runPoseEstimationStateMachine();
+		//runPoseEstimationStateMachine();
 		vTaskDelayUntil(&last_wake_time, period);
 	}
 }
@@ -153,6 +153,7 @@ void communicationManagerTask(void *argument)
 
 	for (;;)
     {
+		SEGGER_SYSVIEW_Print("runCommunicationManagerStateMachine()");
 		runCommunicationManagerStateMachine();
 		ulTaskNotifyTake(pdTRUE, period);
 	}

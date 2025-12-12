@@ -12,26 +12,35 @@
 #include <stddef.h>
 
 
-static char* last_error = NULL;
+static const char* last_error = "No error";
 
 ActivityStatus runCommunicationManagerStatusInit()
 {
-	CommunicationStatus status = initNetworkCommunication();
-	if(COMM_STATUS_IN_PROGRESS == status)
+	SEGGER_SYSVIEW_Print("Running StatusInit()");
+
+	NetworkInitializationStatus status = initNetworkCommunication();
+	if(NET_INIT_IN_PROGRESS == status)
 	{
 		return ACTIVITY_STATUS_INIT;
 	}
-
-	if(COMM_STATUS_DONE != status)
+	else if(NET_INIT_SUCCESS == status)
+	{
+		return ACTIVITY_STATUS_RUNNING;
+	}
+	else
 	{
 		last_error = getError();
 		return ACTIVITY_STATUS_ERROR;
 	}
-	return ACTIVITY_STATUS_RUNNING;
 }
 
 ActivityStatus runCommunicationManagerStatusRunning()
 {
+	SEGGER_SYSVIEW_Print("Running StatusRunning()");
+	SEGGER_SYSVIEW_PrintfHost("Size of size_t %u", sizeof(size_t));
+	SEGGER_SYSVIEW_PrintfHost("Size of int %u", sizeof(int));
+	SEGGER_SYSVIEW_PrintfHost("Size of long int %u", sizeof(long int));
+	SEGGER_SYSVIEW_PrintfHost("Size of short int %u", sizeof(short int));
 	return ACTIVITY_STATUS_RUNNING;
 }
 
@@ -39,7 +48,10 @@ ActivityStatus runCommunicationManagerStatusRunning()
 void runCommunicationManagerStateMachine()
 {
 	static ActivityStatus activity_status = ACTIVITY_STATUS_INIT;
-	parseNewData();
+
+	SEGGER_SYSVIEW_Print("Before parseNewDataIfAny");
+	parseNewDataIfAny();
+	SEGGER_SYSVIEW_Print("After parseNewDataIfAny");
 
 	if(ACTIVITY_STATUS_INIT == activity_status)
 	{
@@ -51,6 +63,6 @@ void runCommunicationManagerStateMachine()
 	}
 	else // ACTIVITY_STATUS_ERROR
 	{
-		SEGGER_SYSVIEW_ErrorfTarget("%s\n", last_error);
+		SEGGER_SYSVIEW_ErrorfTarget("ERROR STATE. Reason: %s\n", last_error);
 	}
 }

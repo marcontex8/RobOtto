@@ -10,15 +10,18 @@
 
 
 typedef enum{
-	COMM_STATUS_IN_PROGRESS,
-	COMM_STATUS_DONE,
-	COMM_STATUS_ERROR,
-} CommunicationStatus;
+	NET_INIT_IDLE,
+	NET_INIT_IN_PROGRESS,
+	NET_INIT_SUCCESS,
+	NET_INIT_ERROR,
+} NetworkInitializationStatus;
 
 
 
-CommunicationStatus initNetworkCommunication();
+NetworkInitializationStatus initNetworkCommunication();
 
-void parseNewData();
+void parseNewDataIfAny();
+
+const char* getError();
 
 #endif /* INCLUDE_NETWORK_COMMUNICATION_H_ */

@@ -1,4 +1,0 @@
-../Common/src/uart_reader.c:31:6:UART4_IRQHandler	8	static
-../Common/src/uart_reader.c:36:6:HAL_UARTEx_RxEventCallback	24	static,ignoring_inline_asm
-../Common/src/uart_reader.c:52:6:ESP_UART_RxInit	8	static
-../Common/src/uart_reader.c:58:6:ESP_UART_fetchAndParseNewData	16	static

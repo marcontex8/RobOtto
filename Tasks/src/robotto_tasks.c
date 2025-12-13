@@ -153,7 +153,6 @@ void communicationManagerTask(void *argument)
 
 	for (;;)
     {
-		SEGGER_SYSVIEW_Print("runCommunicationManagerStateMachine()");
 		runCommunicationManagerStateMachine();
 		ulTaskNotifyTake(pdTRUE, period);
 	}

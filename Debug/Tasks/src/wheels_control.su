@@ -1,4 +1,0 @@
-../Tasks/src/wheels_control.c:28:18:readAngleAndUpdateWheelsStatus	32	static
-../Tasks/src/wheels_control.c:58:16:runWheelsControlStatusInit	40	static
-../Tasks/src/wheels_control.c:100:16:runWheelsControlStatusRunning	48	static
-../Tasks/src/wheels_control.c:163:6:runWheelsControlStateMachine	8	static

@@ -49,9 +49,7 @@ void runCommunicationManagerStateMachine()
 {
 	static ActivityStatus activity_status = ACTIVITY_STATUS_INIT;
 
-	SEGGER_SYSVIEW_Print("Before parseNewDataIfAny");
 	parseNewDataIfAny();
-	SEGGER_SYSVIEW_Print("After parseNewDataIfAny");
 
 	if(ACTIVITY_STATUS_INIT == activity_status)
 	{

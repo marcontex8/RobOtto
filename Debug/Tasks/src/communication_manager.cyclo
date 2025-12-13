@@ -1,3 +1,0 @@
-../Tasks/src/communication_manager.c:17:16:runCommunicationManagerStatusInit	3
-../Tasks/src/communication_manager.c:37:16:runCommunicationManagerStatusRunning	1
-../Tasks/src/communication_manager.c:48:6:runCommunicationManagerStateMachine	3

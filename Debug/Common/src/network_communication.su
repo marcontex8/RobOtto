@@ -1,5 +1,0 @@
-../Common/src/network_communication.c:25:6:activateESP	8	static
-../Common/src/network_communication.c:49:29:performInitSteps	16	static
-../Common/src/network_communication.c:88:29:initNetworkCommunication	8	static
-../Common/src/network_communication.c:104:6:parseNewDataIfAny	8	static
-../Common/src/network_communication.c:109:13:getError	4	static

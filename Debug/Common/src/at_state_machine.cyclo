@@ -1,8 +1,0 @@
-../Common/src/at_state_machine.c:43:6:ATSM_reset	1
-../Common/src/at_state_machine.c:51:6:startNewRequest	2
-../Common/src/at_state_machine.c:67:6:completeRequest	1
-../Common/src/at_state_machine.c:73:6:checkTimeout	2
-../Common/src/at_state_machine.c:82:10:ATSM_runRequest	3
-../Common/src/at_state_machine.c:104:10:parseReplyBuffer	11
-../Common/src/at_state_machine.c:148:6:ATSM_processNewData	2
-../Common/src/at_state_machine.c:164:6:ATSM_newRecievedData	2

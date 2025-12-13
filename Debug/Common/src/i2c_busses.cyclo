@@ -1,2 +1,0 @@
-../Common/src/i2c_busses.c:38:6:initializeI2CMutexes	1
-../Common/src/i2c_busses.c:44:18:ReadI2C	4

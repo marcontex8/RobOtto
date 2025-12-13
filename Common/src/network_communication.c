@@ -7,6 +7,7 @@
 
 #include "network_communication.h"
 #include "robotto_common.h"
+#include "robotto_conf.h"
 #include "uart_reader.h"
 #include "at_state_machine.h"
 
@@ -21,7 +22,6 @@
 #define ESP_RESET_Pin GPIO_PIN_14
 #define ESP_RESET_GPIO_Port GPIOC
 
-
 void activateESP()
 {
 	HAL_GPIO_WritePin(ESP_RESET_GPIO_Port, ESP_RESET_Pin, GPIO_PIN_SET);
@@ -31,12 +31,11 @@ static const char* error_description = NULL;
 
 static NetworkInitializationStatus network_initialization_status = NET_INIT_IDLE;
 
-
 static const char* init_commands[]={
 		"AT",
 		"ATE0",
 		"AT+CWMODE=1",
-		"AT+CWJAP=\"SOPPALCO\",\"scalaApioli!\"",
+		"AT+CWJAP=\"" WIFI_SSID "\",\"" WIFI_PWD "\"",
 		"AT+MQTTUSERCFG=0,1,\"RobOTTO\",\"\",\"\",0,0,\"\"",
 		"AT+MQTTCONN=0,\"192.168.1.140\",1884,0",
 		"AT+MQTTPUB=0,\"test/topic\",\"hello from esp01\",0,0"
@@ -53,7 +52,7 @@ NetworkInitializationStatus performInitSteps()
 
 	NetworkInitializationStatus next_status = NET_INIT_IN_PROGRESS;
 
-	SEGGER_SYSVIEW_PrintfHost("Initialization command index %u, %s", current_command_index, init_commands[current_command_index]);
+	SEGGER_SYSVIEW_PrintfHost("Initialization command index %u", current_command_index);
 	if(current_command_index >= NUMBER_OF_INITIALIZATION_STEPS)
 	{
 		next_status = NET_INIT_SUCCESS;
@@ -103,7 +102,11 @@ NetworkInitializationStatus initNetworkCommunication()
 
 void parseNewDataIfAny()
 {
-	ESP_UART_fetchAndParseNewData();
+	// fetch data only after DMA is initialized correctly
+	if(NET_INIT_IDLE != network_initialization_status)
+	{
+		ESP_UART_fetchAndParseNewData();
+	}
 }
 
 const char* getError()

@@ -1,4 +1,0 @@
-../Tasks/src/motion_planning.c:35:16:motionPlanningStatusInit	2
-../Tasks/src/motion_planning.c:58:6:makeCircle	8
-../Tasks/src/motion_planning.c:118:16:motionPlanningStatusRunning	6
-../Tasks/src/motion_planning.c:155:6:runMotionPlanningStateMachine	3

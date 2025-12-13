@@ -1,5 +1,0 @@
-../Common/src/network_communication.c:25:6:activateESP	1
-../Common/src/network_communication.c:49:29:performInitSteps	5
-../Common/src/network_communication.c:88:29:initNetworkCommunication	3
-../Common/src/network_communication.c:104:6:parseNewDataIfAny	1
-../Common/src/network_communication.c:109:13:getError	1

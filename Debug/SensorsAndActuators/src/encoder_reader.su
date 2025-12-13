@@ -1,3 +1,0 @@
-../SensorsAndActuators/src/encoder_reader.c:22:18:getEncoderDevice	16	static
-../SensorsAndActuators/src/encoder_reader.c:34:18:readAngleRad	32	static
-../SensorsAndActuators/src/encoder_reader.c:56:18:readFullEncoder	32	static

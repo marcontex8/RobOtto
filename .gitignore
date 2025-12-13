@@ -1,4 +1,18 @@
 ############################
+# Local configurations
+############################
+.env
+Common/include/secrets.h
+IntegrationTests/.integration_test_env
+
+
+############################
+# Drivers from StmCubeIDE
+############################
+/Drivers
+
+
+############################
 # Build output
 ############################
 /Debug/
@@ -6,6 +20,8 @@
 /build/
 /Build/
 /out/
+
+/UnitTests/build
 
 ############################
 # Compiled binaries
@@ -26,9 +42,9 @@
 ############################
 .metadata/
 .settings/
-.project
-.cproject
-.launch
+*.project
+*.cproject
+*.launch
 
 ############################
 # VS Code

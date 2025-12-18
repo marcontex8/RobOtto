@@ -10,6 +10,9 @@
 
 #include "secrets.h"
 
+
+/************ PHYSICAL PARAMETERS *************/
+
 // wheel radius [m]
 #define WHEELS_RADIUS 0.0334
 
@@ -19,7 +22,22 @@
 // distance between the wheels (width)
 #define WHEELS_DISTANCE 0.186
 
+
+/************** NETWORK PARAMETERS **************/
+
+// provided by "secrets.h"
 #define WIFI_SSID SECRET_WIFI_SSID
 #define WIFI_PWD SECRET_WIFI_PWD
+
+// time to wait before starting to send AT commands [s]
+#define NETWORK_RUN_DELAY_AT_STARTUP_S 20
+
+// maximum time allowed for a network request through ESP [s]
+#define NETWORK_REQUEST_TIMEOUT_S 30
+
+// maximum amount of times that network request will be repeated
+#define NETWORK_COMMANDS_MAX_REPETITIONS 6
+
+
 
 #endif /* INCLUDE_ROBOTTO_CONF_H_ */

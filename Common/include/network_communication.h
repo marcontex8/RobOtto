@@ -11,7 +11,8 @@
 
 typedef enum{
 	NET_INIT_IDLE,
-	NET_INIT_IN_PROGRESS,
+	NET_INIT_WAITING_ESP_INIT,
+	NET_INIT_STEPS_PROGRESS,
 	NET_INIT_SUCCESS,
 	NET_INIT_ERROR,
 } NetworkInitializationStatus;
@@ -20,7 +21,7 @@ typedef enum{
 
 NetworkInitializationStatus initNetworkCommunication();
 
-void parseNewDataIfAny();
+void updateIncomingData();
 
 const char* getError();
 

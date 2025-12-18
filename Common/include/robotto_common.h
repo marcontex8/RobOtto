@@ -13,6 +13,7 @@
 
 #include <stdbool.h>
 #include <stdint.h>
+#include <stddef.h>
 
 
 typedef enum {
@@ -58,5 +59,11 @@ typedef struct {
     float gyro_y;
     float gyro_z;
 } ImuData;
+
+/*
+ * Helper function to print a buffer containing multiple lines.
+ * @param tmp_line shall be a 128 temporary buffer made to avoid concurrency related issues.
+ */
+void SYSVIEW_PrintLines(const char *buf, char *line, size_t line_size);
 
 #endif /* INC_ROBOTTO_COMMON_H_ */

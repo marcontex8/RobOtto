@@ -10,7 +10,9 @@
 
 #include "at_state_machine.h"
 #include "uart_writer.h"
-
+#include "robotto_conf.h"
+#include "buffer_parser.h"
+#include "robotto_common.h"
 
 #include "SEGGER_SYSVIEW.h"
 
@@ -27,30 +29,36 @@ typedef enum{
 /* REQUEST STATE VARIABLES */
 static ATStatus at_status = AT_STATUS_IDLE;
 static ATAnswer latest_answer = AT_ANSWER_ERROR;
-#define REQUEST_TIMEOUT_SECONDS 10
 static TickType_t start_request_tick;
 
 
 /* REPLY BUFFER VARIABLES */
 #define BUFFER_SIZE 1024
+#define MAX_WRITABLE_BUFFER_SIZE (BUFFER_SIZE -1) // at least 1 termination char should be always present in the buffer
 static uint8_t reply_buffer[BUFFER_SIZE];
-static uint16_t reply_len = 0;
+static uint16_t reply_buffer_current_length = 0;
 
 
 static uint16_t number_of_unexpected_communications = 0;
 
 
-void ATSM_reset()
+void ATSM_resetBuffer()
 {
 	memset(reply_buffer, 0, BUFFER_SIZE);
-	reply_len = 0;
-	latest_answer = AT_ANSWER_ERROR;
+	reply_buffer_current_length = 0;
 }
 
 
+void ATSM_resetStateMachine()
+{
+	at_status = AT_STATUS_IDLE;
+	ATSM_resetBuffer();
+}
+
 void startNewRequest(const char* command)
 {
-	ATSM_reset();
+	ATSM_resetBuffer();
+
 	if(ROBOTTO_OK != SendMessage(command))
 	{
 		latest_answer = AT_ANSWER_ERROR;
@@ -68,12 +76,15 @@ void completeRequest()
 {
 	// latest_answer already updated by the parser during parsing phase.
 	at_status = AT_STATUS_IDLE;
+	ATSM_resetBuffer();
 }
 
-void checkTimeout()
+void checkTimeout(const char* command)
 {
-	if( (xTaskGetTickCount() - start_request_tick) > pdMS_TO_TICKS(REQUEST_TIMEOUT_SECONDS * 1000))
+	if( (xTaskGetTickCount() - start_request_tick) > pdMS_TO_TICKS(NETWORK_REQUEST_TIMEOUT_S * 1000))
 	{
+		SEGGER_SYSVIEW_PrintfHost("Timeout: %s", command);
+		SEGGER_SYSVIEW_PrintfHost("Start time: %u | Now: %u", start_request_tick, xTaskGetTickCount());
 		latest_answer = AT_ANSWER_ERROR;
 		at_status = AT_STATUS_DONE;
 	}
@@ -83,15 +94,17 @@ ATAnswer ATSM_runRequest(const char* command)
 {
 	if(AT_STATUS_IDLE == at_status)
 	{
+		SEGGER_SYSVIEW_PrintfHost("Start new request: %s", command);
 		startNewRequest(command);
 	}
 	else if(AT_STATUS_DONE == at_status)
 	{
+		SEGGER_SYSVIEW_PrintfHost("Request Complete: %s", command);
 		completeRequest();
 	}
 	else
 	{
-		checkTimeout();
+		checkTimeout(command);
 	}
 	return latest_answer;
 }
@@ -101,74 +114,45 @@ ATAnswer ATSM_runRequest(const char* command)
 //////////// CALLBACKS FROM IDLE UART ////////////
 //////////////////////////////////////////////////
 
-ATStatus parseReplyBuffer()
-{
-	const char *p = (const char *)reply_buffer;
-	char line[128];
-	while (*p != '\0')
-	{
-		// extract one line (until \r or \n)
-	    int i = 0;
-	    while (*p != '\0' && *p != '\n' && *p != '\r' && i < (int)(sizeof(line)-1)) {
-	    	line[i++] = *p++;
-	    }
-	    line[i] = '\0';
-
-	    // skip CR/LF
-	    while (*p == '\r' || *p == '\n')
-	    {
-	    	p++;
-	    }
-
-	    // ignore empty lines
-	    if (i == 0)
-	    {
-	    	continue;
-	    }
-
-	    // check minimal match
-	    if (strcmp(line, "OK") == 0)
-	    {
-			SEGGER_SYSVIEW_Print("Found line OK, setting latest_answer");
-	    	latest_answer = AT_ANSWER_OK;
-        	return AT_STATUS_DONE;
-	    }
-	    if (strcmp(line, "ERROR") == 0)
-	    {
-			SEGGER_SYSVIEW_Print("Found line ERROR, setting latest_answer");
-	    	latest_answer = AT_ANSWER_ERROR;
-	        return AT_STATUS_DONE;
-	    }
-	}
-	return AT_STATUS_WAITING;
-}
-
-
-
 void ATSM_processNewData()
 {
-	SEGGER_SYSVIEW_PrintfHost("Process new data: %s", reply_buffer);
-
 	if(AT_STATUS_WAITING != at_status)
 	{
-		SEGGER_SYSVIEW_Print("unexpected");
+		SEGGER_SYSVIEW_Print("UNEXPECTED COMMUNICATION");
 		++number_of_unexpected_communications;
 	}
 	else
 	{
-		SEGGER_SYSVIEW_Print("expected");
-		at_status = parseReplyBuffer();
+		if(NULL != findLineInBuffer((const char *)reply_buffer, "OK"))
+		{
+	    	latest_answer = AT_ANSWER_OK;
+	    	at_status = AT_STATUS_DONE;
+		}
+		else if(NULL != findLineInBuffer((const char *)reply_buffer, "ERROR"))
+		{
+			latest_answer = AT_ANSWER_ERROR;
+			at_status = AT_STATUS_DONE;
+		}
+		else
+		{
+			at_status = AT_STATUS_WAITING;
+		}
 	}
+
+	// TODO: remove when debugging is over
+	static char DEBUG_tmp_line[128];
+	SYSVIEW_PrintLines((const char *)reply_buffer, DEBUG_tmp_line, 128);
+
 }
 
-void ATSM_newRecievedData(const uint8_t *data, uint16_t len)
+void ATSM_newRecievedData(const uint8_t *data, uint16_t new_data_length)
 {
-	if(reply_len + len >= BUFFER_SIZE -1) // at least 1 termination char should be always present in the buffer
+	if(reply_buffer_current_length + new_data_length > MAX_WRITABLE_BUFFER_SIZE)
 	{
-		// TODO: It happens constantly at the startup. A proper solution should be implemented
-		return;
+		SEGGER_SYSVIEW_Warn("Received data overflow buffer size. Some data will be lost!");
+		new_data_length = MAX_WRITABLE_BUFFER_SIZE - reply_buffer_current_length;
 	}
-	memcpy(reply_buffer, data, len);
-	reply_len += len;
+	memcpy(&reply_buffer[reply_buffer_current_length], data, new_data_length);
+	reply_buffer_current_length += new_data_length;
 }
 

@@ -18,7 +18,6 @@
 #include "robotto_common.h"
 #include "at_state_machine.h"
 
-
 #define H_UART_ESP huart4
 #define ESP_UART_DMA_RX_BUF_SIZE 1024
 
@@ -27,32 +26,29 @@ extern TaskHandle_t communication_manager_handles;
 
 uint8_t esp_uart_dma_rx_buf[ESP_UART_DMA_RX_BUF_SIZE];
 
+static bool ESP_UART_error = false;
 
-void UART4_IRQHandler()
+
+bool ESP_UART_ErrorDetected()
 {
-    HAL_UART_IRQHandler(&H_UART_ESP);
-}
-
-void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
-{
-	if (huart != &H_UART_ESP)
-	{
-		return;
-	}
-
-    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-    if (communication_manager_handles != NULL)
-    {
-       vTaskNotifyGiveFromISR(communication_manager_handles, &xHigherPriorityTaskWoken);
-    }
-    portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+	return ESP_UART_error;
 }
 
 
 void ESP_UART_RxInit()
 {
-	HAL_UARTEx_ReceiveToIdle_DMA(&H_UART_ESP, esp_uart_dma_rx_buf, ESP_UART_DMA_RX_BUF_SIZE);
+	memset(esp_uart_dma_rx_buf, 0, ESP_UART_DMA_RX_BUF_SIZE);
+	if(HAL_OK == HAL_UARTEx_ReceiveToIdle_DMA(&H_UART_ESP, esp_uart_dma_rx_buf, ESP_UART_DMA_RX_BUF_SIZE))
+	{
+		ESP_UART_error = false;
+	}
+	else
+	{
+		ESP_UART_error = true;
+	}
 }
+
+
 
 
 void ESP_UART_fetchAndParseNewData()
@@ -62,11 +58,9 @@ void ESP_UART_fetchAndParseNewData()
 
 	if (head_ptr == tail_ptr)
 	{
-		SEGGER_SYSVIEW_Print("No new data");
 		return;
 	}
 
-	SEGGER_SYSVIEW_Print("New data!");
 	if (head_ptr > tail_ptr)
 	{
 		uint16_t new_data_length = head_ptr - tail_ptr;
@@ -84,4 +78,49 @@ void ESP_UART_fetchAndParseNewData()
 	ATSM_processNewData();
 
 	tail_ptr = head_ptr;
+}
+
+
+
+////////////////////////////////////////////
+/////////////  IRQ & CALLBACKS  ////////////
+////////////////////////////////////////////
+
+
+void UART4_IRQHandler()
+{
+    HAL_UART_IRQHandler(&H_UART_ESP);
+}
+
+
+void notifyCommunicationManagerTask()
+{
+    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+    if (communication_manager_handles != NULL)
+    {
+       vTaskNotifyGiveFromISR(communication_manager_handles, &xHigherPriorityTaskWoken);
+    }
+    portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+}
+
+void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
+{
+	if (huart != &H_UART_ESP)
+	{
+		return;
+	}
+
+	notifyCommunicationManagerTask();
+}
+
+
+void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
+{
+	if (huart != &H_UART_ESP)
+	{
+		return;
+	}
+	ESP_UART_error = true;
+
+	notifyCommunicationManagerTask();
 }

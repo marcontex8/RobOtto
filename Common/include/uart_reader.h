@@ -8,8 +8,11 @@
 #ifndef INCLUDE_UART_READER_H_
 #define INCLUDE_UART_READER_H_
 
+#include <stdbool.h>
 
 void ESP_UART_RxInit();
+
+bool ESP_UART_ErrorDetected();
 
 void ESP_UART_fetchAndParseNewData();
 

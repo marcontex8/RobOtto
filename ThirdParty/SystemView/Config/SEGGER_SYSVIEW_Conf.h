@@ -95,7 +95,7 @@ Additional information:
 * TODO: Add your defines here.                                       *
 **********************************************************************
 */
-
+  #define SEGGER_SYSVIEW_PRINTF_IMPLICIT_FORMAT   1
 
 #endif  // SEGGER_SYSVIEW_CONF_H
 

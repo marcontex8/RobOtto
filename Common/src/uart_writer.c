@@ -28,21 +28,25 @@ static bool complete = true;
 
 RobottoErrorCode SendMessage(const char* message)
 {
-	const unsigned int size = strlen(message);
-
-	if (false == complete || NULL == message || size+1 > ESP_UART_DMA_TX_BUF_SIZE)
+	if (false == complete || NULL == message)
 	{
 		return ROBOTTO_ERROR;
 	}
+
+	const unsigned int size = strlen(message);
+	if(size+2 > ESP_UART_DMA_TX_BUF_SIZE)
+	{
+		return ROBOTTO_ERROR;
+	}
+
 	memcpy(esp_uart_dma_tx_buf, (const uint8_t*)message, size);
 
-	// TODO: this is here only to simplify code, but it should be done in at_state_machine
-	esp_uart_dma_tx_buf[size] = '\n';
-	esp_uart_dma_tx_buf[size+1] = '\r';
+	esp_uart_dma_tx_buf[size] = '\r';
+	esp_uart_dma_tx_buf[size+1] = '\n';
 
 	complete = false;
 
-	HAL_UART_Transmit_DMA(&H_UART_ESP, esp_uart_dma_tx_buf, size+1);
+	HAL_UART_Transmit_DMA(&H_UART_ESP, esp_uart_dma_tx_buf, size+2);
 	return ROBOTTO_OK;
 }
 

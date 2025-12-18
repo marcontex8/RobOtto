@@ -11,36 +11,41 @@
 #include "SEGGER_SYSVIEW.h"
 #include <stddef.h>
 
+extern bool UART_error;
 
 static const char* last_error = "No error";
 
 ActivityStatus runCommunicationManagerStatusInit()
 {
-	SEGGER_SYSVIEW_Print("Running StatusInit()");
+	ActivityStatus next_activity_status = ACTIVITY_STATUS_ERROR;
 
 	NetworkInitializationStatus status = initNetworkCommunication();
-	if(NET_INIT_IN_PROGRESS == status)
+	if(NET_INIT_ERROR == status)
 	{
-		return ACTIVITY_STATUS_INIT;
+		last_error = getError();
+		next_activity_status = ACTIVITY_STATUS_ERROR;
 	}
 	else if(NET_INIT_SUCCESS == status)
 	{
-		return ACTIVITY_STATUS_RUNNING;
+		next_activity_status = ACTIVITY_STATUS_RUNNING;
 	}
 	else
 	{
-		last_error = getError();
-		return ACTIVITY_STATUS_ERROR;
+		next_activity_status = ACTIVITY_STATUS_INIT;
 	}
+	return next_activity_status;
 }
 
 ActivityStatus runCommunicationManagerStatusRunning()
 {
 	SEGGER_SYSVIEW_Print("Running StatusRunning()");
-	SEGGER_SYSVIEW_PrintfHost("Size of size_t %u", sizeof(size_t));
-	SEGGER_SYSVIEW_PrintfHost("Size of int %u", sizeof(int));
-	SEGGER_SYSVIEW_PrintfHost("Size of long int %u", sizeof(long int));
-	SEGGER_SYSVIEW_PrintfHost("Size of short int %u", sizeof(short int));
+	// check request from the network
+
+	// list data to be sent
+
+
+
+
 	return ACTIVITY_STATUS_RUNNING;
 }
 
@@ -49,7 +54,7 @@ void runCommunicationManagerStateMachine()
 {
 	static ActivityStatus activity_status = ACTIVITY_STATUS_INIT;
 
-	parseNewDataIfAny();
+	updateIncomingData();
 
 	if(ACTIVITY_STATUS_INIT == activity_status)
 	{

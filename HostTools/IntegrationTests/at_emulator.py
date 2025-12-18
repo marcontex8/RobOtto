@@ -12,10 +12,10 @@ ssid = os.getenv("WIFI_SSID")
 pwd  = os.getenv("WIFI_PWD")
 
 responses = {
-    "AT": (["OK"], 1.0),
-    "ATE0": (["OK"], 0.4),
+    "AT": (["OK"], 9.0),
+    "ATE0": (["OK"], 9.0),
     "AT+CWMODE=1": (["OK"], 5.0),
-    f'AT+CWJAP="{ssid}","{pwd}"': (["WIFI CONNECTED", "WIFI GOT IP", "OK"], 5.5),
+    f'AT+CWJAP="{ssid}","{pwd}"': (["WIFI CONNECTED", "WIFI GOT IP", "OK"], 15.5),
     'AT+MQTTUSERCFG=0,1,"RobOTTO","","",0,0,""': (["OK"], 0.4),
     'AT+MQTTCONN=0,"192.168.1.140",1884,0': (['+MQTTCONNECTED:0,1,"192.168.1.140","1884","",0', "OK"], 2),
     'AT+MQTTPUB=0,"test/topic","hello from esp01",0,0': (["OK"], 0.4),
@@ -36,8 +36,8 @@ def main():
                 buffer = ""
                 if not line:
                     continue
-
-                print(f"< {line}")
+                timestamp = time.strftime("%H:%M:%S", time.localtime())
+                print(f"{timestamp} | > {line}")
 
                 # Get responses and total delay
                 resp_data = responses.get(line)
@@ -46,8 +46,9 @@ def main():
                     delay_per = total_delay / len(resp_list) if resp_list else 0
                     for r in resp_list:
                         time.sleep(delay_per)
+                        timestamp = time.strftime("%H:%M:%S", time.localtime())
                         ser.write((r + "\r\n").encode())
-                        print(f"> {r}")
+                        print(f"{timestamp} | < {r}")
                 else:
                     print("  (unknown command)")
                     # Default for unknown: OK with 0.2 total delay

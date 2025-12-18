@@ -20,6 +20,8 @@ typedef enum{
 } ATAnswer;
 
 
+void ATSM_resetStateMachine();
+
 ATAnswer ATSM_runRequest(const char* command);
 
 void ATSM_processNewData();

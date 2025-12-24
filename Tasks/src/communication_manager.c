@@ -6,66 +6,30 @@
  */
 
 #include "robotto_common.h"
-#include "network_communication.h"
+#include "communication_events.h"
 
 #include "SEGGER_SYSVIEW.h"
-#include <stddef.h>
+#include "FreeRTOS.h"
+#include "queue.h"
 
-extern bool UART_error;
+#include "robotto_conf.h"
 
-static const char* last_error = "No error";
-
-ActivityStatus runCommunicationManagerStatusInit()
-{
-	ActivityStatus next_activity_status = ACTIVITY_STATUS_ERROR;
-
-	NetworkInitializationStatus status = initNetworkCommunication();
-	if(NET_INIT_ERROR == status)
-	{
-		last_error = getError();
-		next_activity_status = ACTIVITY_STATUS_ERROR;
-	}
-	else if(NET_INIT_SUCCESS == status)
-	{
-		next_activity_status = ACTIVITY_STATUS_RUNNING;
-	}
-	else
-	{
-		next_activity_status = ACTIVITY_STATUS_INIT;
-	}
-	return next_activity_status;
-}
-
-ActivityStatus runCommunicationManagerStatusRunning()
-{
-	SEGGER_SYSVIEW_Print("Running StatusRunning()");
-	// check request from the network
-
-	// list data to be sent
-
-
-
-
-	return ACTIVITY_STATUS_RUNNING;
-}
-
+extern QueueHandle_t robotto_communication_queue_handle;
 
 void runCommunicationManagerStateMachine()
 {
-	static ActivityStatus activity_status = ACTIVITY_STATUS_INIT;
-
-	updateIncomingData();
-
-	if(ACTIVITY_STATUS_INIT == activity_status)
-	{
-		activity_status = runCommunicationManagerStatusInit();
-	}
-	else if(ACTIVITY_STATUS_RUNNING == activity_status)
-	{
-		activity_status = runCommunicationManagerStatusRunning();
-	}
-	else // ACTIVITY_STATUS_ERROR
-	{
-		SEGGER_SYSVIEW_ErrorfTarget("ERROR STATE. Reason: %s\n", last_error);
-	}
+	vTaskDelay(pdMS_TO_TICKS(NETWORK_RUN_DELAY_AT_STARTUP_S * 1000));
+	postNewCommunicationEvent(EVENT_COMM_INIT, NULL);
+    for (;;)
+    {
+    	CommunicationEvent event;
+        if (xQueueReceive(robotto_communication_queue_handle, &event, portMAX_DELAY))
+        {
+    		SEGGER_SYSVIEW_PrintfHost("Event: %s", eventToString(event.id));
+        	uart_rx_handleEvent(event);
+        	uart_tx_handleEvent(event);
+        	at_handleEvent(event);
+        	communication_handleEvent(event);
+        }
+    }
 }

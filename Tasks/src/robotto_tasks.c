@@ -16,6 +16,7 @@
 #include "i2c_busses.h"
 
 #include "robotto_common.h"
+#include "communication_events.h"
 
 #include "SEGGER_RTT.h"
 
@@ -59,6 +60,8 @@ QueueHandle_t wheels_speed_set_points_queue_handle = NULL;
 QueueHandle_t wheels_status_queue_handle = NULL;
 // From Pose Estimation to Motion Planning
 QueueHandle_t robotto_pose_queue_handle = NULL;
+// Communication events queue
+QueueHandle_t robotto_communication_queue_handle = NULL;
 
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
@@ -116,7 +119,7 @@ void motionPlanningTask(void *argument)
 
 	TickType_t last_wake_time = xTaskGetTickCount();
 	for (;;) {
-		//runMotionPlanningStateMachine();
+		runMotionPlanningStateMachine();
 		vTaskDelayUntil(&last_wake_time, period);
 	}
 }
@@ -129,7 +132,7 @@ void wheelsControlTask(void *argument)
 	TickType_t last_wake_time = xTaskGetTickCount();
 	for (;;)
 	{
-		//runWheelsControlStateMachine();
+		runWheelsControlStateMachine();
 		vTaskDelayUntil(&last_wake_time, period);
 	}
 }
@@ -141,7 +144,7 @@ void poseEstimationTask(void *argument)
 	TickType_t last_wake_time = xTaskGetTickCount();
 	for (;;)
 	{
-		//runPoseEstimationStateMachine();
+		runPoseEstimationStateMachine();
 		vTaskDelayUntil(&last_wake_time, period);
 	}
 }
@@ -185,6 +188,12 @@ RobottoErrorCode createQueues()
 	{
 		return ROBOTTO_ERROR;
 	}
+
+	robotto_communication_queue_handle = xQueueCreate(100, sizeof(CommunicationEvent));
+	if (robotto_communication_queue_handle == NULL)
+	{
+		return ROBOTTO_ERROR;
+	}
 	return ROBOTTO_OK;
 }
 
@@ -200,6 +209,7 @@ RobottoErrorCode createTasks()
 	{
 		return ROBOTTO_ERROR;
 	}
+	/*
 	if (xTaskCreate(wheelsControlTask, "WHEELS_CONTROL", configMINIMAL_STACK_SIZE,
 			NULL, WHEELS_CONTROL_PRIORITY, &motor_task_handle) != pdPASS)
 	{
@@ -215,6 +225,7 @@ RobottoErrorCode createTasks()
 	{
 		return ROBOTTO_ERROR;
 	}
+	*/
 	if (xTaskCreate(communicationManagerTask, "COMMUNICATION_MANAGER", configMINIMAL_STACK_SIZE,
 			NULL, COMMUNICATION_MANAGER_PRIORITY, &communication_manager_handles) != pdPASS)
 	{

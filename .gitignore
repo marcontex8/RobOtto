@@ -4,7 +4,9 @@
 .env
 Common/include/secrets.h
 IntegrationTests/.integration_test_env
-
+HostTools/.test_env/
+Documentation/all.md
+networks
 
 ############################
 # Drivers from StmCubeIDE

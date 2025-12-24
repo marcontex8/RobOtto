@@ -30,10 +30,10 @@
 #define WIFI_PWD SECRET_WIFI_PWD
 
 // time to wait before starting to send AT commands [s]
-#define NETWORK_RUN_DELAY_AT_STARTUP_S 20
+#define NETWORK_RUN_DELAY_AT_STARTUP_S 10
 
 // maximum time allowed for a network request through ESP [s]
-#define NETWORK_REQUEST_TIMEOUT_S 30
+#define NETWORK_REQUEST_TIMEOUT_S 20
 
 // maximum amount of times that network request will be repeated
 #define NETWORK_COMMANDS_MAX_REPETITIONS 6

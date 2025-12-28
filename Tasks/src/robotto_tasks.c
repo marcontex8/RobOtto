@@ -22,19 +22,24 @@
 
 extern void runWheelsControlStateMachine();
 #define WHEELS_CONTROL_PERIOD_MS 10
-#define WHEELS_CONTROL_PRIORITY 5
+#define WHEELS_CONTROL_PRIORITY 10
 
 extern void runPoseEstimationStateMachine();
 #define POSE_ESTIMATION_PERIOD_MS 20
-#define POSE_ESTIMATION_PRIORITY 4
+#define POSE_ESTIMATION_PRIORITY 8
+
+extern void runObjectDetectionStateMachine();
+#define OBJECT_DETECTION_PERIOD_MS 30
+#define OBJECT_DETECTION_PRIORITY 6
 
 extern void runMotionPlanningStateMachine();
 #define MOTION_PLANNING_PERIOD_MS 50
-#define MOTION_PLANNING_PRIORITY 3
+#define MOTION_PLANNING_PRIORITY 4
 
 extern void runCommunicationManagerStateMachine();
 #define COMMUNICATION_MANAGER_PERIOD_MS 100
 #define COMMUNICATION_MANAGER_PRIORITY 2
+
 
 #define LED_BLINK_PERIOD_MS 1000
 #define LED_BLINK_PRIORITY 1
@@ -47,6 +52,7 @@ extern void runCommunicationManagerStateMachine();
 
 TaskHandle_t led_task_handle = NULL;
 TaskHandle_t motor_task_handle = NULL;
+TaskHandle_t object_detection_handle = NULL;
 TaskHandle_t motion_planning_handle = NULL;
 TaskHandle_t buttonTaskHandle = NULL;
 TaskHandle_t pose_estimation_handles = NULL;
@@ -112,6 +118,18 @@ void buttonTask(void *argument) {
         }
     }
 }
+
+void objectDetectionTask(void *argument)
+{
+	const TickType_t period = pdMS_TO_TICKS(OBJECT_DETECTION_PERIOD_MS);
+
+	TickType_t last_wake_time = xTaskGetTickCount();
+	for (;;) {
+		runObjectDetectionStateMachine();
+		vTaskDelayUntil(&last_wake_time, period);
+	}
+}
+
 
 void motionPlanningTask(void *argument)
 {
@@ -215,6 +233,13 @@ RobottoErrorCode createTasks()
 	{
 		return ROBOTTO_ERROR;
 	}
+	*/
+	if (xTaskCreate(objectDetectionTask, "OBJECT_DETECTION", configMINIMAL_STACK_SIZE,
+			NULL, OBJECT_DETECTION_PRIORITY, &object_detection_handle) != pdPASS)
+	{
+		return ROBOTTO_ERROR;
+	}
+	/*
 	if (xTaskCreate(motionPlanningTask, "MOTION_PLANNING", configMINIMAL_STACK_SIZE,
 			NULL, MOTION_PLANNING_PRIORITY, &motion_planning_handle) != pdPASS)
 	{
@@ -225,12 +250,12 @@ RobottoErrorCode createTasks()
 	{
 		return ROBOTTO_ERROR;
 	}
-	*/
 	if (xTaskCreate(communicationManagerTask, "COMMUNICATION_MANAGER", configMINIMAL_STACK_SIZE,
 			NULL, COMMUNICATION_MANAGER_PRIORITY, &communication_manager_handles) != pdPASS)
 	{
 		return ROBOTTO_ERROR;
 	}
+	*/
 	return ROBOTTO_OK;
 }
 

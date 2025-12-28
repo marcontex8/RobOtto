@@ -19,17 +19,17 @@ extern QueueHandle_t robotto_communication_queue_handle;
 void runCommunicationManagerStateMachine()
 {
 	vTaskDelay(pdMS_TO_TICKS(NETWORK_RUN_DELAY_AT_STARTUP_S * 1000));
-	postNewCommunicationEvent(EVENT_COMM_INIT, NULL);
+	postNewCommunicationEventWithNoData(EVENT_COMM_INIT);
     for (;;)
     {
     	CommunicationEvent event;
         if (xQueueReceive(robotto_communication_queue_handle, &event, portMAX_DELAY))
         {
     		SEGGER_SYSVIEW_PrintfHost("Event: %s", eventToString(event.id));
-        	uart_rx_handleEvent(event);
-        	uart_tx_handleEvent(event);
-        	at_handleEvent(event);
-        	communication_handleEvent(event);
+        	uart_rx_handleEvent(&event);
+        	uart_tx_handleEvent(&event);
+        	at_handleEvent(&event);
+        	communication_handleEvent(&event);
         }
     }
 }

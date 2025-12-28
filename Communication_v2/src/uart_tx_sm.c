@@ -20,7 +20,9 @@ extern UART_HandleTypeDef huart4;
 
 typedef enum{
 	UART_TX_STATUS_IDLE,
-	UART_TX_STATUS_TRANSMITTING
+	UART_TX_STATUS_TRANSMITTING,
+
+	UART_TX_STATUS_COUNT,
 } UartTxState;
 
 
@@ -31,62 +33,53 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
 {
     if (huart == &H_UART_ESP)
     {
-    	postNewCommunicationEventFromISR(EVENT_UART_TX_COMPLETE, NULL);
+    	postNewCommunicationEventFromISRWithNoData(EVENT_UART_TX_COMPLETE);
     }
 }
 
 
-UartTxState runUartTxStateIdle(CommunicationEvent event)
+UartTxState onUartTxRequest(const CommunicationEventData* data)
 {
 	UartTxState next_state = UART_TX_STATUS_IDLE;
-	if(event.id == EVENT_UART_TX_REQUEST)
+
+	HAL_StatusTypeDef result = HAL_UART_Transmit_DMA(&H_UART_ESP, data->uart_tx.buffer, data->uart_tx.size);
+	if (result != HAL_OK)
 	{
-		UartTxData* data = (UartTxData*)event.data;
-		HAL_StatusTypeDef result = HAL_UART_Transmit_DMA(&H_UART_ESP, data->buffer, data->size);
-		if (result != HAL_OK)
-		{
-			postNewCommunicationEvent(EVENT_UART_TX_ERROR, NULL);
-			next_state = UART_TX_STATUS_IDLE;
-		}
-		else
-		{
-			next_state = UART_TX_STATUS_TRANSMITTING;
-		}
-	}
-
-	return next_state;
-}
-
-
-UartTxState runUartTxStateTransmitting(CommunicationEvent event)
-{
-	UartTxState next_state = UART_TX_STATUS_TRANSMITTING;
-
-	if(event.id == EVENT_UART_TX_COMPLETE)
-	{
+		postNewCommunicationEventWithNoData(EVENT_UART_TX_ERROR);
 		next_state = UART_TX_STATUS_IDLE;
 	}
-
-	// TODO: there is probably a way to manage transmission error that could be implemented
-	// else if(event->id == EVENT_UART_TX_ERROR)
-	// {
-	// 	next_state = UART_TX_STATUS_IDLE;
-	// }
-
+	else
+	{
+		next_state = UART_TX_STATUS_TRANSMITTING;
+	}
 	return next_state;
 }
 
-void uart_tx_handleEvent(CommunicationEvent event)
+
+UartTxState onUartTxComplete(const CommunicationEventData*)
 {
-	switch(state)
+	return UART_TX_STATUS_IDLE;
+}
+
+
+typedef UartTxState (*UartTxTransitionFunction)(const CommunicationEventData* data);
+
+static const UartTxTransitionFunction uart_tx_state_transition_table[UART_TX_STATUS_COUNT][EVENT_COUNT] = {
+    [UART_TX_STATUS_IDLE] = {
+        [EVENT_UART_TX_REQUEST] = onUartTxRequest,
+    },
+    [UART_TX_STATUS_TRANSMITTING] = {
+        [EVENT_UART_TX_COMPLETE] = onUartTxComplete,
+    },
+};
+
+
+void uart_tx_handleEvent(const CommunicationEvent* event)
+{
+	UartTxTransitionFunction function = uart_tx_state_transition_table[state][event->id];
+	if(function != NULL)
 	{
-	case UART_TX_STATUS_IDLE:
-		state = runUartTxStateIdle(event);
-		break;
-	case UART_TX_STATUS_TRANSMITTING:
-		state = runUartTxStateTransmitting(event);
-		break;
-	default:
-		// should never happen
+		state = function(&(event->data));
 	}
 }
+

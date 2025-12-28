@@ -26,21 +26,35 @@ const char* eventToString(CommunicationEventId event)
         case EVENT_AT_REQUEST_COMPLETE:  return "EVENT_AT_REQUEST_COMPLETE";
         case EVENT_AT_REQUEST_TIMEOUT:  return "EVENT_AT_REQUEST_TIMEOUT";
         case EVENT_COMM_INIT:  return "EVENT_COMM_INIT";
+        case EVENT_COMM_DELAY_EXPIRED: return "EVENT_COMM_DELAY_EXPIRED";
         case EVENT_COMM_REQUEST:  return "EVENT_COMM_REQUEST";
         default:          return "UNKNOWN";
     }
 }
 
-void postNewCommunicationEvent(CommunicationEventId event_id, const void* data)
+void postNewCommunicationEvent(CommunicationEventId event_id, CommunicationEventData data)
 {
 	CommunicationEvent event = {.data = data, .id = event_id};
 	xQueueSendToBack(robotto_communication_queue_handle, &event, 0);
 }
 
-void postNewCommunicationEventFromISR(CommunicationEventId event_id, const void* data)
+void postNewCommunicationEventWithNoData(CommunicationEventId event_id)
+{
+	CommunicationEventData empty_data = {NULL};
+	postNewCommunicationEvent(event_id, empty_data);
+}
+
+void postNewCommunicationEventFromISR(CommunicationEventId event_id, CommunicationEventData data)
 {
 	CommunicationEvent event = {.data = data, .id = event_id};
 	xQueueSendToBackFromISR(robotto_communication_queue_handle, &event, 0);
 }
+
+void postNewCommunicationEventFromISRWithNoData(CommunicationEventId event_id)
+{
+	CommunicationEventData empty_data = {NULL};
+	postNewCommunicationEventFromISR(event_id, empty_data);
+}
+
 
 

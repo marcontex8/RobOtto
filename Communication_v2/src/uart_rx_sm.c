@@ -23,11 +23,12 @@ static size_t buffer_tail = 0;
 typedef enum{
 	UART_RX_STATUS_OFF,
 	UART_RX_STATUS_LISTENING,
+
+	UART_RX_STATUS_COUNT,
 } UartRxState;
 
 
 static UartRxState state = UART_RX_STATUS_OFF;
-static UartRxData last_notified_data = {0};
 
 
 void UART4_IRQHandler()
@@ -49,22 +50,25 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 		return;
 	}
 
-	// TODO: this could be called again before the previous data has been processed.
+	UartRxData uart_rx_data = {0};
 	if (buffer_head > buffer_tail)
 	{
-		last_notified_data.first_chunk_start = &esp_uart_dma_rx_buf[buffer_tail];
-		last_notified_data.first_chunk_size = buffer_head - buffer_tail;
+		uart_rx_data.first_chunk_start = &esp_uart_dma_rx_buf[buffer_tail];
+		uart_rx_data.first_chunk_size = buffer_head - buffer_tail;
 	}
 	else
 	{
-		last_notified_data.first_chunk_start = &esp_uart_dma_rx_buf[buffer_tail];
-		last_notified_data.first_chunk_size = ESP_UART_DMA_RX_BUF_SIZE - buffer_tail;
+		uart_rx_data.first_chunk_start = &esp_uart_dma_rx_buf[buffer_tail];
+		uart_rx_data.first_chunk_size = ESP_UART_DMA_RX_BUF_SIZE - buffer_tail;
 
-		last_notified_data.second_chunk_start = &esp_uart_dma_rx_buf[0];
-		last_notified_data.second_chunk_size = buffer_head;
+		uart_rx_data.second_chunk_start = &esp_uart_dma_rx_buf[0];
+		uart_rx_data.second_chunk_size = buffer_head;
 	}
 
-	postNewCommunicationEventFromISR(EVENT_UART_RX_NEW_DATA_RECEIVED, (void*)&last_notified_data);
+
+
+	CommunicationEventData data_to_send = {.uart_rx = uart_rx_data};
+	postNewCommunicationEventFromISR(EVENT_UART_RX_NEW_DATA_RECEIVED, data_to_send);
 	buffer_tail = buffer_head;
 }
 
@@ -76,54 +80,58 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 		return;
 	}
 
-	postNewCommunicationEventFromISR(EVENT_UART_RX_ERROR, NULL);
+	postNewCommunicationEventFromISRWithNoData(EVENT_UART_RX_ERROR);
 
 }
 
 
-UartRxState runUartRxStateOff(CommunicationEvent event)
+UartRxState onRxStartRequest(const CommunicationEventData*)
 {
 	UartRxState next_state = UART_RX_STATUS_OFF;
-	if(event.id == EVENT_UART_RX_START_REQUEST)
+
+	memset(esp_uart_dma_rx_buf, 0, ESP_UART_DMA_RX_BUF_SIZE);
+	if(HAL_OK == HAL_UARTEx_ReceiveToIdle_DMA(&H_UART_ESP, esp_uart_dma_rx_buf, ESP_UART_DMA_RX_BUF_SIZE))
 	{
-		memset(esp_uart_dma_rx_buf, 0, ESP_UART_DMA_RX_BUF_SIZE);
-		if(HAL_OK == HAL_UARTEx_ReceiveToIdle_DMA(&H_UART_ESP, esp_uart_dma_rx_buf, ESP_UART_DMA_RX_BUF_SIZE))
-		{
-			next_state = UART_RX_STATUS_LISTENING;
-		}
-		postNewCommunicationEvent(EVENT_UART_RX_STARTED, NULL);
+		next_state = UART_RX_STATUS_LISTENING;
+		postNewCommunicationEventWithNoData(EVENT_UART_RX_STARTED);
+	}
+	else
+	{
+		next_state = UART_RX_STATUS_OFF;
+		postNewCommunicationEventWithNoData(EVENT_UART_RX_START_REQUEST);
 	}
 	return next_state;
 }
 
 
-UartRxState runUartRxStateListening(CommunicationEvent event)
+UartRxState onUartRxError(const CommunicationEventData*)
 {
 	UartRxState next_state = UART_RX_STATUS_LISTENING;
 
-	if(event.id == EVENT_UART_RX_ERROR)
-	{
-		next_state = UART_RX_STATUS_OFF;
-		postNewCommunicationEvent(EVENT_UART_RX_START_REQUEST, NULL);
-	}
+	next_state = UART_RX_STATUS_OFF;
+	postNewCommunicationEventWithNoData(EVENT_UART_RX_START_REQUEST);
 
 	return next_state;
 }
 
 
-void uart_rx_handleEvent(CommunicationEvent event)
+typedef UartRxState (*UartRxTransitionFunction)(const CommunicationEventData* data);
+
+static const UartRxTransitionFunction uart_rx_state_transition_table[UART_RX_STATUS_COUNT][EVENT_COUNT] = {
+    [UART_RX_STATUS_OFF] = {
+        [EVENT_UART_RX_START_REQUEST] = onRxStartRequest,
+    },
+    [UART_RX_STATUS_LISTENING] = {
+        [EVENT_UART_RX_ERROR] = onUartRxError,
+    },
+};
+
+void uart_rx_handleEvent(const CommunicationEvent* event)
 {
-	switch(state)
+	UartRxTransitionFunction function = uart_rx_state_transition_table[state][event->id];
+	if(function != NULL)
 	{
-	case UART_RX_STATUS_OFF:
-		state = runUartRxStateOff(event);
-		break;
-	case UART_RX_STATUS_LISTENING:
-		state = runUartRxStateListening(event);
-		break;
-	default:
-		// should never happen
+		state = function(&(event->data));
 	}
 }
-
 

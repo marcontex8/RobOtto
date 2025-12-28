@@ -8,71 +8,101 @@
 #include "robotto_conf.h"
 #include "communication_events.h"
 
+#include "FreeRTOS.h"
+#include "timers.h"
+
 
 typedef enum{
 	COMM_STATE_OFF,
 	COMM_STATE_STARTING_RX,
 	COMM_STATE_CONNECTING,
+	COMM_STATE_COMMAND_DELAY,
 	COMM_STATE_COMMUNICATION_REAY,
-	COMM_STATE_COUNT
+	COMM_STATE_COUNT,
 } CommunicationState;
 
 static CommunicationState state = COMM_STATE_OFF;
 
+static unsigned int current_command_id = 0;
+
+
+static TimerHandle_t timer;
+
+
 /**
  * Other useful commands
+		AT+CWJAP=[<ssid>],[<pwd>][,<bssid>][,<pci_en>][,<reconn_interval>][,<listen_interval>][,<scan_mode>][,<jap_timeout>][,<pmf>]
+		AT+CWJAP=<ssid>,<pwd>[,<bssid>][,<pci_en>][,<reconn>][,<listen_interval>][,<scan_mode>]
 		"AT+CWLAP", // list access points
 		"AT+RESTORE", // restore to factory settings
  */
-static const ATRequestData init_commands[] = {
-		{.request_id = 1, .buffer = "AT"},
-		{.request_id = 3, .buffer = "AT+CWMODE=1"},
-		{.request_id = 4, .buffer = "AT+CWJAP=\"" WIFI_SSID "\",\"" WIFI_PWD "\""},
-		{.request_id = 5, .buffer = "AT+MQTTUSERCFG=0,1,\"RobOTTO\",\"\",\"\",0,0,\"\""},
-		{.request_id = 6, .buffer = "AT+MQTTCONN=0,\"192.168.1.140\",1884,0"},
-		{.request_id = 7, .buffer = "AT+MQTTPUB=0,\"test/topic\",\"Hello from RobOtto\",0,0"}
+
+
+static const char* init_commands[] = {
+		"AT+RESTORE",
+		"AT",
+		"AT+CWMODE=1",
+		"AT+CWQAP",
+		"AT+CWJAP=\"" WIFI_SSID "\",\"" WIFI_PWD "\"",
+		"AT+MQTTUSERCFG=0,1,\"RobOTTO\",\"\",\"\",0,0,\"\"",
+		"AT+MQTTCONN=0,\"" MQTT_BROKER_IP "\"," MQTT_BROKER_PORT ",0",
+		"AT+MQTTPUB=0,\"test/topic\",\"Hello from RobOtto\",0,0"
 };
 static const size_t number_of_commands = sizeof(init_commands)/sizeof(init_commands[0]);
 
-CommunicationState onCommunicationInit(const void * data)
+
+void timerExpired(TimerHandle_t timer_handle)
 {
-	postNewCommunicationEvent(EVENT_UART_RX_START_REQUEST, NULL);
+	postNewCommunicationEventWithNoData(EVENT_COMM_DELAY_EXPIRED);
+}
+
+
+CommunicationState onCommunicationInit(const CommunicationEventData*)
+{
+	postNewCommunicationEventWithNoData(EVENT_UART_RX_START_REQUEST);
+	timer = xTimerCreate("Commands delay timer",
+			pdMS_TO_TICKS(NETWORK_COMMANDS_DELAY_S * 1000),
+			pdFALSE,
+			NULL,
+			&timerExpired);
 	return COMM_STATE_STARTING_RX;
 }
 
-CommunicationState onUartRxStarted(const void * data)
+CommunicationState onUartRxStarted(const CommunicationEventData*)
 {
-	postNewCommunicationEvent(EVENT_AT_NEW_REQUEST, &init_commands[0]);
+	current_command_id = 0;
+	ATRequestData request_data = {.buffer = init_commands[current_command_id], .request_id = current_command_id};
+	CommunicationEventData data_to_send = {.at_request = request_data};
+	postNewCommunicationEvent(EVENT_AT_NEW_REQUEST, data_to_send);
 	return COMM_STATE_CONNECTING;
 }
 
-CommunicationState onConnectionStepATResponse(const void * data)
+CommunicationState onConnectionStepATResponse(const CommunicationEventData* data)
 {
-	static unsigned int command = 0;
-	unsigned int request_id = command; // TODO once populated: ((ATResponseData*)(data))->request_id;
-	ATResponseResult response = ((ATResponseData*)(data))->response;
+	unsigned int request_id = data->at_response.request_id;
+	ATResponseResult response = data->at_response.response;
 
-	if(request_id != command)
+	if(request_id != current_command_id)
 	{
 		// something is wrong. Start connection from the beginning
-		command = 0;
+		current_command_id = 0;
 	}
 	else
 	{
 		if(AT_SUCCESS == response)
 		{
-			++command;
+			++current_command_id;
 		}
 		else
 		{
-			// re-issue the same command
+			// re-issue the same current_command_id
 		}
 	}
 
-	if(command < number_of_commands)
+	if(current_command_id < number_of_commands)
 	{
-		postNewCommunicationEvent(EVENT_AT_NEW_REQUEST, &init_commands[command]);
-		return COMM_STATE_CONNECTING;
+		xTimerStart(timer, 0);
+		return COMM_STATE_COMMAND_DELAY;
 	}
 	else
 	{
@@ -81,13 +111,22 @@ CommunicationState onConnectionStepATResponse(const void * data)
 }
 
 
-CommunicationState onNewATResponse(const void * data)
+CommunicationState onDelayExpired(const CommunicationEventData*)
+{
+	ATRequestData request_data = {.buffer = init_commands[current_command_id], .request_id = current_command_id};
+	CommunicationEventData data_to_send = {.at_request = request_data};
+	SEGGER_SYSVIEW_PrintfHost("COMMAND: %s", data_to_send.at_request.buffer);
+	postNewCommunicationEvent(EVENT_AT_NEW_REQUEST, data_to_send);
+	return COMM_STATE_CONNECTING;
+}
+
+CommunicationState onNewATResponse(const CommunicationEventData* data)
 {
 	// TODO: implement normal communication
 	return COMM_STATE_COMMUNICATION_REAY;
 }
 
-typedef CommunicationState (*CommStateTransitionFunctionPtr)(const void* data);
+typedef CommunicationState (*CommStateTransitionFunctionPtr)(const CommunicationEventData* data);
 
 
 static const CommStateTransitionFunctionPtr comm_state_transition_table[COMM_STATE_COUNT][EVENT_COUNT] = {
@@ -100,16 +139,19 @@ static const CommStateTransitionFunctionPtr comm_state_transition_table[COMM_STA
 	    [COMM_STATE_CONNECTING] = {
 	        [EVENT_AT_REQUEST_COMPLETE] = onConnectionStepATResponse,
 	    },
+		[COMM_STATE_COMMAND_DELAY] = {
+			[EVENT_COMM_DELAY_EXPIRED] = onDelayExpired,
+		},
 		[COMM_STATE_COMMUNICATION_REAY] = {
 		    [EVENT_AT_REQUEST_COMPLETE] = onNewATResponse,
 		},
 };
 
-void communication_handleEvent(CommunicationEvent event)
+void communication_handleEvent(const CommunicationEvent* event)
 {
-	CommStateTransitionFunctionPtr function = comm_state_transition_table[state][event.id];
+	CommStateTransitionFunctionPtr function = comm_state_transition_table[state][event->id];
 	if(function != NULL)
 	{
-		state = function(event.data);
+		state = function(&(event->data));
 	}
 }

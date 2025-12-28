@@ -26,6 +26,7 @@ typedef enum{
 	EVENT_AT_REQUEST_TIMEOUT, // only AT internal, will trigger a REQUEWST_COMPLETE
 
 	EVENT_COMM_INIT,
+	EVENT_COMM_DELAY_EXPIRED, // only internal, used to delay the requests
 	EVENT_COMM_REQUEST,
 
 
@@ -35,11 +36,6 @@ typedef enum{
 
 const char* eventToString(CommunicationEventId event);
 
-
-typedef struct{
-	const CommunicationEventId id;
-	const void* data;
-} CommunicationEvent;
 
 
 // data of EVENT_UART_TX_REQUEST
@@ -82,16 +78,30 @@ typedef struct{
 } ATResponseData;
 
 
+typedef union{
+	void* pointer;
+	UartTxData uart_tx;
+	UartRxData uart_rx;
+	ATRequestData at_request;
+	ATResponseData at_response;
+} CommunicationEventData;
 
 
-void postNewCommunicationEvent(CommunicationEventId event_id, const void* data);
-void postNewCommunicationEventFromISR(CommunicationEventId event_id, const void* data);
+typedef struct{
+	const CommunicationEventId id;
+	const CommunicationEventData data;
+} CommunicationEvent;
+
+void postNewCommunicationEvent(CommunicationEventId event_id, CommunicationEventData data);
+void postNewCommunicationEventWithNoData(CommunicationEventId event_id);
+void postNewCommunicationEventFromISR(CommunicationEventId event_id, CommunicationEventData data);
+void postNewCommunicationEventFromISRWithNoData(CommunicationEventId event_id);
 
 
-void at_handleEvent(CommunicationEvent event);
-void communication_handleEvent(CommunicationEvent event);
-void uart_rx_handleEvent(CommunicationEvent event);
-void uart_tx_handleEvent(CommunicationEvent event);
+void at_handleEvent(const CommunicationEvent* event);
+void communication_handleEvent(const CommunicationEvent* event);
+void uart_rx_handleEvent(const CommunicationEvent* event);
+void uart_tx_handleEvent(const CommunicationEvent* event);
 
 
 #endif /* COMMUNICATION_EVENTS_H_ */

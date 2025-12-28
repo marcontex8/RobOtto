@@ -14,7 +14,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stddef.h>
-
+#include "FreeRTOSConfig.h"
 
 typedef enum {
 	ROBOTTO_OK = 0,
@@ -60,10 +60,20 @@ typedef struct {
     float gyro_z;
 } ImuData;
 
-/*
- * Helper function to print a buffer containing multiple lines.
- * @param tmp_line shall be a 128 temporary buffer made to avoid concurrency related issues.
- */
-void SYSVIEW_PrintLines(const char *buf, char *line, size_t line_size);
+
+#ifdef DEBUG
+	void SYSVIEW_PrintLines(const char *buf);
+	#define PRINT_LINES_ON_SYSTEMVIEW(buffer) SYSVIEW_PrintLines(buffer)
+#else
+	#define PRINT_LINES_ON_SYSTEMVIEW(buffer) ((void)0)
+#endif
+
+
+#ifdef DEBUG
+	#define ROBOTTO_ASSERT(expr) do { configASSERT(expr); } while(0)
+#else
+	#define ROBOTTO_ASSERT(expr) ((void)0)
+#endif
+
 
 #endif /* INC_ROBOTTO_COMMON_H_ */

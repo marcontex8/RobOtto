@@ -53,6 +53,7 @@ I2C_HandleTypeDef hi2c1;
 I2C_HandleTypeDef hi2c2;
 
 TIM_HandleTypeDef htim1;
+TIM_HandleTypeDef htim10;
 
 UART_HandleTypeDef huart4;
 DMA_HandleTypeDef hdma_uart4_rx;
@@ -71,6 +72,7 @@ static void MX_TIM1_Init(void);
 static void MX_I2C1_Init(void);
 static void MX_I2C2_Init(void);
 static void MX_UART4_Init(void);
+static void MX_TIM10_Init(void);
 /* USER CODE BEGIN PFP */
 /* USER CODE END PFP */
 
@@ -112,6 +114,7 @@ int main(void)
   MX_I2C1_Init();
   MX_I2C2_Init();
   MX_UART4_Init();
+  MX_TIM10_Init();
   /* USER CODE BEGIN 2 */
 
 	if (setupRobotto() != ROBOTTO_OK)
@@ -329,6 +332,55 @@ static void MX_TIM1_Init(void)
 }
 
 /**
+  * @brief TIM10 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM10_Init(void)
+{
+
+  /* USER CODE BEGIN TIM10_Init 0 */
+
+  /* USER CODE END TIM10_Init 0 */
+
+  TIM_IC_InitTypeDef sConfigIC = {0};
+
+  /* USER CODE BEGIN TIM10_Init 1 */
+
+  /* USER CODE END TIM10_Init 1 */
+  htim10.Instance = TIM10;
+  htim10.Init.Prescaler = 83;
+  htim10.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim10.Init.Period = 65535;
+  htim10.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim10.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim10) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_TIM_IC_Init(&htim10) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_TIM_OnePulse_Init(&htim10, TIM_OPMODE_SINGLE) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sConfigIC.ICPolarity = TIM_INPUTCHANNELPOLARITY_RISING;
+  sConfigIC.ICSelection = TIM_ICSELECTION_DIRECTTI;
+  sConfigIC.ICPrescaler = TIM_ICPSC_DIV1;
+  sConfigIC.ICFilter = 0;
+  if (HAL_TIM_IC_ConfigChannel(&htim10, &sConfigIC, TIM_CHANNEL_1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN TIM10_Init 2 */
+
+  /* USER CODE END TIM10_Init 2 */
+
+}
+
+/**
   * @brief UART4 Initialization Function
   * @param None
   * @retval None
@@ -398,8 +450,8 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOC, ESP_RESET_Pin|MOTOR_L_UP_Pin|MOTOR_L_DOWN_Pin|MOTOR_R_UP_Pin
-                          |MOTOR_R_DOWN_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOC, ESP_RESET_Pin|US_TRIGGER_Pin|MOTOR_L_UP_Pin|MOTOR_L_DOWN_Pin
+                          |MOTOR_R_UP_Pin|MOTOR_R_DOWN_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);
@@ -417,8 +469,10 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(ESP_RESET_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : MOTOR_L_UP_Pin MOTOR_L_DOWN_Pin MOTOR_R_UP_Pin MOTOR_R_DOWN_Pin */
-  GPIO_InitStruct.Pin = MOTOR_L_UP_Pin|MOTOR_L_DOWN_Pin|MOTOR_R_UP_Pin|MOTOR_R_DOWN_Pin;
+  /*Configure GPIO pins : US_TRIGGER_Pin MOTOR_L_UP_Pin MOTOR_L_DOWN_Pin MOTOR_R_UP_Pin
+                           MOTOR_R_DOWN_Pin */
+  GPIO_InitStruct.Pin = US_TRIGGER_Pin|MOTOR_L_UP_Pin|MOTOR_L_DOWN_Pin|MOTOR_R_UP_Pin
+                          |MOTOR_R_DOWN_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;

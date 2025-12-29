@@ -61,10 +61,6 @@ void Error_Handler(void);
 #define B1_Pin GPIO_PIN_13
 #define B1_GPIO_Port GPIOC
 #define B1_EXTI_IRQn EXTI15_10_IRQn
-#define ESP_RESET_Pin GPIO_PIN_14
-#define ESP_RESET_GPIO_Port GPIOC
-#define US_TRIGGER_Pin GPIO_PIN_15
-#define US_TRIGGER_GPIO_Port GPIOC
 #define MOTOR_L_UP_Pin GPIO_PIN_0
 #define MOTOR_L_UP_GPIO_Port GPIOC
 #define MOTOR_L_DOWN_Pin GPIO_PIN_1
@@ -95,6 +91,8 @@ void Error_Handler(void);
 #define ENC1_SDA_GPIO_Port GPIOB
 #define US_ECHO_Pin GPIO_PIN_8
 #define US_ECHO_GPIO_Port GPIOB
+#define US_TRIGGER_Pin GPIO_PIN_9
+#define US_TRIGGER_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 

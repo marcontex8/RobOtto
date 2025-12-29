@@ -21,11 +21,6 @@
 
 static TickType_t initialization_start_tick;
 
-void activateESP()
-{
-	HAL_GPIO_WritePin(ESP_RESET_GPIO_Port, ESP_RESET_Pin, GPIO_PIN_SET);
-}
-
 static const char* error_description = NULL;
 
 static NetworkInitializationStatus network_initialization_status = NET_INIT_IDLE;
@@ -113,7 +108,6 @@ NetworkInitializationStatus initNetworkCommunication()
 {
 	if(NET_INIT_IDLE == network_initialization_status)
 	{
-		activateESP(); // TODO check if it's actually working or not
 		initialization_start_tick = xTaskGetTickCount();
 
 		network_initialization_status = NET_INIT_WAITING_ESP_INIT;

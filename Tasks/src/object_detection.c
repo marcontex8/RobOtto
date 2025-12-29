@@ -8,14 +8,18 @@
 
 #include "robotto_common.h"
 #include "ultrasonic_sensor.h"
+
+
 #include "SEGGER_SYSVIEW.h"
+#include "stm32f4xx_hal.h"
+extern TIM_HandleTypeDef htim10;
 
 static const char* last_error = NULL;
-
 
 ActivityStatus runObjectDetectionInit()
 {
 	triggerSensor();
+
 	return ACTIVITY_STATUS_RUNNING;
 }
 
@@ -26,13 +30,13 @@ ActivityStatus runObjectDetectionRunning()
 	if(ROBOTTO_OK == getMeasurementIfReady(&elapsed_time))
 	{
 		float distance_m = elapsed_time / 5831.0f;
-		SEGGER_SYSVIEW_PrintfHost("Distance: %u", elapsed_time);
+		unsigned int distance_cm = (unsigned int)(distance_m * 100);
+		SEGGER_SYSVIEW_PrintfHost("Distance: %u", distance_cm);
 	}
 	else
 	{
 		SEGGER_SYSVIEW_Print("No Measure");
 	}
-
 	triggerSensor();
 	return ACTIVITY_STATUS_RUNNING;
 }

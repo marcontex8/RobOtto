@@ -14,6 +14,10 @@
 #include "stm32f4xx_hal.h"
 #include <stdbool.h>
 
+#include "SEGGER_SYSVIEW.h"
+
+
+
 typedef enum
 {
     ECHO_IDLE,
@@ -22,10 +26,10 @@ typedef enum
 } EchoCaptureState;
 
 extern TIM_HandleTypeDef htim10;
+#define ECHO_TIMER_HANDLE htim10
 
-
-
-
+extern TIM_HandleTypeDef htim11;
+#define TRIGGER_TIMER_HANDLE htim11
 
 static volatile uint32_t echo_start_us = 0;
 static volatile uint32_t echo_end_us   = 0;
@@ -88,22 +92,34 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
     }
 }
 
-
-void triggerSensor(void)
+void resetEchoTimer()
 {
-	measurement_done = false;
-    echo_state = ECHO_WAIT_RISING;
+    __HAL_TIM_SET_COUNTER(&ECHO_TIMER_HANDLE, 0);
 
     __HAL_TIM_SET_CAPTUREPOLARITY(
-        &htim10,
+        &ECHO_TIMER_HANDLE,
         TIM_CHANNEL_1,
         TIM_INPUTCHANNELPOLARITY_RISING
     );
 
-    __HAL_TIM_CLEAR_FLAG(&htim10, TIM_FLAG_CC1);
+    __HAL_TIM_CLEAR_FLAG(&ECHO_TIMER_HANDLE, TIM_FLAG_CC1);
 
-    HAL_GPIO_WritePin(US_TRIGGER_GPIO_Port, US_TRIGGER_Pin, GPIO_PIN_SET);
-    HAL_Delay(1);
-    HAL_GPIO_WritePin(US_TRIGGER_GPIO_Port, US_TRIGGER_Pin, GPIO_PIN_RESET);
+    HAL_TIM_IC_Start_IT(&ECHO_TIMER_HANDLE, TIM_CHANNEL_1);
+
+    __HAL_TIM_ENABLE(&ECHO_TIMER_HANDLE);
+}
+
+void startTriggerPulse()
+{
+	HAL_TIM_PWM_Stop(&TRIGGER_TIMER_HANDLE, TIM_CHANNEL_1);
+	HAL_TIM_PWM_Start(&TRIGGER_TIMER_HANDLE, TIM_CHANNEL_1);
+}
+
+void triggerSensor()
+{
+	resetEchoTimer();
+	measurement_done = false;
+    echo_state = ECHO_WAIT_RISING;
+    startTriggerPulse();
 }
 

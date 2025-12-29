@@ -20,6 +20,8 @@
 
 #include "SEGGER_RTT.h"
 
+#include "main.h"
+
 extern void runWheelsControlStateMachine();
 #define WHEELS_CONTROL_PERIOD_MS 10
 #define WHEELS_CONTROL_PRIORITY 10
@@ -45,9 +47,6 @@ extern void runCommunicationManagerStateMachine();
 #define LED_BLINK_PRIORITY 1
 
 #define BUTTON_TASK_PRIORITY 1
-
-#define LD2_Pin GPIO_PIN_5
-#define LD2_GPIO_Port GPIOA
 
 
 TaskHandle_t led_task_handle = NULL;
@@ -227,19 +226,18 @@ RobottoErrorCode createTasks()
 	{
 		return ROBOTTO_ERROR;
 	}
-	/*
+
 	if (xTaskCreate(wheelsControlTask, "WHEELS_CONTROL", configMINIMAL_STACK_SIZE,
 			NULL, WHEELS_CONTROL_PRIORITY, &motor_task_handle) != pdPASS)
 	{
 		return ROBOTTO_ERROR;
 	}
-	*/
+
 	if (xTaskCreate(objectDetectionTask, "OBJECT_DETECTION", configMINIMAL_STACK_SIZE,
 			NULL, OBJECT_DETECTION_PRIORITY, &object_detection_handle) != pdPASS)
 	{
 		return ROBOTTO_ERROR;
 	}
-	/*
 	if (xTaskCreate(motionPlanningTask, "MOTION_PLANNING", configMINIMAL_STACK_SIZE,
 			NULL, MOTION_PLANNING_PRIORITY, &motion_planning_handle) != pdPASS)
 	{
@@ -250,6 +248,7 @@ RobottoErrorCode createTasks()
 	{
 		return ROBOTTO_ERROR;
 	}
+	/*
 	if (xTaskCreate(communicationManagerTask, "COMMUNICATION_MANAGER", configMINIMAL_STACK_SIZE,
 			NULL, COMMUNICATION_MANAGER_PRIORITY, &communication_manager_handles) != pdPASS)
 	{

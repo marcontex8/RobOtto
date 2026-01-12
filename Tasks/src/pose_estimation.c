@@ -17,6 +17,7 @@
 
 extern QueueHandle_t wheels_status_queue_handle;
 extern QueueHandle_t robotto_pose_queue_handle;
+extern QueueHandle_t robotto_telemetry_pose_queue_handle;
 
 static const char* last_error = NULL;
 
@@ -95,13 +96,14 @@ ActivityStatus poseEstimationStatusRunning()
 		return ACTIVITY_STATUS_ERROR;
 	}
 
-	static RobottoPose estimated_pose = {0};
+	RobottoPose estimated_pose = {0};
+	estimated_pose.timestamp = xTaskGetTickCount();
+
 	WheelsMovementUpdate wheels_movement_update;
 	while(pdPASS == xQueueReceive(wheels_status_queue_handle, &wheels_movement_update, 0))
 	{
 		updateOdometry(&wheels_movement_update, &imu_data, &estimated_pose);
 	}
-	estimated_pose.timestamp = xTaskGetTickCount();
 
     SEGGER_RTT_printf(0, "\t\t\t;%u;\t\t\t%d;\t\t\t%d;\t\t\t%d\n",
     		estimated_pose.timestamp,
@@ -109,6 +111,7 @@ ActivityStatus poseEstimationStatusRunning()
 			(int)(DECIMALS*estimated_pose.y),
 			(int)(DECIMALS*estimated_pose.theta));
 	xQueueOverwrite(robotto_pose_queue_handle, &estimated_pose);
+	xQueueOverwrite(robotto_telemetry_pose_queue_handle, &estimated_pose);
 
 	return ACTIVITY_STATUS_RUNNING;
 }

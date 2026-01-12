@@ -22,10 +22,6 @@
 #define MOTOR_R_UP_GPIO_Port GPIOC
 #define MOTOR_R_DOWN_Pin GPIO_PIN_3
 #define MOTOR_R_DOWN_GPIO_Port GPIOC
-#define MOTOR_R_PWM_Pin GPIO_PIN_8
-#define MOTOR_R_PWM_GPIO_Port GPIOA
-#define MOTOR_L_PWM_Pin GPIO_PIN_9
-#define MOTOR_L_PWM_GPIO_Port GPIOA
 
 
 extern TIM_HandleTypeDef htim1;

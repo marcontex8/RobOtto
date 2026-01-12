@@ -1,5 +1,5 @@
 /*
- * communication_sm.c
+ * connection_sm.c
  *
  *  Created on: Dec 18, 2025
  *      Author: marco
@@ -13,15 +13,15 @@
 
 
 typedef enum{
-	COMM_STATE_OFF,
-	COMM_STATE_STARTING_RX,
-	COMM_STATE_CONNECTING,
-	COMM_STATE_COMMAND_DELAY,
-	COMM_STATE_COMMUNICATION_REAY,
-	COMM_STATE_COUNT,
-} CommunicationState;
+	CONNECTION_STATE_OFF,
+	CONNECTION_STATE_STARTING_RX,
+	CONNECTION_STATE_CONNECTING,
+	CONNECTION_STATE_COMMAND_DELAY,
+	CONNECTION_STATE_CONNECTED,
+	CONNECTION_STATE_COUNT,
+} ConnectionState;
 
-static CommunicationState state = COMM_STATE_OFF;
+static ConnectionState state = CONNECTION_STATE_OFF;
 
 static unsigned int current_command_id = 0;
 
@@ -53,11 +53,11 @@ static const size_t number_of_commands = sizeof(init_commands)/sizeof(init_comma
 
 void timerExpired(TimerHandle_t timer_handle)
 {
-	postNewCommunicationEventWithNoData(EVENT_COMM_DELAY_EXPIRED);
+	postNewCommunicationEventWithNoData(EVENT_CONNECTION_DELAY_EXPIRED);
 }
 
 
-CommunicationState onCommunicationInit(const CommunicationEventData*)
+ConnectionState onCommunicationInit(const CommunicationEventData*)
 {
 	postNewCommunicationEventWithNoData(EVENT_UART_RX_START_REQUEST);
 	timer = xTimerCreate("Commands delay timer",
@@ -65,19 +65,19 @@ CommunicationState onCommunicationInit(const CommunicationEventData*)
 			pdFALSE,
 			NULL,
 			&timerExpired);
-	return COMM_STATE_STARTING_RX;
+	return CONNECTION_STATE_STARTING_RX;
 }
 
-CommunicationState onUartRxStarted(const CommunicationEventData*)
+ConnectionState onUartRxStarted(const CommunicationEventData*)
 {
 	current_command_id = 0;
 	ATRequestData request_data = {.buffer = init_commands[current_command_id], .request_id = current_command_id};
 	CommunicationEventData data_to_send = {.at_request = request_data};
 	postNewCommunicationEvent(EVENT_AT_NEW_REQUEST, data_to_send);
-	return COMM_STATE_CONNECTING;
+	return CONNECTION_STATE_CONNECTING;
 }
 
-CommunicationState onConnectionStepATResponse(const CommunicationEventData* data)
+ConnectionState onConnectionStepATResponse(const CommunicationEventData* data)
 {
 	unsigned int request_id = data->at_response.request_id;
 	ATResponseResult response = data->at_response.response;
@@ -102,54 +102,48 @@ CommunicationState onConnectionStepATResponse(const CommunicationEventData* data
 	if(current_command_id < number_of_commands)
 	{
 		xTimerStart(timer, 0);
-		return COMM_STATE_COMMAND_DELAY;
+		return CONNECTION_STATE_COMMAND_DELAY;
 	}
 	else
 	{
-		return COMM_STATE_COMMUNICATION_REAY;
+		postNewCommunicationEventWithNoData(EVENT_CONNECTION_ESTABLISHED);
+		return CONNECTION_STATE_CONNECTED;
 	}
 }
 
 
-CommunicationState onDelayExpired(const CommunicationEventData*)
+ConnectionState onDelayExpired(const CommunicationEventData*)
 {
 	ATRequestData request_data = {.buffer = init_commands[current_command_id], .request_id = current_command_id};
 	CommunicationEventData data_to_send = {.at_request = request_data};
 	SEGGER_SYSVIEW_PrintfHost("COMMAND: %s", data_to_send.at_request.buffer);
 	postNewCommunicationEvent(EVENT_AT_NEW_REQUEST, data_to_send);
-	return COMM_STATE_CONNECTING;
+	return CONNECTION_STATE_CONNECTING;
 }
 
-CommunicationState onNewATResponse(const CommunicationEventData* data)
-{
-	// TODO: implement normal communication
-	return COMM_STATE_COMMUNICATION_REAY;
-}
 
-typedef CommunicationState (*CommStateTransitionFunctionPtr)(const CommunicationEventData* data);
+typedef ConnectionState (*ConnectionStateTransitionFunctionPtr)(const CommunicationEventData* data);
 
 
-static const CommStateTransitionFunctionPtr comm_state_transition_table[COMM_STATE_COUNT][EVENT_COUNT] = {
-	    [COMM_STATE_OFF] = {
-	        [EVENT_COMM_INIT] = onCommunicationInit,
+static const ConnectionStateTransitionFunctionPtr comm_state_transition_table[CONNECTION_STATE_COUNT][EVENT_COUNT] = {
+	    [CONNECTION_STATE_OFF] = {
+	        [EVENT_CONNECTION_INIT] = onCommunicationInit,
 	    },
-		[COMM_STATE_STARTING_RX] = {
+		[CONNECTION_STATE_STARTING_RX] = {
 	        [EVENT_UART_RX_STARTED] = onUartRxStarted,
 	    },
-	    [COMM_STATE_CONNECTING] = {
+	    [CONNECTION_STATE_CONNECTING] = {
 	        [EVENT_AT_REQUEST_COMPLETE] = onConnectionStepATResponse,
 	    },
-		[COMM_STATE_COMMAND_DELAY] = {
-			[EVENT_COMM_DELAY_EXPIRED] = onDelayExpired,
+		[CONNECTION_STATE_COMMAND_DELAY] = {
+			[EVENT_CONNECTION_DELAY_EXPIRED] = onDelayExpired,
 		},
-		[COMM_STATE_COMMUNICATION_REAY] = {
-		    [EVENT_AT_REQUEST_COMPLETE] = onNewATResponse,
-		},
+		[CONNECTION_STATE_CONNECTED] = {}, // shall manage disconnection
 };
 
-void communication_handleEvent(const CommunicationEvent* event)
+void connection_handleEvent(const CommunicationEvent* event)
 {
-	CommStateTransitionFunctionPtr function = comm_state_transition_table[state][event->id];
+	ConnectionStateTransitionFunctionPtr function = comm_state_transition_table[state][event->id];
 	if(function != NULL)
 	{
 		state = function(&(event->data));

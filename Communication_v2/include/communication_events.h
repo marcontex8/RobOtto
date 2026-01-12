@@ -25,10 +25,11 @@ typedef enum{
 	EVENT_AT_REQUEST_COMPLETE,
 	EVENT_AT_REQUEST_TIMEOUT, // only AT internal, will trigger a REQUEWST_COMPLETE
 
-	EVENT_COMM_INIT,
-	EVENT_COMM_DELAY_EXPIRED, // only internal, used to delay the requests
-	EVENT_COMM_REQUEST,
+	EVENT_CONNECTION_INIT,
+	EVENT_CONNECTION_DELAY_EXPIRED, // only internal, used to delay the requests
+	EVENT_CONNECTION_ESTABLISHED,
 
+	EVENT_TELEMETRY_TICK,
 
 	EVENT_COUNT,
 } CommunicationEventId;
@@ -99,9 +100,11 @@ void postNewCommunicationEventFromISRWithNoData(CommunicationEventId event_id);
 
 
 void at_handleEvent(const CommunicationEvent* event);
-void communication_handleEvent(const CommunicationEvent* event);
+void connection_handleEvent(const CommunicationEvent* event);
 void uart_rx_handleEvent(const CommunicationEvent* event);
 void uart_tx_handleEvent(const CommunicationEvent* event);
+void telemetry_handleEvent(const CommunicationEvent* event);
 
+void handleCommunicationEvent(const CommunicationEvent* event);
 
 #endif /* COMMUNICATION_EVENTS_H_ */

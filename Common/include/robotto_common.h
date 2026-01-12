@@ -60,6 +60,10 @@ typedef struct {
     float gyro_z;
 } ImuData;
 
+typedef enum {
+	ROBOTTO_BEHAVIOR_IDLE,
+	ROBOTTO_BEHAVIOR_RUNNING,
+} RobottoBehavior;
 
 #ifdef DEBUG
 	void SYSVIEW_PrintLines(const char *buf);

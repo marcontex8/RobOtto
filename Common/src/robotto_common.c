@@ -7,6 +7,15 @@
 #include <string.h>
 
 #include "SEGGER_SYSVIEW.h"
+#include "FreeRTOS.h"
+#include "task.h"
+
+void vApplicationStackOverflowHook( TaskHandle_t xTask,
+	                                        char * pcTaskName )
+{
+	//nothing
+}
+
 
 #ifdef DEBUG
 

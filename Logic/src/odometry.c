@@ -11,6 +11,8 @@
 
 void updateOdometry(const WheelsMovementUpdate* wheels_movement_update, const ImuData* imu_data, RobottoPose* estimated_pose)
 {
+	// TODO: implement sensor fusion with IMU data
+
 	float delta_l = wheels_movement_update->delta_angle_left * WHEELS_RADIUS;
 	float delta_r = wheels_movement_update->delta_angle_right * WHEELS_RADIUS;
 	float delta_s = (delta_r + delta_l) / 2;

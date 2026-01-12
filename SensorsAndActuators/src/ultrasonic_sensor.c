@@ -17,6 +17,14 @@
 #include "SEGGER_SYSVIEW.h"
 
 
+extern TIM_HandleTypeDef htim10;
+#define ECHO_TIMER_HANDLE htim10
+
+extern TIM_HandleTypeDef htim11;
+#define TRIGGER_TIMER_HANDLE htim11
+
+#define CONVERSION_FACTOR 5831.0f
+
 
 typedef enum
 {
@@ -25,12 +33,6 @@ typedef enum
     ECHO_WAIT_FALLING
 } EchoCaptureState;
 
-extern TIM_HandleTypeDef htim10;
-#define ECHO_TIMER_HANDLE htim10
-
-extern TIM_HandleTypeDef htim11;
-#define TRIGGER_TIMER_HANDLE htim11
-
 static volatile uint32_t echo_start_us = 0;
 static volatile uint32_t echo_end_us   = 0;
 static volatile bool measurement_done = false;
@@ -38,17 +40,15 @@ static volatile bool measurement_done = false;
 
 static volatile EchoCaptureState echo_state = ECHO_IDLE;
 
-RobottoErrorCode getMeasurementIfReady(uint32_t* time)
+RobottoErrorCode getMeasurementIfReady(float* distance)
 {
 	RobottoErrorCode result = ROBOTTO_ERROR;
-	taskENTER_CRITICAL();
 	if(measurement_done)
 	{
-		*time = echo_end_us - echo_start_us;
+		*distance = (echo_end_us - echo_start_us) / CONVERSION_FACTOR;
 		measurement_done = false;
 		result = ROBOTTO_OK;
 	}
-	taskEXIT_CRITICAL();
 	return result;
 }
 
@@ -122,4 +122,3 @@ void triggerSensor()
     echo_state = ECHO_WAIT_RISING;
     startTriggerPulse();
 }
-

@@ -65,6 +65,8 @@ QueueHandle_t wheels_speed_set_points_queue_handle = NULL;
 QueueHandle_t wheels_status_queue_handle = NULL;
 // From Pose Estimation to Motion Planning
 QueueHandle_t robotto_pose_queue_handle = NULL;
+// From Pose Estimation to Telemetry
+QueueHandle_t robotto_telemetry_pose_queue_handle = NULL;
 // Communication events queue
 QueueHandle_t robotto_communication_queue_handle = NULL;
 
@@ -73,10 +75,9 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
     if (GPIO_Pin == GPIO_PIN_13)
     {
-        static uint32_t last = 0;
-        uint32_t now = xTaskGetTickCountFromISR();
+        static TickType_t last = 0;
+        TickType_t now = xTaskGetTickCountFromISR();
 
-        // 50 ms debounce
         if ((now - last) > pdMS_TO_TICKS(50))
         {
             BaseType_t xHigherPriorityTaskWoken = pdFALSE;
@@ -100,23 +101,25 @@ void ledBlinkTask(void *argument) {
 	}
 }
 
+
 void buttonTask(void *argument) {
     for (;;)
     {
-    	static uint8_t behavior = 0;
+    	static RobottoBehavior behavior = ROBOTTO_BEHAVIOR_IDLE;
         ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
 
-        ++behavior;
-        if (behavior > 3)
+        if(ROBOTTO_BEHAVIOR_IDLE == behavior)
         {
-        	behavior = 0;
+        	behavior = ROBOTTO_BEHAVIOR_RUNNING;
         }
-        if(xQueueOverwrite(behavior_queue_handle, &behavior)  != pdPASS)
+        else // RUNNING
         {
-            SEGGER_RTT_printf(0, "buttonTask. ERROR\n");
+        	behavior = ROBOTTO_BEHAVIOR_IDLE;
         }
+        xQueueOverwrite(behavior_queue_handle, &behavior);
     }
 }
+
 
 void objectDetectionTask(void *argument)
 {
@@ -182,7 +185,7 @@ void communicationManagerTask(void *argument)
 
 RobottoErrorCode createQueues()
 {
-	behavior_queue_handle = xQueueCreate(1, sizeof(uint8_t));
+	behavior_queue_handle = xQueueCreate(1, sizeof(RobottoBehavior));
 	if (behavior_queue_handle == NULL)
 	{
 		return ROBOTTO_ERROR;
@@ -202,6 +205,12 @@ RobottoErrorCode createQueues()
 
 	robotto_pose_queue_handle = xQueueCreate(1, sizeof(RobottoPose));
 	if (robotto_pose_queue_handle == NULL)
+	{
+		return ROBOTTO_ERROR;
+	}
+
+	robotto_telemetry_pose_queue_handle = xQueueCreate(1, sizeof(RobottoPose));
+	if (robotto_telemetry_pose_queue_handle == NULL)
 	{
 		return ROBOTTO_ERROR;
 	}
@@ -226,7 +235,6 @@ RobottoErrorCode createTasks()
 	{
 		return ROBOTTO_ERROR;
 	}
-
 	if (xTaskCreate(wheelsControlTask, "WHEELS_CONTROL", configMINIMAL_STACK_SIZE,
 			NULL, WHEELS_CONTROL_PRIORITY, &motor_task_handle) != pdPASS)
 	{
@@ -248,13 +256,11 @@ RobottoErrorCode createTasks()
 	{
 		return ROBOTTO_ERROR;
 	}
-	/*
-	if (xTaskCreate(communicationManagerTask, "COMMUNICATION_MANAGER", configMINIMAL_STACK_SIZE,
+	if (xTaskCreate(communicationManagerTask, "COMMUNICATION_MANAGER", 4*configMINIMAL_STACK_SIZE,
 			NULL, COMMUNICATION_MANAGER_PRIORITY, &communication_manager_handles) != pdPASS)
 	{
 		return ROBOTTO_ERROR;
 	}
-	*/
 	return ROBOTTO_OK;
 }
 

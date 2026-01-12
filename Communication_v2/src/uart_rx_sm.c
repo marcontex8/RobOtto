@@ -122,6 +122,7 @@ static const UartRxTransitionFunction uart_rx_state_transition_table[UART_RX_STA
         [EVENT_UART_RX_START_REQUEST] = onRxStartRequest,
     },
     [UART_RX_STATUS_LISTENING] = {
+        [EVENT_UART_RX_START_REQUEST] = onRxStartRequest,
         [EVENT_UART_RX_ERROR] = onUartRxError,
     },
 };

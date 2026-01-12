@@ -4,45 +4,82 @@
  *  Created on: Dec 26, 2025
  *      Author: marco
  */
-
-
 #include "robotto_common.h"
 #include "ultrasonic_sensor.h"
-
+#include "servo.h"
 
 #include "SEGGER_SYSVIEW.h"
 #include "stm32f4xx_hal.h"
+
+#include "FreeRTOS.h"
+#include "task.h"
+
+#include "detection_manager.h"
+
 extern TIM_HandleTypeDef htim10;
 
 static const char* last_error = NULL;
 
+static float servo_angle = 0.0f;
+static bool servo_direction = true;
+
+
+void updateServo()
+{
+	static unsigned int counter = 0;
+	++counter;
+	if(counter % 1 == 0)
+	{
+		if(servo_direction)
+		{
+			servo_angle += 1.5f;
+		}
+		else
+		{
+			servo_angle -= 1.5f;
+		}
+		if(servo_angle >= 90.0 || servo_angle <= -90.0)
+		{
+			servo_direction = !servo_direction;
+		}
+		setServoAngle(servo_angle);
+	}
+}
+
 ActivityStatus runObjectDetectionInit()
 {
-	triggerSensor();
+	initServo();
+	static TickType_t start_time = 0;
+	static bool started = false;
 
-	return ACTIVITY_STATUS_RUNNING;
+	if(!started)
+	{
+		setServoAngle(servo_angle);
+		start_time = xTaskGetTickCount();
+		started = true;
+	}
+	else if(xTaskGetTickCount() - start_time > pdMS_TO_TICKS(3000))
+	{
+		triggerSensor();
+		return ACTIVITY_STATUS_RUNNING;
+	}
+
+	return ACTIVITY_STATUS_INIT;
 }
 
 
 ActivityStatus runObjectDetectionRunning()
 {
-	uint32_t elapsed_time;
-	if(ROBOTTO_OK == getMeasurementIfReady(&elapsed_time))
+	float distance_m;
+	if(ROBOTTO_OK == getMeasurementIfReady(&distance_m))
 	{
-		float distance_m = elapsed_time / 5831.0f;
-		unsigned int distance_cm = (unsigned int)(distance_m * 100);
-		SEGGER_SYSVIEW_PrintfHost("Distance: %u", distance_cm);
+		addDetection(xTaskGetTickCount(), distance_m, servo_angle);
 	}
-	else
-	{
-		SEGGER_SYSVIEW_Print("No Measure");
-	}
+
 	triggerSensor();
+	updateServo();
 	return ACTIVITY_STATUS_RUNNING;
 }
-
-
-
 
 
 void runObjectDetectionStateMachine()

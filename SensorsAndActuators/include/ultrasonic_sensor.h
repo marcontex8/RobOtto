@@ -14,6 +14,6 @@
 
 void triggerSensor(void);
 
-RobottoErrorCode getMeasurementIfReady(uint32_t* time);
+RobottoErrorCode getMeasurementIfReady(float* distance);
 
 #endif /* INCLUDE_ULTRASONIC_SENSOR_H_ */

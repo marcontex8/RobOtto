@@ -25,7 +25,7 @@ void runCommunicationManagerStateMachine()
     	CommunicationEvent event;
         if (xQueueReceive(robotto_communication_queue_handle, &event, portMAX_DELAY))
         {
-    		SEGGER_SYSVIEW_PrintfHost("Event: %s", eventToString(event.id));
+    		//SEGGER_SYSVIEW_PrintfHost("Event: %s", eventToString(event.id));
     		handleCommunicationEvent(&event);
         }
     }

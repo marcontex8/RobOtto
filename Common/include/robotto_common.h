@@ -14,7 +14,6 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stddef.h>
-#include "FreeRTOSConfig.h"
 
 typedef enum {
 	ROBOTTO_OK = 0,

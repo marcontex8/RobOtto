@@ -8,13 +8,12 @@
 #include "robotto_conf.h"
 #include "robotto_common.h"
 #include "communication_events.h"
+#include "at_command_writer.h"
 
 #include "FreeRTOS.h"
 #include "timers.h"
 #include "queue.h"
 
-#include <stdio.h>
-#include <inttypes.h>
 
 typedef enum{
 	TELEMETRY_STATE_OFF,
@@ -29,7 +28,6 @@ static TimerHandle_t telemetry_timer;
 
 extern QueueHandle_t robotto_telemetry_pose_queue_handle;
 
-static char json[200];
 static char at_command[256];
 
 void telemetryTimerCallback()
@@ -55,15 +53,7 @@ TelemetryState onTelemetryTick(const CommunicationEventData* data)
 	RobottoPose pose;
 	if (pdTRUE == xQueuePeek(robotto_telemetry_pose_queue_handle, &pose, 0))
 	{
-		snprintf(json, sizeof(json),
-		         "{\"timestamp\": %" PRIu32 ", \"x\": %.2f, \"y\": %.2f, \"theta\": %.2f}",
-		         pose.timestamp, pose.x, pose.y, pose.theta);
-
-		snprintf(at_command, sizeof(at_command),
-		         "AT+MQTTPUB=0,\"%s\",\"\\\"%s\\\"\",0,0\r\n",
-		         "RobOtto/pose",
-		         json);
-
+		atMqttPubFromPose(&pose, MQTT_TOPIC_POSE, at_command, sizeof(at_command));
 	    ATRequestData request_data = {.buffer = at_command, .request_id=101};
 		CommunicationEventData data_to_send = {.at_request = request_data};
 		postNewCommunicationEvent(EVENT_AT_NEW_REQUEST, data_to_send);

@@ -41,6 +41,7 @@ static TimerHandle_t timer;
 static const char* init_commands[] = {
 		"AT+RESTORE",
 		"AT",
+		"ATE0",
 		"AT+CWMODE=1",
 		"AT+CWQAP",
 		"AT+CWJAP=\"" WIFI_SSID "\",\"" WIFI_PWD "\"",

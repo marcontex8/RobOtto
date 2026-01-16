@@ -41,6 +41,9 @@
 #define NETWORK_COMMANDS_DELAY_S 3
 
 // period of the telemetry data communication
-#define TELEMETRY_PERIOD_MS 2000
+#define TELEMETRY_PERIOD_MS 200
+
+// MQTT TOPICS
+#define MQTT_TOPIC_POSE "RobOtto/pose"
 
 #endif /* INCLUDE_ROBOTTO_CONF_H_ */

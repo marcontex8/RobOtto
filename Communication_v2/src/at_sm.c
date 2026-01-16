@@ -45,8 +45,15 @@ static TimerHandle_t timer;
 
 void timeoutExpired(TimerHandle_t timer_handle)
 {
-	// TODO add a check on the timer_handle?
 	postNewCommunicationEventWithNoData(EVENT_AT_REQUEST_TIMEOUT);
+}
+
+void startTimeoutTimer()
+{
+	if (timer == NULL || xTimerStart(timer, 0) != pdPASS)
+	{
+		SEGGER_SYSVIEW_Print("Something wrong with timer creation or starting");
+	}
 }
 
 
@@ -74,10 +81,7 @@ void makeNewTxRequest(const CommunicationEventData* data)
 	CommunicationEventData data_to_send = {.uart_tx = uart_tx_data};
 	postNewCommunicationEvent(EVENT_UART_TX_REQUEST, data_to_send);
 
-	if (timer == NULL || xTimerStart(timer, 0) != pdPASS)
-	{
-		SEGGER_SYSVIEW_Print("Something wrong with timer creation or starting");
-	}
+	startTimeoutTimer();
 }
 
 
@@ -129,7 +133,6 @@ ATState onNewExpectedDataReceived(const CommunicationEventData* data)
 	copyDataToLocalBuffer(data);
 	if(NULL != findLineInBuffer((const char *)reply_buffer, "OK"))
 	{
-	  	SEGGER_SYSVIEW_Print("found OK");
 		xTimerStop(timer, 0);
 
 		ATResponseData at_response_data = {.request_id = latest_request, .response = AT_SUCCESS};
@@ -139,7 +142,6 @@ ATState onNewExpectedDataReceived(const CommunicationEventData* data)
 	}
 	else if(NULL != findLineInBuffer((const char *)reply_buffer, "ERROR"))
 	{
-	  	SEGGER_SYSVIEW_Print("found ERROR");
 		xTimerStop(timer, 0);
 
 		ATResponseData at_response_data = {.request_id = latest_request, .response = AT_FAILURE};
@@ -147,10 +149,7 @@ ATState onNewExpectedDataReceived(const CommunicationEventData* data)
 		postNewCommunicationEvent(EVENT_AT_REQUEST_COMPLETE, data_to_send);
 		next_state = AT_STATE_IDLE;
 	}
-	else
-	{
-	  	SEGGER_SYSVIEW_Print("found NOTHING");
-	}
+
 	return next_state;
 }
 
@@ -161,6 +160,13 @@ ATState onAnyError(const CommunicationEventData* data)
 
 	postNewCommunicationEvent(EVENT_AT_REQUEST_COMPLETE, data_to_send);
 	return AT_STATE_IDLE;
+}
+
+
+ATState onConcurrentRequest(const CommunicationEventData* data)
+{
+	SEGGER_SYSVIEW_Print("New message request while another request was still running. Ignored.");
+	return AT_STATE_WAITING_RESPONSE;
 }
 
 typedef ATState (*ATStateTransitionFunction)(const CommunicationEventData* data);
@@ -174,9 +180,8 @@ static const ATStateTransitionFunction at_state_transition_table[AT_STATE_COUNT]
 		[EVENT_UART_RX_NEW_DATA_RECEIVED] = NULL, // TODO: manage unexpected communications
     },
     [AT_STATE_WAITING_RESPONSE] = {
-    	[EVENT_AT_NEW_REQUEST] = NULL, // TODO: this should be monitored as an error!
-		[EVENT_UART_TX_COMPLETE] = NULL, // at the moment we assume this will be fine
-		[EVENT_UART_TX_ERROR] = NULL, // at the moment we assume this will be fine
+    	[EVENT_AT_NEW_REQUEST] = onConcurrentRequest,
+		[EVENT_UART_TX_ERROR] = onAnyError,
         [EVENT_UART_RX_ERROR]    = onAnyError,
         [EVENT_AT_REQUEST_TIMEOUT]    = onAnyError,
 		[EVENT_UART_RX_NEW_DATA_RECEIVED] = onNewExpectedDataReceived,

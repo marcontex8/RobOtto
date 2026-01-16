@@ -14,6 +14,8 @@
 #include "stm32f4xx.h"
 #include "stm32f4xx_hal_uart.h"
 
+#include "SEGGER_SYSVIEW.h"
+
 extern UART_HandleTypeDef huart4;
 #define H_UART_ESP huart4
 
@@ -43,6 +45,7 @@ UartTxState onUartTxRequest(const CommunicationEventData* data)
 	UartTxState next_state = UART_TX_STATUS_IDLE;
 
 	HAL_StatusTypeDef result = HAL_UART_Transmit_DMA(&H_UART_ESP, data->uart_tx.buffer, data->uart_tx.size);
+	SEGGER_SYSVIEW_PrintfHost("COMMAND: %s", data->uart_tx.buffer);
 	if (result != HAL_OK)
 	{
 		postNewCommunicationEventWithNoData(EVENT_UART_TX_ERROR);

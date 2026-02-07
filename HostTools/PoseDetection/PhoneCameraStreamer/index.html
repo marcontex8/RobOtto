@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Phone Camera Streamer</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <h1>Phone Camera Streamer</h1>
+  <div id="status">Initializing…</div>
+  <div class="row">
+    <div class="card">
+      <div><strong>Tip:</strong> Keep this page open while streaming.</div>
+      <div class="subtle">If the camera fails, ensure HTTPS (or localhost) and allow camera permissions.</div>
+    </div>
+  </div>
+  <video id="preview" autoplay playsinline muted></video>
+
+<script>
+const statusEl = document.getElementById('status');
+const preview = document.getElementById('preview');
+
+function setStatus(msg) { statusEl.textContent = msg; }
+
+async function waitIceComplete(pc) {
+  if (pc.iceGatheringState === 'complete') return;
+  await new Promise(resolve => {
+    function check() {
+      if (pc.iceGatheringState === 'complete') {
+        pc.removeEventListener('icegatheringstatechange', check);
+        resolve();
+      }
+    }
+    pc.addEventListener('icegatheringstatechange', check);
+  });
+}
+
+async function start() {
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    setStatus('Error: getUserMedia is unavailable. Use HTTPS (or localhost) and a modern browser.');
+    return;
+  }
+
+  setStatus('Requesting camera…');
+  const stream = await navigator.mediaDevices.getUserMedia({
+    audio: false,
+    video: {
+      width: { ideal: 1280 },
+      height: { ideal: 720 },
+      frameRate: { ideal: 30 },
+      facingMode: { ideal: 'environment' }
+    }
+  });
+  const rawTrack = stream.getVideoTracks()[0];
+  const settings = rawTrack.getSettings();
+  const width = settings.width || 1280;
+  const height = settings.height || 720;
+  const fps = settings.frameRate || 30;
+
+  const rawVideo = document.createElement('video');
+  rawVideo.srcObject = stream;
+  rawVideo.muted = true;
+  rawVideo.playsInline = true;
+  await rawVideo.play();
+
+  const cropWidth = Math.floor(width * 2 / 3);
+  const cropHeight = Math.floor(height * 2 / 3);
+  const cropX = Math.floor((width - cropWidth) / 2);
+  const cropY = Math.floor((height - cropHeight) / 2);
+
+  const canvas = document.createElement('canvas');
+  canvas.width = cropWidth;
+  canvas.height = cropHeight;
+  const ctx = canvas.getContext('2d');
+  ctx.filter = 'grayscale(1)';
+
+  function drawFrame() {
+    ctx.drawImage(rawVideo, cropX, cropY, cropWidth, cropHeight, 0, 0, cropWidth, cropHeight);
+    if (rawVideo.requestVideoFrameCallback) {
+      rawVideo.requestVideoFrameCallback(drawFrame);
+    } else {
+      requestAnimationFrame(drawFrame);
+    }
+  }
+
+  drawFrame();
+
+  const grayStream = canvas.captureStream(fps);
+  const videoTrack = grayStream.getVideoTracks()[0];
+  preview.srcObject = grayStream;
+
+  const pc = new RTCPeerConnection({ iceServers: [] });
+  const sender = pc.addTrack(videoTrack, grayStream);
+
+  if (sender && sender.getParameters) {
+    const params = sender.getParameters();
+    params.degradationPreference = 'maintain-resolution';
+    params.encodings = params.encodings || [{}];
+    params.encodings[0].maxBitrate = 6_000_000;
+    params.encodings[0].maxFramerate = fps;
+    params.encodings[0].scaleResolutionDownBy = 1.0;
+    await sender.setParameters(params);
+  }
+
+  pc.onconnectionstatechange = () => {
+    setStatus('Connection state: ' + pc.connectionState);
+  };
+
+  const offer = await pc.createOffer();
+  await pc.setLocalDescription(offer);
+  await waitIceComplete(pc);
+
+  setStatus('Connecting to server…');
+  const response = await fetch('/offer', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(pc.localDescription)
+  });
+
+  const answer = await response.json();
+  await pc.setRemoteDescription(answer);
+  setStatus('Streaming. Leave this page open.');
+}
+
+start().catch(err => {
+  console.error(err);
+  setStatus('Error: ' + err.message);
+});
+</script>
+</body>
+</html>

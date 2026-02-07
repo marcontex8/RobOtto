@@ -220,6 +220,7 @@ RobottoErrorCode createQueues()
 	{
 		return ROBOTTO_ERROR;
 	}
+
 	return ROBOTTO_OK;
 }
 

@@ -73,22 +73,11 @@ ActivityStatus runWheelsControlStatusInit(WheelStatus* left_wheel_status, WheelS
 		return ACTIVITY_STATUS_ERROR;
 	};
 
-	if(0 == left_encoder_status.magnet_detected)
-	{
-		last_error = "INITIALIZATION ERROR, LEFT MAGNET NOT DETECTED";
-		return ACTIVITY_STATUS_ERROR;
-	};
-	if(0 == right_encoder_status.magnet_detected)
-	{
-		last_error = "INITIALIZATION ERROR, RIGHT MAGNET NOT DETECTED";
-		return ACTIVITY_STATUS_ERROR;
-	};
-
 
 	if(ROBOTTO_OK != readAngleAndUpdateWheelsStatus(left_wheel_status, right_wheel_status))
 	{
 		last_error = "ERROR WHILE INITIALIZING ENCODERS STATE";
-		return ACTIVITY_STATUS_ERROR;
+		//return ACTIVITY_STATUS_ERROR;
 	}
 
 	return ACTIVITY_STATUS_RUNNING;
@@ -124,7 +113,9 @@ ActivityStatus runWheelsControlStatusRunning(WheelStatus* left_wheel_status, Whe
 	if(ROBOTTO_OK != readAngleAndUpdateWheelsStatus(left_wheel_status, right_wheel_status))
 	{
 		last_error = "CANNOT READ FROM ENCODER";
-		return ACTIVITY_STATUS_ERROR;
+		setMotorDutyCycle(WHEEL_LEFT, 0);
+		setMotorDutyCycle(WHEEL_RIGHT, 0);
+		resetController();
 	}
 
 

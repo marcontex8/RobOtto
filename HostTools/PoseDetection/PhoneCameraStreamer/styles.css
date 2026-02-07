@@ -1,0 +1,47 @@
+:root {
+  color-scheme: dark;
+}
+
+body {
+  font-family: system-ui, sans-serif;
+  margin: 16px;
+  background: #0f1117;
+  color: #e6e6e6;
+}
+
+#status {
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: #1b1f2a;
+  margin-bottom: 12px;
+}
+
+video {
+  width: 100%;
+  max-width: 640px;
+  border-radius: 8px;
+  border: 1px solid #2c3242;
+}
+
+.row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.card {
+  padding: 12px;
+  background: #161a24;
+  border: 1px solid #2c3242;
+  border-radius: 8px;
+}
+
+code {
+  color: #9cdcfe;
+}
+
+.subtle {
+  margin-top: 6px;
+  color: #9aa4b2;
+  font-size: 0.9rem;
+}

@@ -7,7 +7,8 @@ IntegrationTests/.integration_test_env
 HostTools/.test_env/
 Documentation/all.md
 networks
-HostTools/mosquitto_mqtt/mosquitto.db
+HostTools/MosquittoMQTT/mosquitto.db
+*.pem
 
 ############################
 # Drivers from StmCubeIDE

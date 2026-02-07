@@ -16,7 +16,6 @@ void vApplicationStackOverflowHook( TaskHandle_t xTask,
 	//nothing
 }
 
-
 #ifdef DEBUG
 
 #define LINE_SIZE 128

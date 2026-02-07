@@ -16,12 +16,30 @@
 
 extern QueueHandle_t behavior_queue_handle;
 extern QueueHandle_t robotto_pose_queue_handle;
-
 extern QueueHandle_t wheels_speed_set_points_queue_handle;
 
 static const char* last_error = NULL;
 
 #define MAX_ESTIMATED_POSE_DELAY 50
+
+static RobottoPose targetPoses[4] = {
+    { .x = 2.0, .y = 2.0 },
+    { .x = 0.0, .y = 0.0 },
+    { .x = 2.0, .y = 2.0 },
+    { .x = 0.0, .y = 0.0 }
+};
+
+
+RobottoPose getNextTargetPose()
+{
+	static unsigned int next = 0;
+	return targetPoses[next++];
+	if (next == 4)
+	{
+		next = 0;
+	}
+}
+
 
 ActivityStatus motionPlanningStatusInit()
 {
@@ -39,8 +57,29 @@ ActivityStatus motionPlanningStatusInit()
 }
 
 
+void planMotion(const RobottoPose* estimated_pose, const RobottoBehavior* behavior, WheelSpeedSetPoint* speed_set_point)
+{
+	if(ROBOTTO_BEHAVIOR_IDLE == behavior)
+	{
+		speed_set_point->active = false;
+	}
+	else
+	{
+		if(endPoseReached(estimated_pose))
+		{
+			defineNewTargetPose(getNextTargetPose());
+		}
+
+		*speed_set_point = computeWheelSpeedSetpoint(estimated_pose);
+		//SEGGER_SYSVIEW_PrintfTarget("Target pose: (x: %d, y: %d, theta: %d)\n", (int)(1000*estimated_pose->x),  (int)(1000*estimated_pose->y),  (int)(1000*estimated_pose->theta));
+	}
+}
+
+
 ActivityStatus motionPlanningStatusRunning()
 {
+	WheelSpeedSetPoint speed_set_point = {0};
+
 	RobottoPose estimated_pose;
 	if (pdTRUE != xQueuePeek(robotto_pose_queue_handle, &estimated_pose, 0) || (xTaskGetTickCount() - estimated_pose.timestamp) > MAX_ESTIMATED_POSE_DELAY)
 	{
@@ -48,17 +87,10 @@ ActivityStatus motionPlanningStatusRunning()
 		return ACTIVITY_STATUS_ERROR;
 	}
 
-	static RobottoBehavior last_behavior = 0;
-	RobottoBehavior new_behavior = 0;
-	xQueuePeek(behavior_queue_handle, &new_behavior, 0);
-	if(new_behavior != last_behavior && ROBOTTO_BEHAVIOR_IDLE != new_behavior)
-	{
-		RobottoPose end_pose = estimated_pose;
-		end_pose.y += 2.0f;
-		defineNewTrajectory(estimated_pose, end_pose);
-	}
+	RobottoBehavior behavior = 0;
+	xQueuePeek(behavior_queue_handle, &behavior, 0);
 
-	WheelSpeedSetPoint speed_set_point = computeWheelSpeedSetpoint(estimated_pose);
+	planMotion(&estimated_pose, &behavior, &speed_set_point);
 
 	if (xQueueSend(wheels_speed_set_points_queue_handle, &speed_set_point, 0) != pdPASS)
 	{
@@ -67,7 +99,6 @@ ActivityStatus motionPlanningStatusRunning()
 	}
 	return ACTIVITY_STATUS_RUNNING;
 }
-
 
 
 void runMotionPlanningStateMachine()
@@ -86,7 +117,4 @@ void runMotionPlanningStateMachine()
 	{
 		SEGGER_SYSVIEW_ErrorfTarget("%s\n", last_error);
 	}
-
-
 }
-

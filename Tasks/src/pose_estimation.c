@@ -22,6 +22,8 @@ extern QueueHandle_t robotto_telemetry_pose_queue_handle;
 static const char* last_error = NULL;
 
 static ImuData imu_bias = {0};
+
+RobottoPose estimated_pose = {0};
 #define MEASURES_FOR_BIAS_ESTIMATION 100
 
 #define DECIMALS 100000
@@ -52,6 +54,7 @@ void addMeasureToBias(ImuData* imu_bias, unsigned int counter, const ImuData* cu
 
 ActivityStatus poseEstimationStatusInit()
 {
+	/*
 	static unsigned int counter = 0;
 	++counter;
 	if (counter <= MEASURES_FOR_BIAS_ESTIMATION)
@@ -66,6 +69,7 @@ ActivityStatus poseEstimationStatusInit()
 
 		return ACTIVITY_STATUS_INIT;
 	}
+	*/
 
 	WheelsMovementUpdate wheels_movement_update;
 	if (pdPASS != xQueueReceive(wheels_status_queue_handle, &wheels_movement_update, 0))
@@ -82,21 +86,23 @@ ActivityStatus poseEstimationStatusInit()
 ActivityStatus poseEstimationStatusRunning()
 {
 	ImuData imu_data = {0};
+	/*
 	if(ROBOTTO_OK != readIMUData(&imu_data))
 	{
 		last_error = "Impossible to read IMU data";
 		return ACTIVITY_STATUS_ERROR;
 	}
 	removeBias(&imu_data);
-
+	*/
 
 	if(0 == uxQueueMessagesWaiting(wheels_status_queue_handle))
 	{
 		last_error = "No wheels encoders data available";
 		return ACTIVITY_STATUS_ERROR;
 	}
+	// TODO: implement sensor fusion with IMU data
 
-	RobottoPose estimated_pose = {0};
+
 	estimated_pose.timestamp = xTaskGetTickCount();
 
 	WheelsMovementUpdate wheels_movement_update;

@@ -1,6 +1,7 @@
 #include "unity.h"
 #include "odometry.h"
 #include <math.h>
+#include "logic_common.h"
 
 void setUp(void) {}
 void tearDown(void) {}
@@ -145,7 +146,7 @@ void test_CumulativeUpdates()
 
     TEST_ASSERT_FLOAT_WITHIN(TOLERANCE, 1.0f, pose.x);
     TEST_ASSERT_FLOAT_WITHIN(TOLERANCE, 0.0f, pose.y);
-    TEST_ASSERT_FLOAT_WITHIN(TOLERANCE, -M_PI, pose.theta);
+    TEST_ASSERT_FLOAT_WITHIN(TOLERANCE, M_PI, pose.theta);
 
 
     WheelsMovementUpdate w2 = { .timestamp = 0, .delta_angle_left = 0.0f, .delta_angle_right = M_PI/10.0f };

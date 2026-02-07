@@ -12,9 +12,10 @@
 
 
 
-WheelSpeedSetPoint computeWheelSpeedSetpoint(RobottoPose current);
+WheelSpeedSetPoint computeWheelSpeedSetpoint(const RobottoPose* current);
 
-void defineNewTrajectory(RobottoPose start, RobottoPose end);
+void defineNewTargetPose(RobottoPose end);
 
+bool endPoseReached(const RobottoPose* current);
 
 #endif /* INCLUDE_TRAJECTORY_PLANNER_H_ */

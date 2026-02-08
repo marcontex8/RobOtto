@@ -13,7 +13,6 @@
 #include "wheel_status_estimator.h"
 #include "pid_motor_controller.h"
 #include "robotto_common.h"
-#include "SEGGER_RTT.h"
 #include "queue.h"
 
 
@@ -92,7 +91,6 @@ ActivityStatus runWheelsControlStatusRunning(WheelStatus* left_wheel_status, Whe
 	static WheelSpeedSetPoint speed_set_point = {0};
 	static int missing_setpoint_counter = 0;
 
-	SEGGER_SYSVIEW_MarkStart(10);
 	if (xQueueReceive(wheels_speed_set_points_queue_handle, &speed_set_point, 0) == pdPASS)
 	{
 		missing_setpoint_counter = 0;
@@ -108,7 +106,6 @@ ActivityStatus runWheelsControlStatusRunning(WheelStatus* left_wheel_status, Whe
 		SEGGER_SYSVIEW_WarnfTarget("%s\n", last_error);
 	}
 
-	SEGGER_SYSVIEW_MarkStop(10);
 	// READ WHEEL STATUS FROM ENCODERS
 	if(ROBOTTO_OK != readAngleAndUpdateWheelsStatus(left_wheel_status, right_wheel_status))
 	{
@@ -145,6 +142,9 @@ ActivityStatus runWheelsControlStatusRunning(WheelStatus* left_wheel_status, Whe
 		last_error = "wheels_status_queue_handle IS FULL";
 		SEGGER_SYSVIEW_WarnfTarget("%s\n", last_error);
 	}
+
+	SEGGER_SYSVIEW_PrintfTarget("Measured speed: (left: %d, right: %d)\n", (int)(1000*left_wheel_status->filtered_speed),  (int)(1000*right_wheel_status->filtered_speed));
+
 	return ACTIVITY_STATUS_RUNNING;
 }
 

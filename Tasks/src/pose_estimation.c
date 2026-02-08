@@ -10,7 +10,6 @@
 #include "FreeRTOS.h"
 #include "queue.h"
 
-#include "SEGGER_RTT.h"
 #include "task.h"
 
 #include "odometry.h"
@@ -111,12 +110,7 @@ ActivityStatus poseEstimationStatusRunning()
 		updateOdometry(&wheels_movement_update, &imu_data, &estimated_pose);
 	}
 
-    SEGGER_RTT_printf(0, "\t\t\t;%u;\t\t\t%d;\t\t\t%d;\t\t\t%d\n",
-    		estimated_pose.timestamp,
-			(int)(DECIMALS*estimated_pose.x),
-			(int)(DECIMALS*estimated_pose.y),
-			(int)(DECIMALS*estimated_pose.theta));
-	xQueueOverwrite(robotto_pose_queue_handle, &estimated_pose);
+    xQueueOverwrite(robotto_pose_queue_handle, &estimated_pose);
 	xQueueOverwrite(robotto_telemetry_pose_queue_handle, &estimated_pose);
 
 	return ACTIVITY_STATUS_RUNNING;

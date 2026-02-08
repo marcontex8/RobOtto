@@ -10,9 +10,9 @@
 #include "robotto_common.h"
 #include "queue.h"
 #include "imu_reader.h"
-#include "SEGGER_RTT.h"
 #include <math.h>
 #include "trajectory_planner.h"
+#include "SEGGER_SYSVIEW.h"
 
 extern QueueHandle_t behavior_queue_handle;
 extern QueueHandle_t robotto_pose_queue_handle;
@@ -23,9 +23,9 @@ static const char* last_error = NULL;
 #define MAX_ESTIMATED_POSE_DELAY 50
 
 static RobottoPose targetPoses[4] = {
-    { .x = 2.0, .y = 2.0 },
-    { .x = 0.0, .y = 0.0 },
-    { .x = 2.0, .y = 2.0 },
+    { .x = 0.0, .y = 1.0 },
+    { .x = 1.0, .y = 1.0 },
+    { .x = 1.0, .y = 0.0 },
     { .x = 0.0, .y = 0.0 }
 };
 
@@ -33,11 +33,12 @@ static RobottoPose targetPoses[4] = {
 RobottoPose getNextTargetPose()
 {
 	static unsigned int next = 0;
-	return targetPoses[next++];
-	if (next == 4)
+	RobottoPose pose = targetPoses[next];
+	if (++next == 4)
 	{
 		next = 0;
 	}
+	return pose;
 }
 
 
@@ -59,7 +60,7 @@ ActivityStatus motionPlanningStatusInit()
 
 void planMotion(const RobottoPose* estimated_pose, const RobottoBehavior* behavior, WheelSpeedSetPoint* speed_set_point)
 {
-	if(ROBOTTO_BEHAVIOR_IDLE == behavior)
+	if(ROBOTTO_BEHAVIOR_IDLE == *behavior)
 	{
 		speed_set_point->active = false;
 	}
@@ -71,7 +72,6 @@ void planMotion(const RobottoPose* estimated_pose, const RobottoBehavior* behavi
 		}
 
 		*speed_set_point = computeWheelSpeedSetpoint(estimated_pose);
-		//SEGGER_SYSVIEW_PrintfTarget("Target pose: (x: %d, y: %d, theta: %d)\n", (int)(1000*estimated_pose->x),  (int)(1000*estimated_pose->y),  (int)(1000*estimated_pose->theta));
 	}
 }
 

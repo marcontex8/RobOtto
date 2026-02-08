@@ -12,7 +12,7 @@
 #include "logic_common.h"
 #include <math.h>
 
-#define CRUISE_SPEED 6.28f
+#define CRUISE_SPEED 6.28f * WHEELS_RADIUS
 #define POSITION_TOLERANCE 0.05f
 #define LOOKAHEAD_DISTANCE 0.4f
 #define K_P_ANGULAR 1.0f
@@ -98,6 +98,12 @@ WheelSpeedSetPoint computeWheelSpeedSetpoint(const RobottoPose* current)
 			out.right = v_right / WHEELS_RADIUS;
 		}
 	}
+	SEGGER_SYSVIEW_PrintfTarget("Required speed: (left: %d, right: %d)\n", (int)(1000*out.left),  (int)(1000*out.right));
+	SEGGER_SYSVIEW_PrintfTarget("Current pose: (x: %d, y: %d, theta: %d)\n", (int)(1000*current->x),  (int)(1000*current->y),  (int)(1000*current->theta));
+	SEGGER_SYSVIEW_PrintfTarget("Target pose: (x: %d, y: %d, theta: %d)\n", (int)(1000*end_pose.x),  (int)(1000*end_pose.y),  (int)(1000*end_pose.theta));
+
+	//out.left = CRUISE_SPEED;
+	//out.right = CRUISE_SPEED;
     return out;
 }
 

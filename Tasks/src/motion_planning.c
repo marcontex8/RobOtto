@@ -18,6 +18,8 @@ extern QueueHandle_t behavior_queue_handle;
 extern QueueHandle_t robotto_pose_queue_handle;
 extern QueueHandle_t wheels_speed_set_points_queue_handle;
 
+extern QueueHandle_t robotto_telemetry_queue_handle;
+
 static const char* last_error = NULL;
 
 #define MAX_ESTIMATED_POSE_DELAY 50
@@ -58,24 +60,6 @@ ActivityStatus motionPlanningStatusInit()
 }
 
 
-void planMotion(const RobottoPose* estimated_pose, const RobottoBehavior* behavior, WheelSpeedSetPoint* speed_set_point)
-{
-	if(ROBOTTO_BEHAVIOR_IDLE == *behavior)
-	{
-		speed_set_point->active = false;
-	}
-	else
-	{
-		if(endPoseReached(estimated_pose))
-		{
-			defineNewTargetPose(getNextTargetPose());
-		}
-
-		*speed_set_point = computeWheelSpeedSetpoint(estimated_pose);
-	}
-}
-
-
 ActivityStatus motionPlanningStatusRunning()
 {
 	WheelSpeedSetPoint speed_set_point = {0};
@@ -87,16 +71,34 @@ ActivityStatus motionPlanningStatusRunning()
 		return ACTIVITY_STATUS_ERROR;
 	}
 
-	RobottoBehavior behavior = 0;
+	RobottoBehavior behavior = ROBOTTO_BEHAVIOR_IDLE;
 	xQueuePeek(behavior_queue_handle, &behavior, 0);
 
-	planMotion(&estimated_pose, &behavior, &speed_set_point);
+	if(ROBOTTO_BEHAVIOR_IDLE == behavior)
+	{
+		speed_set_point.active = false;
+	}
+	else
+	{
+		if(endPoseReached(&estimated_pose))
+		{
+			defineNewTargetPose(getNextTargetPose());
+		}
 
+		speed_set_point = computeWheelSpeedSetpoint(&estimated_pose);
+	}
 	if (xQueueSend(wheels_speed_set_points_queue_handle, &speed_set_point, 0) != pdPASS)
 	{
 		last_error = "wheels_speed_set_points_queue_handle IS FULL";
 		SEGGER_SYSVIEW_WarnfTarget("%s\n", last_error);
 	}
+
+	RobottoAggregatedTelemetry aggregated_telemetry = {
+			.pose = estimated_pose,
+			.target_pose = *getCurrentTargetPose(),
+			.speed_set_point = speed_set_point
+	};
+	xQueueOverwrite(robotto_telemetry_queue_handle, &aggregated_telemetry);
 	return ACTIVITY_STATUS_RUNNING;
 }
 

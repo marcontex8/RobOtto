@@ -11,6 +11,7 @@
 #include "robotto_common.h"
 
 
+const RobottoPose* getCurrentTargetPose();
 
 WheelSpeedSetPoint computeWheelSpeedSetpoint(const RobottoPose* current);
 

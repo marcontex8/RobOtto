@@ -1,0 +1,9 @@
+paho-mqtt
+python-dotenv
+pyserial
+matplotlib
+numpy
+#opencv-python
+aiohttp
+aiortc
+av

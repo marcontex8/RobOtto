@@ -10,13 +10,11 @@
 
 #include "robotto_common.h"
 
-int jsonFromPose(const RobottoPose *pose,
-                            char *out,
-                            int out_size);
-
-int atMqttPubFromPose(const RobottoPose *pose,
+int atMqttPubFromTelemetry(const RobottoPose *pose,
+                      const RobottoPose *target_pose,
+                      const WheelSpeedSetPoint *speed_set_point,
                       const char *topic,
                       char *out,
-                      int out_size);
+                      int max_out_size);
 
 #endif /* AT_COMMAND */

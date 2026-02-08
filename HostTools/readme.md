@@ -1,10 +1,34 @@
 # Tools for Host System
 
-## Run everything
+## Python dependencies
 
-Launch Mosquitto, MQTT->ROS2, and FoxGlove bridge (each in its own process):
+Install the Python dependencies listed in [HostTools/requirements.txt](HostTools/requirements.txt):
 
-python3 run_all.py
+```bash
+cd /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto
+./.venv/bin/python -m pip install -r HostTools/requirements.txt
+```
+
+ROS2 Python packages such as rclpy, geometry_msgs, std_msgs, sensor_msgs, and cv_bridge are provided by your ROS2 installation and are not in the requirements file.
+
+## RobOtto to ROS2
+
+### Mosquitto MQTT broker
+cd HostTools/MosquittoMQTT/
+mosquitto -c mosquitto.conf -v
+
+### MQTT -> ROS2
+This ROS2 node is used to convert MQTT data to ROS2 visualizable data
+python HostTools/mqtt_to_ros2.py
+
+
+
+
+
+## Visualization
+
+## FoxGlove Bridge
+ros2 launch foxglove_bridge foxglove_bridge_launch.xml
 
 
 ## Phone Camera To ROS2
@@ -40,21 +64,3 @@ python3 aruco_pose_detector.py --ros-args -p debug_level:=DEBUG -p visualize:=tr
 python3  calibrate_camera.py --image-dir PoseDetection/PhoneCameraStreamer/calib_images
 
 
-## RobOtto to ROS2
-
-### Mosquitto MQTT broker
-cd ./MosquittoMQTT/
-mosquitto -c mosquitto.conf -v
-
-### MQTT -> ROS2
-This ROS2 node is used to convert MQTT data to ROS2 visualizable data
-python ./mqtt_to_ros2.py
-
-
-
-
-
-## Visualization
-
-## FoxGlove Bridge
-ros2 launch foxglove_bridge foxglove_bridge_launch.xml

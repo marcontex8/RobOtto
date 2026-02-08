@@ -16,7 +16,6 @@
 
 extern QueueHandle_t wheels_status_queue_handle;
 extern QueueHandle_t robotto_pose_queue_handle;
-extern QueueHandle_t robotto_telemetry_pose_queue_handle;
 
 static const char* last_error = NULL;
 
@@ -111,7 +110,6 @@ ActivityStatus poseEstimationStatusRunning()
 	}
 
     xQueueOverwrite(robotto_pose_queue_handle, &estimated_pose);
-	xQueueOverwrite(robotto_telemetry_pose_queue_handle, &estimated_pose);
 
 	return ACTIVITY_STATUS_RUNNING;
 }

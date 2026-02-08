@@ -1,0 +1,134 @@
+{
+  "configById": {
+    "Plot!2bhwxvi": {
+      "paths": [
+        {
+          "timestampMethod": "receiveTime",
+          "value": "/RobOtto/wheels_speed_setpoint.data[0]",
+          "enabled": true,
+          "color": "#4e98e2",
+          "id": "f9a3fba5-843a-49bb-b63c-d1d5a5152343",
+          "label": "Left Wheel Speed Setpoint"
+        },
+        {
+          "timestampMethod": "receiveTime",
+          "value": "/RobOtto/wheels_speed_setpoint.data[1]",
+          "enabled": true,
+          "color": "#f5774d",
+          "id": "7bf459aa-249d-4826-9490-02446b0dd39b",
+          "label": "Right Wheel Speed Setpoint"
+        }
+      ],
+      "maxYValue": 15.0422,
+      "showXAxisLabels": true,
+      "showYAxisLabels": true,
+      "showLegend": true,
+      "legendDisplay": "floating",
+      "showPlotValuesInLegend": false,
+      "isSynced": true,
+      "xAxisVal": "timestamp",
+      "sidebarDimension": 240
+    },
+    "3D!2evdt39": {
+      "layers": {
+        "845139cb-26bc-40b3-8161-8ab60af4baf5": {
+          "visible": true,
+          "frameLocked": true,
+          "label": "Grid",
+          "instanceId": "845139cb-26bc-40b3-8161-8ab60af4baf5",
+          "layerId": "foxglove.Grid",
+          "size": 10,
+          "divisions": 10,
+          "lineWidth": 1,
+          "color": "#248eff",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "order": 1
+        }
+      },
+      "cameraState": {
+        "perspective": true,
+        "distance": 4.518710819848973,
+        "phi": 14.26800929512247,
+        "thetaOffset": -1.0108443067375739,
+        "targetOffset": [
+          0.9787419857262997,
+          0.3962498778811224,
+          1.8667908668019015e-17
+        ],
+        "target": [
+          0,
+          0,
+          0
+        ],
+        "targetOrientation": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "fovy": 45,
+        "near": 0.5,
+        "far": 5000
+      },
+      "followMode": "follow-pose",
+      "scene": {
+        "enableStats": true,
+        "syncCamera": false
+      },
+      "transforms": {},
+      "topics": {
+        "/initialpose": {
+          "visible": false
+        },
+        "/pose": {
+          "visible": true,
+          "type": "arrow"
+        },
+        "/RobOtto/pose": {
+          "visible": true
+        },
+        "/move_base_simple/goal": {
+          "visible": false
+        },
+        "/RobOtto/target_pose": {
+          "visible": true,
+          "type": "axis"
+        }
+      },
+      "publish": {
+        "type": "point",
+        "poseTopic": "/move_base_simple/goal",
+        "pointTopic": "/clicked_point",
+        "poseEstimateTopic": "/initialpose",
+        "poseEstimateXDeviation": 0.5,
+        "poseEstimateYDeviation": 0.5,
+        "poseEstimateThetaDeviation": 0.26179939
+      },
+      "imageMode": {},
+      "fixedFrame": "map"
+    }
+  },
+  "globalVariables": {},
+  "userNodes": {},
+  "playbackConfig": {
+    "speed": 1
+  },
+  "drawerConfig": {
+    "tracks": []
+  },
+  "layout": {
+    "first": "Plot!2bhwxvi",
+    "second": "3D!2evdt39",
+    "direction": "column",
+    "splitPercentage": 29.16646989374262
+  }
+}

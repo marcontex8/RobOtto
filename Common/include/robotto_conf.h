@@ -44,6 +44,6 @@
 #define TELEMETRY_PERIOD_MS 200
 
 // MQTT TOPICS
-#define MQTT_TOPIC_POSE "RobOtto/pose"
+#define MQTT_TOPIC_TELEMETRY "RobOtto/telemetry"
 
 #endif /* INCLUDE_ROBOTTO_CONF_H_ */

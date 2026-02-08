@@ -64,6 +64,12 @@ typedef enum {
 	ROBOTTO_BEHAVIOR_RUNNING,
 } RobottoBehavior;
 
+typedef struct {
+	RobottoPose pose;
+	RobottoPose target_pose;
+	WheelSpeedSetPoint speed_set_point;
+} RobottoAggregatedTelemetry;
+
 #ifdef DEBUG
 	void SYSVIEW_PrintLines(const char *buf);
 	#define PRINT_LINES_ON_SYSTEMVIEW(buffer) SYSVIEW_PrintLines(buffer)

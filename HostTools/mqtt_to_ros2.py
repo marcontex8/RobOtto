@@ -3,76 +3,69 @@ from rclpy.node import Node
 from rclpy.time import Time
 
 from geometry_msgs.msg import PoseStamped
-from std_msgs.msg import String
+from std_msgs.msg import Float32MultiArray
 
 import paho.mqtt.client as mqtt
-import json
 import math
 import time
+
+from telemetry_decode import decode_telemetry_payload
 
 class MqttToRos2Node(Node):
     def __init__(self):
         super().__init__('mqtt_pose_publisher')
-        self.publisher_ = self.create_publisher(PoseStamped, '/RobOtto/pose', 10)
-        self.status_publisher_ = self.create_publisher(String, '/RobOtto/pose_info', 10)
+        self.robotto_pose_publisher_ = self.create_publisher(PoseStamped, '/RobOtto/pose', 10)
+        self.target_pose_publisher_ = self.create_publisher(PoseStamped, '/RobOtto/target_pose', 10)
+        self.wheels_speed_setpoint_publisher_ = self.create_publisher(Float32MultiArray, '/RobOtto/wheels_speed_setpoint', 10)
 
-        self.declare_parameter('use_fake_mqtt', False)
         self.declare_parameter('frame_id', 'map')
-
-        self._use_fake_mqtt = self.get_parameter('use_fake_mqtt').get_parameter_value().bool_value
         self._frame_id = self.get_parameter('frame_id').get_parameter_value().string_value
 
-        if self._use_fake_mqtt:
-            self._start_time = time.time()
-            self._timer = self.create_timer(0.1, self._publish_fake_pose)
-        else:
-            self.mqtt_client = mqtt.Client(callback_api_version=mqtt.CallbackAPIVersion.VERSION2)
-            self.mqtt_client.on_message = self.on_mqtt_pose_message
-            try:
-                self.mqtt_client.connect('127.0.0.1', 1884, 60)
-            except Exception as e:
-                self.get_logger().error(
-                    f"Failed to connect to MQTT broker: {e}. Ensure the broker is running and reachable."
-                )
-                raise RuntimeError(f"MQTT broker connection failed: {e}")
-            self.mqtt_client.subscribe('RobOtto/pose')
-            self.mqtt_client.loop_start()
-
-    def on_mqtt_pose_message(self, client, userdata, msg):
+        self.mqtt_client = mqtt.Client(callback_api_version=mqtt.CallbackAPIVersion.VERSION2)
+        self.mqtt_client.on_message = self.on_mqtt_telemetry_message
         try:
-            data = json.loads(msg.payload.decode())
+            self.mqtt_client.connect('127.0.0.1', 1884, 60)
+        except Exception as e:
+            self.get_logger().error(
+                f"Failed to connect to MQTT broker: {e}. Ensure the broker is running and reachable."
+            )
+            raise RuntimeError(f"MQTT broker connection failed: {e}")
+        self.get_logger().info(
+                f"Successfully connected to MQTT broker."
+            )
+        self.mqtt_client.subscribe('RobOtto/telemetry')
+        self.mqtt_client.loop_start()
+
+    def on_mqtt_telemetry_message(self, client, userdata, msg):
+        try:
+            telemetry = decode_telemetry_payload(msg.payload)
             pose_msg = self._pose_from_xytheta(
-                int(data['timestamp']),
-                float(data['x']),
-                float(data['y']),
-                float(data['theta']),
+                telemetry['robotto_timestamp'],
+                telemetry['robotto_x'],
+                telemetry['robotto_y'],
+                telemetry['robotto_theta'],
             )
-            self.publisher_.publish(pose_msg)
-            status_msg = String()
-            status_msg.data = (
-                f"mqtt pose: t={data['timestamp']} x={data['x']} y={data['y']} theta={data['theta']}"
+            self.robotto_pose_publisher_.publish(pose_msg)
+
+            target_pose_msg = self._pose_from_xytheta(
+                telemetry['target_timestamp'],
+                telemetry['target_x'],
+                telemetry['target_y'],
+                telemetry['target_theta'],
             )
-            self.status_publisher_.publish(status_msg)
-            self.get_logger().info('Published pose')
+            self.target_pose_publisher_.publish(target_pose_msg)
+
+            speed_setpoint_msg = Float32MultiArray()
+            speed_setpoint_msg.data = [
+                telemetry['wheel_speed_setpoint_left'],
+                telemetry['wheel_speed_setpoint_right'],
+                1.0 if telemetry['wheel_speed_setpoint_active'] else 0.0,
+            ]
+            self.wheels_speed_setpoint_publisher_.publish(speed_setpoint_msg)   
+
+            self.get_logger().info('Published telemetry')
         except Exception as e:
             self.get_logger().error(f'Error processing MQTT message: {e}')
-
-    def _publish_fake_pose(self):
-        t = time.time() - self._start_time
-        x = math.cos(t)
-        y = math.sin(t)
-        theta = t % (2.0 * math.pi)
-        stamp_ns = time.time_ns()
-        pose_msg = self._pose_from_xytheta(stamp_ns, x, y, theta)
-        self.publisher_.publish(pose_msg)
-        status_msg = String()
-        status_msg.data = (
-            f"fake pose: t={t:.2f} x={x:.3f} y={y:.3f} theta={theta:.3f} stamp_ns={stamp_ns}"
-        )
-        self.status_publisher_.publish(status_msg)
-        self.get_logger().info(
-            f"Fake publish /RobOtto/pose: t={t:.2f} x={x:.3f} y={y:.3f} theta={theta:.3f} stamp_ns={stamp_ns}"
-        )
 
     def _pose_from_xytheta(self, timestamp_ns: int, x: float, y: float, theta: float) -> PoseStamped:
         pose_msg = PoseStamped()

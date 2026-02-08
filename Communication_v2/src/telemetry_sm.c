@@ -26,7 +26,7 @@ static TelemetryState state = TELEMETRY_STATE_OFF;
 
 static TimerHandle_t telemetry_timer;
 
-extern QueueHandle_t robotto_telemetry_pose_queue_handle;
+extern QueueHandle_t robotto_telemetry_queue_handle;
 
 static char at_command[256];
 
@@ -50,10 +50,10 @@ TelemetryState onConnectionEstablished(const CommunicationEventData* data)
 
 TelemetryState onTelemetryTick(const CommunicationEventData* data)
 {
-	RobottoPose pose;
-	if (pdTRUE == xQueuePeek(robotto_telemetry_pose_queue_handle, &pose, 0))
+	RobottoAggregatedTelemetry aggregated_telemetry;
+	if (pdTRUE == xQueuePeek(robotto_telemetry_queue_handle, &aggregated_telemetry, 0))
 	{
-		atMqttPubFromPose(&pose, MQTT_TOPIC_POSE, at_command, sizeof(at_command));
+		atMqttPubFromTelemetry(&aggregated_telemetry.pose, &aggregated_telemetry.target_pose, &aggregated_telemetry.speed_set_point, MQTT_TOPIC_TELEMETRY, at_command, sizeof(at_command));
 	    ATRequestData request_data = {.buffer = at_command, .request_id=101};
 		CommunicationEventData data_to_send = {.at_request = request_data};
 		postNewCommunicationEvent(EVENT_AT_NEW_REQUEST, data_to_send);

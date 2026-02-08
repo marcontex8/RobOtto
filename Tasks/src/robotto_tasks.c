@@ -65,8 +65,8 @@ QueueHandle_t wheels_speed_set_points_queue_handle = NULL;
 QueueHandle_t wheels_status_queue_handle = NULL;
 // From Pose Estimation to Motion Planning
 QueueHandle_t robotto_pose_queue_handle = NULL;
-// From Pose Estimation to Telemetry
-QueueHandle_t robotto_telemetry_pose_queue_handle = NULL;
+// From Motion Planning to Telemetry
+QueueHandle_t robotto_telemetry_queue_handle = NULL;
 // Communication events queue
 QueueHandle_t robotto_communication_queue_handle = NULL;
 
@@ -209,8 +209,8 @@ RobottoErrorCode createQueues()
 		return ROBOTTO_ERROR;
 	}
 
-	robotto_telemetry_pose_queue_handle = xQueueCreate(1, sizeof(RobottoPose));
-	if (robotto_telemetry_pose_queue_handle == NULL)
+	robotto_telemetry_queue_handle = xQueueCreate(1, sizeof(RobottoAggregatedTelemetry));
+	if (robotto_telemetry_queue_handle == NULL)
 	{
 		return ROBOTTO_ERROR;
 	}

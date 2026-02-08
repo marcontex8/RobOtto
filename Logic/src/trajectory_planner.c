@@ -19,6 +19,11 @@
 
 static RobottoPose end_pose = {0};
 
+const RobottoPose* getCurrentTargetPose()
+{
+	return &end_pose;
+}
+
 bool endPoseReached(const RobottoPose* current)
 {
 	float euclidean_distance = sqrtf((current->x - end_pose.x)*(current->x - end_pose.x) + (current->y - end_pose.y) * (current->y - end_pose.y));
@@ -98,9 +103,12 @@ WheelSpeedSetPoint computeWheelSpeedSetpoint(const RobottoPose* current)
 			out.right = v_right / WHEELS_RADIUS;
 		}
 	}
+	
+	/*
 	SEGGER_SYSVIEW_PrintfTarget("Required speed: (left: %d, right: %d)\n", (int)(1000*out.left),  (int)(1000*out.right));
 	SEGGER_SYSVIEW_PrintfTarget("Current pose: (x: %d, y: %d, theta: %d)\n", (int)(1000*current->x),  (int)(1000*current->y),  (int)(1000*current->theta));
 	SEGGER_SYSVIEW_PrintfTarget("Target pose: (x: %d, y: %d, theta: %d)\n", (int)(1000*end_pose.x),  (int)(1000*end_pose.y),  (int)(1000*end_pose.theta));
+	*/
 
 	//out.left = CRUISE_SPEED;
 	//out.right = CRUISE_SPEED;

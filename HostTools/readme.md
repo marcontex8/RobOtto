@@ -1,66 +1,57 @@
 # Tools for Host System
 
-## Python dependencies
+## Prerequisites
+- ROS2 installed and sourced in your shell (provides rclpy, geometry_msgs, std_msgs, sensor_msgs, cv_bridge)
+- Python 3.10+ recommended
 
-Install the Python dependencies listed in [HostTools/requirements.txt](HostTools/requirements.txt):
-
+## Install dependencies
+Create a virtual environment and install Python dependencies:
 ```bash
-cd /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto
+python -m venv .venv
 ./.venv/bin/python -m pip install -r HostTools/requirements.txt
 ```
 
-ROS2 Python packages such as rclpy, geometry_msgs, std_msgs, sensor_msgs, and cv_bridge are provided by your ROS2 installation and are not in the requirements file.
+## Evaluation tools
+The Evaluation folder contains tools to validate RobOtto behavior, including:
+- MQTT telemetry bridge to ROS2
+- Camera-based pose estimation using ArUco markers
 
-## RobOtto to ROS2
-
-### Mosquitto MQTT broker
-cd HostTools/MosquittoMQTT/
+### Telemetry decoding (MQTT → ROS2)
+Start the MQTT broker:
+```bash
+cd HostTools/Evaluation/TelemetryDecoding
 mosquitto -c mosquitto.conf -v
+```
 
-### MQTT -> ROS2
-This ROS2 node is used to convert MQTT data to ROS2 visualizable data
-python HostTools/mqtt_to_ros2.py
+Run the bridge node:
+```bash
+python HostTools/Evaluation/TelemetryDecoding/mqtt_to_ros2.py
+```
 
-
-
-
-
-## Visualization
-
-## FoxGlove Bridge
+Launch Foxglove bridge (optional):
+```bash
 ros2 launch foxglove_bridge foxglove_bridge_launch.xml
+```
 
+### Camera-based pose estimation
+You can use a web-based camera stream if a reliable Wi-Fi connection is available.
+Otherwise, a standard USB webcam works better.
 
-## Phone Camera To ROS2
+The pose-estimation tools are ROS2 nodes and can be visualized with
+[Foxglove](https://foxglove.dev/product/visualization).
 
-### Camera Phone -> ROS2
-python3 PoseDetection/PhoneCameraStreamer/phone_camera_streamer.py
+#### ArUco pose detector
+```bash
+python3 aruco_pose_detector.py --ros-args \
+	-p debug_level:=DEBUG \
+	-p visualize:=true \
+	-p marker_size:=0.05 \
+	-p aruco_dict:=DICT_5X5_50
+```
 
-Note: most mobile browsers require HTTPS for camera access (or localhost). This server now requires HTTPS.
-On first run, a self-signed cert is generated in PoseDetection/PhoneCameraStreamer (cert.pem/key.pem).
-
-Open the page:
-https://<laptop-ip>:8080/?w=1280&h=720&fps=30
-
-Python deps:
-- aiohttp
-- aiortc
-- av
-- opencv-python
-- cv-bridge (from ROS2)
-
-ROS2 params (examples):
-- `http_port` (default 8080)
-- `topic` (default /camera/image_raw)
-- `camera_info_topic` (default /camera/camera_info)
-- `grayscale` (default false)
-- `publish_camera_info` (default false)
-- `frame_id` (default camera)
-
-### ARUCO pose detector
-python3 aruco_pose_detector.py --ros-args -p debug_level:=DEBUG -p visualize:=true -p marker_size:=0.05 -p aruco_dict:=DICT_5X5_50
-
-### Camera Calibration
-python3  calibrate_camera.py --image-dir PoseDetection/PhoneCameraStreamer/calib_images
+#### Camera calibration
+```bash
+python3 calibrate_camera.py --image-dir PoseDetection/PhoneCameraStreamer/calib_images
+```
 
 

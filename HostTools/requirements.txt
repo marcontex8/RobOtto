@@ -3,7 +3,11 @@ python-dotenv
 pyserial
 matplotlib
 numpy
-#opencv-python
+opencv-python
+cv-bridge
 aiohttp
 aiortc
 av
+
+# ROS2 Python deps (install via ROS2/apt, not pip):
+# rclpy, sensor-msgs, geometry-msgs

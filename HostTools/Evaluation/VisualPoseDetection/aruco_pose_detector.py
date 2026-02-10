@@ -97,10 +97,10 @@ class ArucoPoseDetector(Node):
         )
         self.image_sub = self.create_subscription(
             Image,
-            'phone_camera/image_raw',
+            'usb_camera/image_raw',
             self.image_callback,
             qos_profile=image_qos)
-        self.get_logger().info('Subscribed to phone_camera/image_raw (Image) with queue size 1 and BEST_EFFORT QoS')
+        self.get_logger().info('Subscribed to usb_camera/image_raw (Image) with queue size 1 and BEST_EFFORT QoS')
 
         # Publisher: only robot pose
         self.robot_pose_pub = self.create_publisher(PoseStamped, '/robot_pose', 10)

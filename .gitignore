@@ -9,7 +9,8 @@ Documentation/all.md
 networks
 HostTools/MosquittoMQTT/mosquitto.db
 *.pem
-HostTools/__pycache__/
+*.pyc
+__pycache__/
 
 ############################
 # Drivers from StmCubeIDE

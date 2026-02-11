@@ -66,52 +66,18 @@ WheelSpeedSetPoint computeWheelSpeedSetpoint(const RobottoPose* current)
 		float lookahead_y = current->y + target_vector_y * scale;
 
 		float alpha = wrapToPI(atan2f(current->x - lookahead_x, lookahead_y - current->y) - current->theta);
-/*
-		if(alpha > 0.9 * M_PI)
-		{
-			out.active = true;
-			out.left  = -1.0 * CRUISE_SPEED / WHEELS_RADIUS;
-			out.right = CRUISE_SPEED / WHEELS_RADIUS;
-		}
-		else if(alpha < -0.9 * M_PI)
-		{
-			out.active = true;
-			out.left  = CRUISE_SPEED / WHEELS_RADIUS;
-			out.right = -1.0 * CRUISE_SPEED / WHEELS_RADIUS;
-		}
-		else
-*/
-		{
-			float ld = fmaxf(LOOKAHEAD_DISTANCE * scale, 1e-6f);
-			float curvature = 2.0f * sinf(alpha) / ld;
-			float angular_speed = K_P_ANGULAR * linear_speed * curvature;
+		float ld = fmaxf(LOOKAHEAD_DISTANCE * scale, 1e-6f);
+		float curvature = 2.0f * sinf(alpha) / ld;
+		float angular_speed = K_P_ANGULAR * linear_speed * curvature;
 
-			float v_left  = linear_speed - (angular_speed * WHEELS_DISTANCE / 2.0f);
-			float v_right = linear_speed + (angular_speed * WHEELS_DISTANCE / 2.0f);
+		float v_left  = linear_speed - (angular_speed * WHEELS_DISTANCE / 2.0f);
+		float v_right = linear_speed + (angular_speed * WHEELS_DISTANCE / 2.0f);
 
-			/* Optional min-speed ramp (uncomment if needed)
-			float min_allowed = (slow_radius > 0.0f)
-				? (distance >= slow_radius ? min_speed : min_speed * (distance / slow_radius))
-				: min_speed;
-
-			if (fabsf(v_left)  > 0.0f && fabsf(v_left)  < min_allowed) v_left  = copysignf(min_allowed, v_left);
-			if (fabsf(v_right) > 0.0f && fabsf(v_right) < min_allowed) v_right = copysignf(min_allowed, v_right);
-			*/
-
-			out.active = true;
-			out.left  = v_left  / WHEELS_RADIUS;
-			out.right = v_right / WHEELS_RADIUS;
-		}
+		out.active = true;
+		out.left  = v_left  / WHEELS_RADIUS;
+		out.right = v_right / WHEELS_RADIUS;
 	}
-	
-	/*
-	SEGGER_SYSVIEW_PrintfTarget("Required speed: (left: %d, right: %d)\n", (int)(1000*out.left),  (int)(1000*out.right));
-	SEGGER_SYSVIEW_PrintfTarget("Current pose: (x: %d, y: %d, theta: %d)\n", (int)(1000*current->x),  (int)(1000*current->y),  (int)(1000*current->theta));
-	SEGGER_SYSVIEW_PrintfTarget("Target pose: (x: %d, y: %d, theta: %d)\n", (int)(1000*end_pose.x),  (int)(1000*end_pose.y),  (int)(1000*end_pose.theta));
-	*/
 
-	//out.left = CRUISE_SPEED;
-	//out.right = CRUISE_SPEED;
     return out;
 }
 

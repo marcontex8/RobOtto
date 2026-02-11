@@ -5,6 +5,7 @@ import os
 import glob
 
 import cv2
+from common import find_camera_device
 import rclpy
 from cv_bridge import CvBridge
 from rclpy.node import Node
@@ -27,7 +28,7 @@ class UsbWebcamStreamer(Node):
 		self.grayscale = True
 		self.show_preview = False
 
-		self.device = self._find_camera_device(self.camera_id_name)
+		self.device = find_camera_device(self.camera_id_name)
 
 		# Open camera
 		backend = cv2.CAP_V4L2 if self.use_v4l2 else 0
@@ -70,16 +71,7 @@ class UsbWebcamStreamer(Node):
 			f'Publishing to {self.topic} as {encoding}, frame_id={self.frame_id}, '
 			f'preview={self.show_preview}')
 
-	def _find_camera_device(self, camera_id_name):
-		by_id_dir = '/dev/v4l/by-id'
-		target = os.path.join(by_id_dir, camera_id_name)
-		if os.path.exists(target):
-			return target
-		matches = glob.glob(os.path.join(by_id_dir, f'*{camera_id_name}*'))
-		if matches:
-			return matches[0]
-		self.get_logger().error(f'Camera not found in {by_id_dir}: {camera_id_name}')
-		raise RuntimeError('Target camera not found')
+
 
 	def _timer_callback(self):
 		ret, frame = self.cap.read()

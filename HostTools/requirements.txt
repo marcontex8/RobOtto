@@ -8,6 +8,8 @@ cv-bridge
 aiohttp
 aiortc
 av
+em
+lark
 
 # ROS2 Python deps (install via ROS2/apt, not pip):
 # rclpy, sensor-msgs, geometry-msgs

@@ -18,8 +18,6 @@ class ArucoPoseDetector(Node):
     def __init__(self):
         super().__init__('aruco_pose_detector')
         self.counter = 0
-        # Real-time processing control
-        self.processing_frame = False
         
         # --- Ground marker world positions (meters) ---
         # Example: marker ID 1 at (0,0), ID 2 at (1,0), ID 3 at (0,1)
@@ -38,13 +36,11 @@ class ArucoPoseDetector(Node):
         self.declare_parameter('aruco_dict', 'DICT_5X5_1000')  # ArUco dictionary
         self.declare_parameter('debug_level', 'DEBUG')  # Debug level
         self.declare_parameter('visualize', True)  # Enable visualization
-        self.declare_parameter('save_debug_images', False)  # Save debug images
         
         self.marker_size = self.get_parameter('marker_size').value
         dict_name = self.get_parameter('aruco_dict').value
         debug_level = self.get_parameter('debug_level').value
         self.visualize = self.get_parameter('visualize').value
-        self.save_debug_images = self.get_parameter('save_debug_images').value
 
         # Setup logging
         self.logger = logging.getLogger('aruco_pose_detector')
@@ -70,7 +66,7 @@ class ArucoPoseDetector(Node):
 
         # Load camera calibration from JSON
         import json, os
-        calib_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'camera_calibration.json')
+        calib_path = '/home/marco/STM32CubeIDE/workspace_1.19.0/Robotto/HostTools/Evaluation/CameraBasedPoseDetection/calibration.json'
         try:
             with open(calib_path, 'r') as f:
                 calib = json.load(f)
@@ -114,32 +110,17 @@ class ArucoPoseDetector(Node):
         """Process only the most recent image, drop older ones if still processing."""
         self.counter += 1
         print(f'Received image #{self.counter}')
-        if self.processing_frame:
-            # Drop this frame, still processing previous
-            return
-        self.processing_frame = True
         self.frame_count += 1
         if self.frame_count % 100 == 0:
             self.get_logger().info(f'Frame {self.frame_count} received')
         try:
-            cv_image = self._ros_image_to_gray(msg)
-            if cv_image is not None:
-                self._process_frame(cv_image)
+            cv_image = self.bridge.imgmsg_to_cv2(msg)
+            self._process_frame(cv_image)
         except Exception as e:
             self.get_logger().error(
                 f'Error processing image (frame {self.frame_count}): {e}\n'
                 f'{traceback.format_exc()}')
-        finally:
-            self.processing_frame = False
 
-    def _ros_image_to_gray(self, msg):
-        try:
-            cv_image = self.bridge.imgmsg_to_cv2(msg)
-            #cv_image = cv2.cvtColor(cv_image, cv2.COLOR_BGR2GRAY)
-            return cv_image
-        except Exception as convert_error:
-            self.get_logger().info(f'Failed ros image conversion: {convert_error}')
-            return None
 
     def _detect_markers(self, cv_image):
         detect_start = time.time()
@@ -173,58 +154,6 @@ class ArucoPoseDetector(Node):
                     marker_poses[marker_id] = (rvec, tvec)
         return marker_poses
 
-    def _update_camera_to_ground(self, marker_poses):
-        visible_ground = [mid for mid in marker_poses if mid in self.ground_marker_ids]
-        if len(visible_ground) >= 2:
-            cam_pts = []
-            world_pts = []
-            for mid in visible_ground:
-                tvec = marker_poses[mid][1].flatten()
-                cam_pts.append(tvec[:2])
-                world_pts.append(self.ground_markers_world[mid])
-            cam_pts = np.array(cam_pts)
-            world_pts = np.array(world_pts)
-            cam_mean = np.mean(cam_pts, axis=0)
-            world_mean = np.mean(world_pts, axis=0)
-            cam_pts_c = cam_pts - cam_mean
-            world_pts_c = world_pts - world_mean
-            H = cam_pts_c.T @ world_pts_c
-            U, S, Vt = np.linalg.svd(H)
-            R_2d = Vt.T @ U.T
-            if np.linalg.det(R_2d) < 0:
-                Vt[1, :] *= -1
-                R_2d = Vt.T @ U.T
-            t_2d = world_mean - R_2d @ cam_mean
-            self.camera_to_ground_R = R_2d
-            self.camera_to_ground_t = t_2d
-            self.get_logger().info(f"Camera-to-ground transform updated (using {len(visible_ground)} ground markers)")
-
-    def _output_robot_pose(self, marker_poses):
-        if self.camera_to_ground_R is not None and self.robot_marker_id in marker_poses:
-            tvec = marker_poses[self.robot_marker_id][1].flatten()
-            rvec = marker_poses[self.robot_marker_id][0].flatten()
-            robot_cam_xy = tvec[:2]
-            robot_ground_xy = self.camera_to_ground_R @ robot_cam_xy + self.camera_to_ground_t
-            R_robot, _ = cv2.Rodrigues(rvec)
-            theta_cam = np.arctan2(R_robot[1, 0], R_robot[0, 0])
-            theta_rot = np.arctan2(self.camera_to_ground_R[1, 0], self.camera_to_ground_R[0, 0])
-            theta_ground = theta_rot + theta_cam
-            # Publish as PoseStamped
-            pose_msg = PoseStamped()
-            pose_msg.header.stamp = self.get_clock().now().to_msg()
-            pose_msg.header.frame_id = "ground"
-            pose_msg.pose.position.x = float(robot_ground_xy[0])
-            pose_msg.pose.position.y = float(robot_ground_xy[1])
-            pose_msg.pose.position.z = 0.0
-            # Convert theta_ground to quaternion (2D yaw)
-            qz = np.sin(theta_ground / 2.0)
-            qw = np.cos(theta_ground / 2.0)
-            pose_msg.pose.orientation.x = 0.0
-            pose_msg.pose.orientation.y = 0.0
-            pose_msg.pose.orientation.z = qz
-            pose_msg.pose.orientation.w = qw
-            self.robot_pose_pub.publish(pose_msg)
-            self.get_logger().info(f"Published robot pose: x={robot_ground_xy[0]:.3f}, y={robot_ground_xy[1]:.3f}, theta={theta_ground:.3f} rad")
 
     def _process_frame(self, cv_image):
         frame_start_time = time.time()
@@ -232,12 +161,8 @@ class ArucoPoseDetector(Node):
         marker_poses = self._estimate_marker_poses(corners, ids)
         if self.frame_count % 100 == 0:
             self.get_logger().info(f'Frame {self.frame_count}: Found {len(marker_poses)} markers')
-        self._update_camera_to_ground(marker_poses)
-        self._output_robot_pose(marker_poses)
         if self.visualize:
             self._visualize_detections(cv_image, corners, ids)
-        if self.save_debug_images:
-            self._save_debug_image(cv_image, corners, ids, self.frame_count)
         frame_total_time = time.time() - frame_start_time
         if self.frame_count % 100 == 0:
             self.get_logger().info(f'Total frame processing: {frame_total_time*1000:.2f}ms')
@@ -259,18 +184,7 @@ class ArucoPoseDetector(Node):
             self.get_logger().debug('Visualization image displayed')
         except Exception as e:
             self.get_logger().warn(f'Visualization failed: {e}')
-    
-    def _save_debug_image(self, cv_image, corners, ids, frame_num):
-        """Save debug image with detections."""
-        try:
-            if ids is not None and len(ids) > 0:
-                cv_image_color = cv2.cvtColor(cv_image, cv2.COLOR_GRAY2BGR)
-                cv_image_vis = cv2.aruco.drawDetectedMarkers(cv_image_color, corners, ids)
-                filename = f'aruco_debug_{frame_num:06d}.png'
-                cv2.imwrite(filename, cv_image_vis)
-                self.get_logger().info(f'Saved debug image: {filename}')
-        except Exception as e:
-            self.get_logger().warn(f'Debug image save failed: {e}')
+
 
 def main(args=None):
     # Setup console logging

@@ -11,6 +11,12 @@ python -m venv .venv
 ./.venv/bin/python -m pip install -r HostTools/requirements.txt
 ```
 
+## Simulation
+To choose and verify motion and algorithms a simple python based simulation is available.
+The simulated components mimic the kinematic behavior of the robot and it's sensors.
+Algorimthms are written in python, and than converted to C for the embedded (possibly will be substituted by a software in the loop solution)
+
+
 ## Evaluation tools
 The Evaluation folder contains tools to validate RobOtto behavior, including:
 - MQTT telemetry bridge to ROS2

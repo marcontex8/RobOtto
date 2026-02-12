@@ -3,10 +3,8 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
 import math
-import random
-from simulation_common import Pose, Status, WheelSpeedSetPoint, wrap_to_pi, WHEELS_DISTANCE, WHEELS_RADIUS
+from simulation_common import Pose, KinematicStatus, WheelSpeedSetPoint, wrap_to_pi, WHEELS_DISTANCE, WHEELS_RADIUS
 
 class DifferentialDriveKinematics:
     def __init__(self, pose: Pose) -> None:
@@ -15,8 +13,15 @@ class DifferentialDriveKinematics:
         self._y_dot = 0.0
         self._theta_dot = 0.0
 
-    def get_status(self) -> Status:
-        return Status(
+        self.base_slip = 0.01
+        self.slip_gain = 0.25
+        self.slip_accel_ref = 20.0
+        self.slip_accel_threshold = 5.0
+        self._prev_left = 0.0
+        self._prev_right = 0.0
+
+    def get_status(self) -> KinematicStatus:
+        return KinematicStatus(
             x=self._pose.x,
             y=self._pose.y,
             theta=self._pose.theta,
@@ -27,12 +32,26 @@ class DifferentialDriveKinematics:
 
     def step(self, wheel_speed_setpoint: WheelSpeedSetPoint, dt: float):
         """Advance the pose using wheel angular speeds (rad/s)."""
-        v_left = wheel_speed_setpoint.left * WHEELS_RADIUS
-        v_right = wheel_speed_setpoint.right * WHEELS_RADIUS
+        if dt <= 0.0:
+            return
+
+        left = wheel_speed_setpoint.left
+        right = wheel_speed_setpoint.right
+
+        left_accel = (left - self._prev_left) / dt
+        right_accel = (right - self._prev_right) / dt
+
+        diff_accel = abs(right_accel - left_accel)
+        diff_excess = max(0.0, diff_accel - self.slip_accel_threshold)
+        slip_turn = self.base_slip + self.slip_gain * min(1.0, diff_excess / self.slip_accel_ref)
+
+        v_left = left * WHEELS_RADIUS
+        v_right = right * WHEELS_RADIUS
 
         v = 0.5 * (v_left + v_right)
         omega = (v_right - v_left) / WHEELS_DISTANCE
-
+        omega *= (1.0 - slip_turn)
+        
         self._x_dot = -v * math.sin(self._pose.theta)
         self._y_dot = v * math.cos(self._pose.theta)
         self._theta_dot = omega
@@ -40,42 +59,7 @@ class DifferentialDriveKinematics:
         self._pose.x += self._x_dot * dt
         self._pose.y += self._y_dot * dt
         self._pose.theta = wrap_to_pi(self._pose.theta + omega * dt)
+
+        self._prev_left = left
+        self._prev_right = right
     
-
-class OdometryWithNoise:
-    """Simulated odometry with noise."""
-    def __init__(self, pose: Pose, noise_std: float = 0.01) -> None:
-        self._pose = Pose(pose.x, pose.y, pose.theta)
-        self._noise_std = noise_std
-        self.slippage_factor = 0.1
-
-    def get(self) -> Pose:
-        return Pose(self._pose.x, self._pose.y, self._pose.theta)
-    
-    def step(self, wheel_speed_setpoint: WheelSpeedSetPoint, dt: float):
-        """Advance the pose using wheel angular speeds (rad/s) with noise."""
-        v_left = wheel_speed_setpoint.left * WHEELS_RADIUS * (1.0 - self.slippage_factor) + random.gauss(0.0, self._noise_std)
-        v_right = wheel_speed_setpoint.right * WHEELS_RADIUS * (1.0 - self.slippage_factor) + random.gauss(0.0, self._noise_std)
-
-        v = 0.5 * (v_left + v_right)
-        omega = (v_right - v_left) / WHEELS_DISTANCE
-
-        self._pose.x += -v * math.sin(self._pose.theta) * dt
-        self._pose.y += v * math.cos(self._pose.theta) * dt
-        self._pose.theta = wrap_to_pi(self._pose.theta + omega * dt)
-
-
-
-class GyroscopeWithNoise:
-    """Simulated gyroscope with noise."""
-    def __init__(self, pose: Pose, noise_std: float = 0.01) -> None:
-        self._noise_std = noise_std
-        self._theta = pose.theta
-
-    def get(self) -> float:
-        return self._theta
-    
-    def step(self, angular_velocity: float, dt: float):
-        """Advance the angle using angular velocity (rad/s) with noise."""
-        self._theta += angular_velocity * dt + random.gauss(0.0, self._noise_std)
-        self._theta = wrap_to_pi(self._theta)

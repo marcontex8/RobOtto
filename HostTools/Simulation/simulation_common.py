@@ -9,7 +9,7 @@ class Pose:
     theta: float
 
 @dataclass
-class Status:
+class KinematicStatus:
     x: float
     y: float
     theta: float
@@ -45,16 +45,16 @@ SLIPPAGE_FACTOR = 0.1
 
 # Simulation configuration (hardcoded defaults)
 DT = 0.02
-SIMULATION_DURATION = 120.0
+SIMULATION_DURATION = 60.0
 
 START_POSE = Pose(0.0, 0.0, 0.0)
 
 SQUARE_SIZE = 2.0
 TARGET_POINTS = [
     Pose(0.0, 0.0, 0.0),
-    Pose(SQUARE_SIZE, 0.0, 0.0),
-    Pose(SQUARE_SIZE, SQUARE_SIZE, 0.0),
     Pose(0.0, SQUARE_SIZE, 0.0),
+    Pose(SQUARE_SIZE, SQUARE_SIZE, 0.0),
+    Pose(SQUARE_SIZE, 0.0, 0.0),
     Pose(0.0, 0.0, 0.0),
 ]
 

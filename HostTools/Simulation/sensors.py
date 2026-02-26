@@ -4,7 +4,7 @@ import math
 
 class OdometryWithNoise:
     """Simulated odometry with noise."""
-    def __init__(self, pose: Pose, noise_std: float = 0.01) -> None:
+    def __init__(self, pose: Pose, noise_std: float = 0.1) -> None:
         self._pose = Pose(pose.x, pose.y, pose.theta)
         self._noise_std = noise_std
 
@@ -33,7 +33,7 @@ class OdometryWithNoise:
 
 class GyroscopeWithNoise:
     """Simulated gyroscope with noise."""
-    def __init__(self, noise_std: float) -> None:
+    def __init__(self, noise_std: float = 0.2) -> None:
         self._noise_std = noise_std
         self._omega = 0.0
 

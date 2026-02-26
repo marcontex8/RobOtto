@@ -40,7 +40,8 @@ LOOKAHEAD_DISTANCE = 0.4
 POSITION_TOLERANCE = 0.05
 
 # sensor parameters
-NOISE_STD = 0.01
+GYRO_STD = 0.1
+ODOM_STD = 0.01
 SLIPPAGE_FACTOR = 0.1
 
 # Simulation configuration (hardcoded defaults)
@@ -52,10 +53,7 @@ START_POSE = Pose(0.0, 0.0, 0.0)
 SQUARE_SIZE = 2.0
 TARGET_POINTS = [
     Pose(0.0, 0.0, 0.0),
-    Pose(0.0, SQUARE_SIZE, 0.0),
-    Pose(SQUARE_SIZE, SQUARE_SIZE, 0.0),
-    Pose(SQUARE_SIZE, 0.0, 0.0),
-    Pose(0.0, 0.0, 0.0),
+    Pose(0.0, 10.0, 0.0),
 ]
 
 TARGET_POSE = TARGET_POINTS[-1]

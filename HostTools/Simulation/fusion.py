@@ -69,12 +69,10 @@ class HeadingKalmanFilter:
 
 class SlipDetector:
     def __init__(self):
-        self.slip_threshold = 0.3
-        pass
+        self.slip_threshold = 0.2
 
     def detect_slip(self, angular_velocity_from_odometry: float, angular_velocity_from_gyro: float) -> bool:
-        if abs(angular_velocity_from_odometry) < 0.01:
-            return False
-        slip_ratio = abs(angular_velocity_from_gyro - angular_velocity_from_odometry) / abs(angular_velocity_from_odometry)
-        return slip_ratio > self.slip_threshold
+        if abs(angular_velocity_from_odometry) > 0.2:
+            return True
+        #return abs(angular_velocity_from_gyro - angular_velocity_from_odometry) > self.slip_threshold
         

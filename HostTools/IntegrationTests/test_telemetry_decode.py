@@ -26,6 +26,9 @@ class TestTelemetryDecode(unittest.TestCase):
         left,
         right,
         active,
+        detection_timestamp,
+        detection_distance_m,
+        detection_servo_angle,
         places=5,
     ):
         telemetry = decode_telemetry_payload(payload)
@@ -40,10 +43,13 @@ class TestTelemetryDecode(unittest.TestCase):
         self.assertAlmostEqual(left, telemetry['wheel_speed_setpoint_left'], places=places)
         self.assertAlmostEqual(right, telemetry['wheel_speed_setpoint_right'], places=places)
         self.assertEqual(active, telemetry['wheel_speed_setpoint_active'])
+        self.assertEqual(detection_timestamp, telemetry['object_detection_timestamp'])
+        self.assertAlmostEqual(detection_distance_m, telemetry['object_detection_distance_m'], places=places)
+        self.assertAlmostEqual(detection_servo_angle, telemetry['object_detection_servo_angle'], places=places)
 
     def test_decode_telemetry_zero(self):
         self.assertTelemetry(
-            b"AgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            b"AwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
             0,
             0.0,
             0.0,
@@ -55,11 +61,14 @@ class TestTelemetryDecode(unittest.TestCase):
             0.0,
             0.0,
             False,
+            0,
+            0.0,
+            0.0,
         )
 
     def test_decode_telemetry_negative_values(self):
         self.assertTelemetry(
-            b"AioAAAAAAMC/AAAQQAAAYMBkAAAAAACAwAAAsEAAANDAAAAAwAAAQEAB",
+            b"AyoAAAAAAMC/AAAQQAAAYMBkAAAAAACAwAAAsEAAANDAAAAAwAAAQEABTQAAAAAAoD8AADTC",
             42,
             -1.5,
             2.25,
@@ -71,11 +80,14 @@ class TestTelemetryDecode(unittest.TestCase):
             -2.0,
             3.0,
             True,
+            77,
+            1.25,
+            -45.0,
         )
 
     def test_decode_telemetry_max_timestamp(self):
         self.assertTelemetry(
-            b"Av////8AAPZCAAA2wgAAAD4HAAAAAACAPwAAAEAAAEBAAAAgQQAAMMEA",
+            b"A/////8AAPZCAAA2wgAAAD4HAAAAAACAPwAAAEAAAEBAAAAgQQAAMMEAoA8AAAAAIEAAALJC",
             4294967295,
             123.0,
             -45.5,
@@ -87,6 +99,9 @@ class TestTelemetryDecode(unittest.TestCase):
             10.0,
             -11.0,
             False,
+            4000,
+            2.5,
+            89.0,
         )
 
 

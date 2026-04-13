@@ -10,9 +10,8 @@
 
 #include "at_command_writer.h"
 
-#define TELEMETRY_BINARY_VERSION 2u
-#define TELEMETRY_POSE_BINARY_SIZE 17
-#define TELEMETRY_V2_BINARY_SIZE 42
+#define TELEMETRY_BINARY_VERSION 1u
+#define TELEMETRY_BINARY_SIZE 54
 
 static int write_u32_le(uint8_t *out, int out_size, uint32_t value)
 {
@@ -37,12 +36,13 @@ static int write_float_le(uint8_t *out, int out_size, float value)
 static int serializeTelemetryBinary(const RobottoPose *pose,
                                     const RobottoPose *target_pose,
                                     const WheelSpeedSetPoint *speed_set_point,
+                                    const RobottoDetectionTelemetry *detection_telemetry,
                                     uint8_t *out,
                                     int out_size)
 {
     int off = 0;
 
-    if (out_size < TELEMETRY_V2_BINARY_SIZE) {
+    if (out_size < TELEMETRY_BINARY_SIZE) {
         return -1;
     }
 
@@ -110,6 +110,24 @@ static int serializeTelemetryBinary(const RobottoPose *pose,
 
     out[off++] = speed_set_point->active ? 1u : 0u;
 
+    written = write_u32_le(out + off, out_size - off, (uint32_t)detection_telemetry->timestamp);
+    if (written < 0) {
+        return -1;
+    }
+    off += written;
+
+    written = write_float_le(out + off, out_size - off, detection_telemetry->distance_m);
+    if (written < 0) {
+        return -1;
+    }
+    off += written;
+
+    written = write_float_le(out + off, out_size - off, detection_telemetry->servo_angle);
+    if (written < 0) {
+        return -1;
+    }
+    off += written;
+
     return off;
 }
 
@@ -152,19 +170,20 @@ static int base64Encode(const uint8_t *in, int in_len, char *out, int out_size)
 int atMqttPubFromTelemetry(const RobottoPose *pose,
                       const RobottoPose *target_pose,
                       const WheelSpeedSetPoint *speed_set_point,
+                      const RobottoDetectionTelemetry *detection_telemetry,
                       const char *topic,
                       char *out,
                       int max_out_size)
 {
     int off = 0;
 
-    uint8_t payload[TELEMETRY_V2_BINARY_SIZE];
-    int payload_len = serializeTelemetryBinary(pose, target_pose, speed_set_point, payload, sizeof(payload));
+    uint8_t payload[TELEMETRY_BINARY_SIZE];
+    int payload_len = serializeTelemetryBinary(pose, target_pose, speed_set_point, detection_telemetry, payload, sizeof(payload));
     if (payload_len < 0) {
         return -1;
     }
 
-    char payload_b64[96];
+    char payload_b64[128];
     int payload_b64_len = base64Encode(payload, payload_len, payload_b64, sizeof(payload_b64));
     if (payload_b64_len < 0) {
         return -1;

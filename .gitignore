@@ -74,3 +74,10 @@ Thumbs.db
 # Logs
 ############################
 *.log
+
+############################
+# Foxglove extension
+############################
+HostTools/FoxgloveExtensions/robotto-extension/node_modules/
+HostTools/FoxgloveExtensions/robotto-extension/dist/
+HostTools/FoxgloveExtensions/robotto-extension/package-lock.json

@@ -6,7 +6,18 @@
  */
 #include "robotto_common.h"
 
+#include "FreeRTOS.h"
+#include "queue.h"
+
+extern QueueHandle_t robotto_object_detection_telemetry_queue_handle;
+
 void addDetection(TickType_t time, float distance, float servo_angle)
 {
-	// TODO: implement
+	RobottoDetectionTelemetry detection = {
+		.timestamp = time,
+		.distance_m = distance,
+		.servo_angle = servo_angle,
+	};
+
+	xQueueOverwrite(robotto_object_detection_telemetry_queue_handle, &detection);
 }

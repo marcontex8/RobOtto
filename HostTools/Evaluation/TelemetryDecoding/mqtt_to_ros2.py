@@ -2,8 +2,8 @@ import rclpy
 from rclpy.node import Node
 from rclpy.time import Time
 
-from geometry_msgs.msg import PoseStamped
-from std_msgs.msg import Float32MultiArray
+from geometry_msgs.msg import PoseStamped, PointStamped
+from std_msgs.msg import Float32, Float32MultiArray
 
 import paho.mqtt.client as mqtt
 import math
@@ -17,6 +17,9 @@ class MqttToRos2Node(Node):
         self.robotto_pose_publisher_ = self.create_publisher(PoseStamped, '/RobOtto/pose', 10)
         self.target_pose_publisher_ = self.create_publisher(PoseStamped, '/RobOtto/target_pose', 10)
         self.wheels_speed_setpoint_publisher_ = self.create_publisher(Float32MultiArray, '/RobOtto/wheels_speed_setpoint', 10)
+        self.detection_distance_publisher_ = self.create_publisher(Float32, '/RobOtto/detection/distance_m', 10)
+        self.detection_servo_angle_publisher_ = self.create_publisher(Float32, '/RobOtto/detection/servo_angle', 10)
+        self.detection_point_publisher_ = self.create_publisher(PointStamped, '/RobOtto/detection/point', 10)
 
         self.declare_parameter('frame_id', 'map')
         self._frame_id = self.get_parameter('frame_id').get_parameter_value().string_value
@@ -61,7 +64,27 @@ class MqttToRos2Node(Node):
                 telemetry['wheel_speed_setpoint_right'],
                 1.0 if telemetry['wheel_speed_setpoint_active'] else 0.0,
             ]
-            self.wheels_speed_setpoint_publisher_.publish(speed_setpoint_msg)   
+            self.wheels_speed_setpoint_publisher_.publish(speed_setpoint_msg)
+
+            detection_distance_m = telemetry['object_detection_distance_m']
+            detection_servo_angle_deg = telemetry['object_detection_servo_angle']
+            detection_servo_angle_rad = math.radians(detection_servo_angle_deg)
+
+            distance_msg = Float32()
+            distance_msg.data = detection_distance_m
+            self.detection_distance_publisher_.publish(distance_msg)
+
+            servo_angle_msg = Float32()
+            servo_angle_msg.data = detection_servo_angle_deg
+            self.detection_servo_angle_publisher_.publish(servo_angle_msg)
+
+            detection_point_msg = PointStamped()
+            detection_point_msg.header.frame_id = self._frame_id
+            detection_point_msg.header.stamp = self.get_clock().now().to_msg()
+            detection_point_msg.point.x = detection_distance_m * math.cos(detection_servo_angle_rad)
+            detection_point_msg.point.y = detection_distance_m * math.sin(detection_servo_angle_rad)
+            detection_point_msg.point.z = 0.0
+            self.detection_point_publisher_.publish(detection_point_msg)
 
             self.get_logger().info('Published telemetry')
         except Exception as e:

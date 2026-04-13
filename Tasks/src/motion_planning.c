@@ -18,7 +18,7 @@ extern QueueHandle_t behavior_queue_handle;
 extern QueueHandle_t robotto_pose_queue_handle;
 extern QueueHandle_t wheels_speed_set_points_queue_handle;
 
-extern QueueHandle_t robotto_telemetry_queue_handle;
+extern QueueHandle_t robotto_motion_telemetry_queue_handle;
 
 static const char* last_error = NULL;
 
@@ -93,12 +93,12 @@ ActivityStatus motionPlanningStatusRunning()
 		SEGGER_SYSVIEW_WarnfTarget("%s\n", last_error);
 	}
 
-	RobottoAggregatedTelemetry aggregated_telemetry = {
+	RobottoMotionTelemetry motion_telemetry = {
 			.pose = estimated_pose,
 			.target_pose = *getCurrentTargetPose(),
 			.speed_set_point = speed_set_point
 	};
-	xQueueOverwrite(robotto_telemetry_queue_handle, &aggregated_telemetry);
+	xQueueOverwrite(robotto_motion_telemetry_queue_handle, &motion_telemetry);
 	return ACTIVITY_STATUS_RUNNING;
 }
 

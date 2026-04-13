@@ -50,6 +50,12 @@ typedef struct {
 
 typedef struct {
 	TickType_t timestamp;
+	float distance_m;
+	float servo_angle;
+} RobottoDetectionTelemetry;
+
+typedef struct {
+	TickType_t timestamp;
     float acc_x;
     float acc_y;
     float acc_z;
@@ -68,6 +74,11 @@ typedef struct {
 	RobottoPose pose;
 	RobottoPose target_pose;
 	WheelSpeedSetPoint speed_set_point;
+} RobottoMotionTelemetry;
+
+typedef struct {
+	RobottoMotionTelemetry motion_telemetry;
+	RobottoDetectionTelemetry detection_telemetry;
 } RobottoAggregatedTelemetry;
 
 #ifdef DEBUG

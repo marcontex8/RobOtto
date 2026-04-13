@@ -29,6 +29,34 @@
       "xAxisVal": "timestamp",
       "sidebarDimension": 240
     },
+    "Plot!detect01": {
+      "paths": [
+        {
+          "timestampMethod": "receiveTime",
+          "value": "/RobOtto/detection/distance_m.data",
+          "enabled": true,
+          "color": "#e25f4e",
+          "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+          "label": "Distance (m)"
+        },
+        {
+          "timestampMethod": "receiveTime",
+          "value": "/RobOtto/detection/servo_angle.data",
+          "enabled": true,
+          "color": "#4ee2a1",
+          "id": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+          "label": "Servo Angle (deg)"
+        }
+      ],
+      "showXAxisLabels": true,
+      "showYAxisLabels": true,
+      "showLegend": true,
+      "legendDisplay": "floating",
+      "showPlotValuesInLegend": false,
+      "isSynced": true,
+      "xAxisVal": "timestamp",
+      "sidebarDimension": 240
+    },
     "3D!2evdt39": {
       "layers": {
         "845139cb-26bc-40b3-8161-8ab60af4baf5": {
@@ -101,7 +129,11 @@
         },
         "/RobOtto/target_pose": {
           "visible": true,
-          "type": "axis"
+          "schemaName": "foxglove.SceneUpdate"
+        },
+        "/RobOtto/detection/point": {
+          "visible": true,
+          "schemaName": "foxglove.SceneUpdate"
         }
       },
       "publish": {
@@ -127,8 +159,18 @@
   },
   "layout": {
     "first": "Plot!2bhwxvi",
-    "second": "3D!2evdt39",
+    "second": {
+      "first": "Plot!detect01",
+      "second": {
+        "first": "3D!2evdt39",
+        "second": "RobOtto Detection Sweep!sweep01",
+        "direction": "row",
+        "splitPercentage": 58
+      },
+      "direction": "column",
+      "splitPercentage": 30
+    },
     "direction": "column",
-    "splitPercentage": 29.16646989374262
+    "splitPercentage": 20
   }
 }

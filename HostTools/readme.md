@@ -61,3 +61,35 @@ python3 calibrate_camera.py --image-dir PoseDetection/PhoneCameraStreamer/calib_
 ```
 
 
+## Foxglove Extension
+
+The `FoxgloveExtensions/robotto-extension` package provides custom Foxglove panels and converters for visualising RobOtto telemetry (target pose, detection sweep).
+
+### Install dependencies
+```bash
+cd HostTools/FoxgloveExtensions/robotto-extension
+npm install
+```
+
+### Build
+```bash
+npm run build
+```
+
+This compiles the TypeScript sources and outputs `dist/extension.js`.
+
+### Install into Foxglove (automatic local install)
+```bash
+npm run local-install
+```
+
+This copies the packaged extension into the Foxglove local extensions directory (`~/.foxglove/extensions/` on Linux). The next time you open the Foxglove desktop app the extension will be loaded automatically — no manual import step needed.
+
+### Package for distribution (optional)
+```bash
+npm run package
+```
+
+This creates a `.foxe` archive that can be shared and installed on other machines via **Foxglove → Extensions → Install from file**.
+
+

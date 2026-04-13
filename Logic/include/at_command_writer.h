@@ -13,6 +13,7 @@
 int atMqttPubFromTelemetry(const RobottoPose *pose,
                       const RobottoPose *target_pose,
                       const WheelSpeedSetPoint *speed_set_point,
+                      const RobottoDetectionTelemetry *detection_telemetry,
                       const char *topic,
                       char *out,
                       int max_out_size);

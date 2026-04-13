@@ -143,7 +143,7 @@ ActivityStatus runWheelsControlStatusRunning(WheelStatus* left_wheel_status, Whe
 		SEGGER_SYSVIEW_WarnfTarget("%s\n", last_error);
 	}
 
-	SEGGER_SYSVIEW_PrintfTarget("Measured speed: (left: %d, right: %d)\n", (int)(1000*left_wheel_status->filtered_speed),  (int)(1000*right_wheel_status->filtered_speed));
+	//SEGGER_SYSVIEW_PrintfTarget("Measured speed: (left: %d, right: %d)\n", (int)(1000*left_wheel_status->filtered_speed),  (int)(1000*right_wheel_status->filtered_speed));
 
 	return ACTIVITY_STATUS_RUNNING;
 }

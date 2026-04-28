@@ -28,7 +28,7 @@ void runCommunicationManagerStateMachine()
     	CommunicationEvent event;
         if (getNextCommunicationEvent(&event))
         {
-    		//SEGGER_SYSVIEW_PrintfHost("Event: %s", eventToString(event.id));
+    		SEGGER_SYSVIEW_PrintfHost("Event: %s", eventToString(event.id));
     		handleCommunicationEvent(&event);
         }
     }

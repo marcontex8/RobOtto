@@ -48,8 +48,6 @@ __pycache__/
 ############################
 .metadata/
 .settings/
-*.project
-*.cproject
 *.launch
 
 ############################

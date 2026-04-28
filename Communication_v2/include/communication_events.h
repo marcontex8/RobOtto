@@ -10,6 +10,10 @@
 
 #include <stdint.h>
 #include <stddef.h>
+#include <stdbool.h>
+
+#include "FreeRTOS.h"
+#include "queue.h"
 
 typedef enum{
 	EVENT_UART_TX_REQUEST,
@@ -105,6 +109,9 @@ void uart_rx_handleEvent(const CommunicationEvent* event);
 void uart_tx_handleEvent(const CommunicationEvent* event);
 void telemetry_handleEvent(const CommunicationEvent* event);
 
+void setEventsQueue(QueueHandle_t communication_queue);
+
+bool getNextCommunicationEvent(CommunicationEvent* event);
 void handleCommunicationEvent(const CommunicationEvent* event);
 
 #endif /* COMMUNICATION_EVENTS_H_ */

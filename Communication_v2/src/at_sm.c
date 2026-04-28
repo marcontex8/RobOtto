@@ -63,7 +63,7 @@ void makeNewTxRequest(const CommunicationEventData* data)
 	latest_request = data->at_request.request_id;
 
 	// crop message if it's too long to fit buffer and termination chars. Should never happen
-	ROBOTTO_ASSERT(size <= REQUEST_BUFFER_SIZE-2);
+	ROBOTTO_ASSERT_DEBUG(size <= REQUEST_BUFFER_SIZE-2);
 	if(size > REQUEST_BUFFER_SIZE-2)
 	{
 		size = REQUEST_BUFFER_SIZE-2;

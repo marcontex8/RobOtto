@@ -90,9 +90,9 @@ typedef struct {
 
 
 #ifdef DEBUG
-	#define ROBOTTO_ASSERT(expr) do { configASSERT(expr); } while(0)
+	#define ROBOTTO_ASSERT_DEBUG(expr) do { configASSERT(expr); } while(0)
 #else
-	#define ROBOTTO_ASSERT(expr) ((void)0)
+	#define ROBOTTO_ASSERT_DEBUG(expr) ((void)0)
 #endif
 
 

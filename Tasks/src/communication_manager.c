@@ -14,7 +14,10 @@
 
 #include "robotto_conf.h"
 
-extern QueueHandle_t robotto_communication_queue_handle;
+void setCommunicationManagerQueue(QueueHandle_t communication_queue)
+{
+    setEventsQueue(communication_queue);
+}
 
 void runCommunicationManagerStateMachine()
 {
@@ -23,7 +26,7 @@ void runCommunicationManagerStateMachine()
     for (;;)
     {
     	CommunicationEvent event;
-        if (xQueueReceive(robotto_communication_queue_handle, &event, portMAX_DELAY))
+        if (getNextCommunicationEvent(&event))
         {
     		//SEGGER_SYSVIEW_PrintfHost("Event: %s", eventToString(event.id));
     		handleCommunicationEvent(&event);

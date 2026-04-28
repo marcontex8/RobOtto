@@ -7,10 +7,23 @@
 
 
 #include "communication_events.h"
-#include "FreeRTOS.h"
-#include "queue.h"
+#include "robotto_common.h"
 
-extern QueueHandle_t robotto_communication_queue_handle;
+static QueueHandle_t comm_events_queue;
+
+void setEventsQueue(QueueHandle_t communication_queue)
+{
+    if (comm_events_queue == NULL)
+    {
+        comm_events_queue = communication_queue;
+    }
+}
+
+QueueHandle_t getEventsQueue()
+{
+    ROBOTTO_ASSERT_DEBUG(comm_events_queue != NULL);
+    return comm_events_queue;
+}
 
 const char* eventToString(CommunicationEventId event)
 {
@@ -36,7 +49,7 @@ const char* eventToString(CommunicationEventId event)
 void postNewCommunicationEvent(CommunicationEventId event_id, CommunicationEventData data)
 {
 	CommunicationEvent event = {.data = data, .id = event_id};
-	xQueueSendToBack(robotto_communication_queue_handle, &event, 0);
+	xQueueSendToBack(getEventsQueue(), &event, 0);
 }
 
 void postNewCommunicationEventWithNoData(CommunicationEventId event_id)
@@ -48,13 +61,18 @@ void postNewCommunicationEventWithNoData(CommunicationEventId event_id)
 void postNewCommunicationEventFromISR(CommunicationEventId event_id, CommunicationEventData data)
 {
 	CommunicationEvent event = {.data = data, .id = event_id};
-	xQueueSendToBackFromISR(robotto_communication_queue_handle, &event, 0);
+	xQueueSendToBackFromISR(getEventsQueue(), &event, 0);
 }
 
 void postNewCommunicationEventFromISRWithNoData(CommunicationEventId event_id)
 {
 	CommunicationEventData empty_data = {NULL};
 	postNewCommunicationEventFromISR(event_id, empty_data);
+}
+
+bool getNextCommunicationEvent(CommunicationEvent* event)
+{
+    return xQueueReceive(getEventsQueue(), event, portMAX_DELAY) == pdTRUE;
 }
 
 

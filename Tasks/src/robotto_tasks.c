@@ -22,23 +22,24 @@
 
 #include "main.h"
 
-extern void runWheelsControlStateMachine();
+void runWheelsControlStateMachine();
 #define WHEELS_CONTROL_PERIOD_MS 10
 #define WHEELS_CONTROL_PRIORITY 10
 
-extern void runPoseEstimationStateMachine();
+void runPoseEstimationStateMachine();
 #define POSE_ESTIMATION_PERIOD_MS 20
 #define POSE_ESTIMATION_PRIORITY 8
 
-extern void runObjectDetectionStateMachine();
+void runObjectDetectionStateMachine();
 #define OBJECT_DETECTION_PERIOD_MS 30
 #define OBJECT_DETECTION_PRIORITY 6
 
-extern void runMotionPlanningStateMachine();
+void runMotionPlanningStateMachine();
 #define MOTION_PLANNING_PERIOD_MS 50
 #define MOTION_PLANNING_PRIORITY 4
 
-extern void runCommunicationManagerStateMachine();
+void setCommunicationManagerQueue(QueueHandle_t communication_queue);
+void runCommunicationManagerStateMachine();
 #define COMMUNICATION_MANAGER_PERIOD_MS 100
 #define COMMUNICATION_MANAGER_PRIORITY 2
 
@@ -174,6 +175,7 @@ void poseEstimationTask(void *argument)
 
 void communicationManagerTask(void *argument)
 {
+	setCommunicationManagerQueue(robotto_communication_queue_handle);
 	const TickType_t period = pdMS_TO_TICKS(COMMUNICATION_MANAGER_PERIOD_MS);
 
 	for (;;)

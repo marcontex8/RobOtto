@@ -6,45 +6,45 @@
 #ifndef COMMUNICATION_SRC_COMMUNICATION_EVENTS_H
 #define COMMUNICATION_SRC_COMMUNICATION_EVENTS_H
 
-#include <stdint.h>
-#include <stddef.h>
 #include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
 
 #include "FreeRTOS.h"
 #include "queue.h"
 
-typedef enum{
-	EVENT_UART_TX_REQUEST,
-	EVENT_UART_TX_COMPLETE,
-	EVENT_UART_TX_ERROR,
+typedef enum
+{
+    EVENT_UART_TX_REQUEST,
+    EVENT_UART_TX_COMPLETE,
+    EVENT_UART_TX_ERROR,
 
-	EVENT_UART_RX_START_REQUEST,
-	EVENT_UART_RX_STARTED,
-	EVENT_UART_RX_ERROR,
-	EVENT_UART_RX_NEW_DATA_RECEIVED,
+    EVENT_UART_RX_START_REQUEST,
+    EVENT_UART_RX_STARTED,
+    EVENT_UART_RX_ERROR,
+    EVENT_UART_RX_NEW_DATA_RECEIVED,
 
-	EVENT_AT_NEW_REQUEST,
-	EVENT_AT_REQUEST_COMPLETE,
-	EVENT_AT_REQUEST_TIMEOUT, // only AT internal, will trigger a REQUEWST_COMPLETE
+    EVENT_AT_NEW_REQUEST,
+    EVENT_AT_REQUEST_COMPLETE,
+    EVENT_AT_REQUEST_TIMEOUT,  // only AT internal, will trigger a
+                               // REQUEWST_COMPLETE
 
-	EVENT_CONNECTION_INIT,
-	EVENT_CONNECTION_DELAY_EXPIRED, // only internal, used to delay the requests
-	EVENT_CONNECTION_ESTABLISHED,
+    EVENT_CONNECTION_INIT,
+    EVENT_CONNECTION_DELAY_EXPIRED,  // only internal, used to delay the requests
+    EVENT_CONNECTION_ESTABLISHED,
 
-	EVENT_TELEMETRY_TICK,
+    EVENT_TELEMETRY_TICK,
 
-	EVENT_COUNT,
+    EVENT_COUNT,
 } CommunicationEventId;
 
-
-const char* Communication_eventToString(CommunicationEventId event);
-
-
+const char *Communication_eventToString(CommunicationEventId event);
 
 // data of EVENT_UART_TX_REQUEST
-typedef struct{
-	const uint8_t* buffer;
-	size_t size;
+typedef struct
+{
+    const uint8_t *buffer;
+    size_t size;
 } UartTxData;
 
 /**
@@ -53,51 +53,51 @@ typedef struct{
  * If the buffer wraps around there could be a first chuck until the end
  * and a second one starting at the beginning of it.
  */
-typedef struct{
-	const uint8_t* first_chunk_start;
-	size_t first_chunk_size;
-	const uint8_t* second_chunk_start;
-	size_t second_chunk_size;
+typedef struct
+{
+    const uint8_t *first_chunk_start;
+    size_t first_chunk_size;
+    const uint8_t *second_chunk_start;
+    size_t second_chunk_size;
 } UartRxData;
 
-
 // data of EVENT_AT_NEW_REQUEST
-typedef struct{
-	unsigned int request_id;
-	const char* buffer;
+typedef struct
+{
+    unsigned int request_id;
+    const char *buffer;
 } ATRequestData;
 
-
-
-typedef enum{
-	AT_SUCCESS,
-	AT_FAILURE,
+typedef enum
+{
+    AT_SUCCESS,
+    AT_FAILURE,
 } ATResponseResult;
 
 // data of EVENT_AT_REQUEST_COMPLETE
-typedef struct{
-	unsigned int request_id;
-	ATResponseResult response;
+typedef struct
+{
+    unsigned int request_id;
+    ATResponseResult response;
 } ATResponseData;
 
-
-typedef union{
-	void* pointer;
-	UartTxData uart_tx;
-	UartRxData uart_rx;
-	ATRequestData at_request;
-	ATResponseData at_response;
+typedef union
+{
+    void *pointer;
+    UartTxData uart_tx;
+    UartRxData uart_rx;
+    ATRequestData at_request;
+    ATResponseData at_response;
 } CommunicationEventData;
 
-
-typedef struct{
-	const CommunicationEventId id;
-	const CommunicationEventData data;
+typedef struct
+{
+    const CommunicationEventId id;
+    const CommunicationEventData data;
 } CommunicationEvent;
-
 
 void triggerCommunicationInitialization();
 
-void handleCommunicationEvent(const CommunicationEvent* event);
+void handleCommunicationEvent(const CommunicationEvent *event);
 
 #endif /* COMMUNICATION_SRC_COMMUNICATION_EVENTS_H */

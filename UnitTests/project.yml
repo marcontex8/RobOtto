@@ -100,9 +100,10 @@
     - +:test/**
     - -:test/support
   :source:
-    - ../Logic/src/**
+    - ../PlatformIndependent/src/**
   :include:
-    - ../Logic/include/**
+    - ../PlatformIndependent/include/**
+    - ../PlatformIndependent/src/**
     - ../Common/include/**
   :support:
     - test/support

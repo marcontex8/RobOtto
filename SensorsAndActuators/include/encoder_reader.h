@@ -8,13 +8,13 @@
 
 #include <stdbool.h>
 
-#include "stm32f4xx_hal.h"
 #include "robotto_common.h"
+#include "stm32f4xx_hal.h"
 
 #include "sensors_and_actuators_common.h"
 
-
-typedef struct {
+typedef struct
+{
     uint8_t magnet_detected;
     uint8_t too_strong;
     uint8_t too_weak;
@@ -22,8 +22,7 @@ typedef struct {
     float angle;
 } EncoderStatus;
 
-
-RobottoErrorCode readAngleRad(Wheel wheel, float* out);
-RobottoErrorCode readFullEncoder(Wheel wheel, EncoderStatus* out);
+RobottoErrorCode readAngleRad(Wheel wheel, float *out);
+RobottoErrorCode readFullEncoder(Wheel wheel, EncoderStatus *out);
 
 #endif /* SENSORSANDACTUATORS_INCLUDE_ENCODER_READER_H */

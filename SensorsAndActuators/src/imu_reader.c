@@ -4,18 +4,16 @@
  */
 #include "imu_reader.h"
 
-
-#include "i2c_busses.h"
-#include "stm32f4xx_hal.h"
 #include "FreeRTOS.h"
+#include "i2c_busses.h"
 #include "semphr.h"
+#include "stm32f4xx_hal.h"
 
 extern I2C_HandleTypeDef hi2c1;
 extern SemaphoreHandle_t i2c1_mutex;
 
 #define I2C_HANDLE hi2c1
 #define I2C_MUTEX i2c1_mutex
-
 
 #define I2C_MPU6500_ADDRESS 0x68
 
@@ -39,7 +37,7 @@ extern SemaphoreHandle_t i2c1_mutex;
 #define MPU6500_GYRO_ZOUT_L 0x48
 
 #define FIFO_ENABLE 0x23
-#define FIFO_ENABLE_VALUE 0x78 // all gyro + accelerometer
+#define FIFO_ENABLE_VALUE 0x78  // all gyro + accelerometer
 
 #define GYRO_SCALE 250
 #define ACCELEROMETER_SCALE 2 * 9.80665
@@ -48,19 +46,19 @@ extern SemaphoreHandle_t i2c1_mutex;
 
 RobottoErrorCode verifyIMUCommunication()
 {
-	uint8_t whoami = 0;
+    uint8_t whoami = 0;
 
-	if(ROBOTTO_OK != ReadI2C(ROBOTTO_DEVICE_IMU, I2C_MPU6500_ADDRESS, MPU6500_WHOAMI, &whoami, 1))
-	{
-		return ROBOTTO_ERROR;
-	}
+    if (ROBOTTO_OK != ReadI2C(ROBOTTO_DEVICE_IMU, I2C_MPU6500_ADDRESS, MPU6500_WHOAMI, &whoami, 1))
+    {
+        return ROBOTTO_ERROR;
+    }
 
-	if(whoami != 0x70)
-	{
-		SEGGER_SYSVIEW_ErrorfTarget("ERROR - whoami %u\n", &whoami);
-		return ROBOTTO_ERROR;
-	}
-	return ROBOTTO_OK;
+    if (whoami != 0x70)
+    {
+        SEGGER_SYSVIEW_ErrorfTarget("ERROR - whoami %u\n", &whoami);
+        return ROBOTTO_ERROR;
+    }
+    return ROBOTTO_OK;
 }
 
 float toFloat(uint8_t high, uint8_t low, float max_scale)
@@ -69,14 +67,15 @@ float toFloat(uint8_t high, uint8_t low, float max_scale)
     return ((float)tmp) / 32768.0f * max_scale;
 }
 
-RobottoErrorCode readIMUData(ImuData* out)
+RobottoErrorCode readIMUData(ImuData *out)
 {
-	uint8_t rawImu[14];
+    uint8_t rawImu[14];
 
-	if(ROBOTTO_OK != ReadI2C(ROBOTTO_DEVICE_IMU, I2C_MPU6500_ADDRESS, MPU6500_ACCEL_XOUT_H, rawImu, 14))
-	{
-		return ROBOTTO_ERROR;
-	}
+    if (ROBOTTO_OK !=
+        ReadI2C(ROBOTTO_DEVICE_IMU, I2C_MPU6500_ADDRESS, MPU6500_ACCEL_XOUT_H, rawImu, 14))
+    {
+        return ROBOTTO_ERROR;
+    }
 
     out->acc_x = toFloat(rawImu[0], rawImu[1], ACCELEROMETER_SCALE);
     out->acc_y = toFloat(rawImu[2], rawImu[3], ACCELEROMETER_SCALE);
@@ -87,4 +86,3 @@ RobottoErrorCode readIMUData(ImuData* out)
     out->gyro_z = toFloat(rawImu[12], rawImu[13], GYRO_SCALE);
     return ROBOTTO_OK;
 }
-

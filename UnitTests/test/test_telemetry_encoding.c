@@ -6,13 +6,16 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "unity.h"
 #include "at_command_writer.h"
 #include "serializer.h"
+#include "unity.h"
 
-void setUp(void) {}
-void tearDown(void) {}
-
+void setUp(void)
+{
+}
+void tearDown(void)
+{
+}
 
 static void assertPoseMqttPublication(const RobottoPose *pose,
                                       const RobottoPose *target_pose,
@@ -22,17 +25,19 @@ static void assertPoseMqttPublication(const RobottoPose *pose,
 {
     char buffer[256];
     const char *topic = "RobOtto/pose";
-    int length = getATMqttPubTelemetryMessage(pose, target_pose, speed_set_point, detection_telemetry, topic, buffer, sizeof(buffer));
+    int length = makeATMQTTPubTelemetryMessage(
+        pose, target_pose, speed_set_point, detection_telemetry, topic, buffer, sizeof(buffer));
 
     char expected_command[256];
-    snprintf(expected_command, sizeof(expected_command),
+    snprintf(expected_command,
+             sizeof(expected_command),
              "AT+MQTTPUB=0,\"%s\",\"%s\",0,0",
-             topic, expected_payload);
+             topic,
+             expected_payload);
 
     TEST_ASSERT_EQUAL_INT((int)strlen(expected_command), length);
     TEST_ASSERT_EQUAL_STRING(expected_command, buffer);
 }
-
 
 void test_PoseMqttPublication_Zero()
 {
@@ -44,7 +49,12 @@ void test_PoseMqttPublication_Zero()
     pose.x = 0.0f;
     pose.y = 0.0f;
     pose.theta = 0.0f;
-    assertPoseMqttPublication(&pose, &target_pose, &speed_set_point, &detection_telemetry, "AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+    assertPoseMqttPublication(&pose,
+                              &target_pose,
+                              &speed_set_point,
+                              &detection_telemetry,
+                              "AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+                              "AAAAAAAAAAAAAAAAAAAAAA");
 }
 
 void test_PoseMqttPublication_NegativeValues()
@@ -67,7 +77,12 @@ void test_PoseMqttPublication_NegativeValues()
     detection_telemetry.timestamp = 77;
     detection_telemetry.distance_m = 1.25f;
     detection_telemetry.servo_angle = -45.0f;
-    assertPoseMqttPublication(&pose, &target_pose, &speed_set_point, &detection_telemetry, "ASoAAAAAAMC/AAAQQAAAYMBkAAAAAACAwAAAsEAAANDAAAAAwAAAQEABTQAAAAAAoD8AADTC");
+    assertPoseMqttPublication(&pose,
+                              &target_pose,
+                              &speed_set_point,
+                              &detection_telemetry,
+                              "ASoAAAAAAMC/"
+                              "AAAQQAAAYMBkAAAAAACAwAAAsEAAANDAAAAAwAAAQEABTQAAAAAAoD8AADTC");
 }
 
 void test_PoseMqttPublication_MaxTimestamp()
@@ -90,5 +105,10 @@ void test_PoseMqttPublication_MaxTimestamp()
     detection_telemetry.timestamp = 4000;
     detection_telemetry.distance_m = 2.5f;
     detection_telemetry.servo_angle = 89.0f;
-    assertPoseMqttPublication(&pose, &target_pose, &speed_set_point, &detection_telemetry, "Af////8AAPZCAAA2wgAAAD4HAAAAAACAPwAAAEAAAEBAAAAgQQAAMMEAoA8AAAAAIEAAALJC");
+    assertPoseMqttPublication(&pose,
+                              &target_pose,
+                              &speed_set_point,
+                              &detection_telemetry,
+                              "Af////"
+                              "8AAPZCAAA2wgAAAD4HAAAAAACAPwAAAEAAAEBAAAAgQQAAMMEAoA8AAAAAIEAAALJC");
 }

@@ -9,9 +9,8 @@
 #include "robotto_common.h"
 #include <stdint.h>
 
-
 RobottoErrorCode verifyIMUCommunication();
 
-RobottoErrorCode readIMUData(ImuData* out);
+RobottoErrorCode readIMUData(ImuData *out);
 
 #endif /* SENSORSANDACTUATORS_INCLUDE_IMU_READER_H */

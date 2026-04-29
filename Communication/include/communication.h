@@ -10,6 +10,6 @@
 
 RobottoErrorCode Communication_initializeCommunication();
 
-void Communication_task(void * argument);
+void Communication_task(void *argument);
 
 #endif /* COMMUNICATION_INCLUDE_COMMUNICATION_H */

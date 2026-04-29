@@ -8,7 +8,6 @@
 
 #include "secrets.h"
 
-
 /************ PHYSICAL PARAMETERS *************/
 
 // wheel radius [m]
@@ -19,7 +18,6 @@
 
 // distance between the wheels (width)
 #define WHEELS_DISTANCE 0.186
-
 
 /************** NETWORK PARAMETERS **************/
 

@@ -4,15 +4,13 @@
  */
 #include <string.h>
 
-
-#include "SEGGER_SYSVIEW.h"
 #include "FreeRTOS.h"
+#include "SEGGER_SYSVIEW.h"
 #include "task.h"
 
-void vApplicationStackOverflowHook( TaskHandle_t xTask,
-	                                        char * pcTaskName )
+void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName)
 {
-	//nothing
+    // nothing
 }
 
 #ifdef DEBUG
@@ -20,7 +18,7 @@ void vApplicationStackOverflowHook( TaskHandle_t xTask,
 #define LINE_SIZE 128
 void SYSVIEW_PrintLines(const char *buf)
 {
-	static char line[LINE_SIZE];
+    static char line[LINE_SIZE];
 
     const char *line_start = buf;
     const char *p = buf;

@@ -6,8 +6,8 @@
 #ifndef COMMUNICATION_SRC_COMMUNICATION_QUEUE_H
 #define COMMUNICATION_SRC_COMMUNICATION_QUEUE_H
 
-#include "robotto_common.h"
 #include "communication_events.h"
+#include "robotto_common.h"
 
 RobottoErrorCode initializeQueue();
 
@@ -18,6 +18,6 @@ void postNewCommunicationEventFromISRWithNoData(CommunicationEventId event_id);
 
 void triggerCommunicationInitialization();
 
-bool getNextCommunicationEvent(CommunicationEvent* event);
+bool getNextCommunicationEvent(CommunicationEvent *event);
 
 #endif /* COMMUNICATION_SRC_COMMUNICATION_QUEUE_H */

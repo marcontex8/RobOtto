@@ -4,15 +4,12 @@
  */
 #include <string.h>
 
-
 #include "buffer_parser.h"
 
-
-
-const char* findLineInBuffer(const char* buffer, const char* target)
+const char *findLineInBuffer(const char *buffer, const char *target)
 {
-    const char* line_start = buffer;
-    const char* p = buffer;
+    const char *line_start = buffer;
+    const char *p = buffer;
     size_t target_len = strlen(target);
 
     while (*p != '\0')
@@ -23,15 +20,13 @@ const char* findLineInBuffer(const char* buffer, const char* target)
             size_t line_len = (size_t)(p - line_start);
 
             /* Compare length first, then content */
-            if (target_len <= line_len &&
-                strncmp(line_start, target, target_len) == 0)
+            if (target_len <= line_len && strncmp(line_start, target, target_len) == 0)
             {
                 return line_start;
             }
 
             /* Skip CRLF or LFCR */
-            if ((*p == '\r' && *(p + 1) == '\n') ||
-                (*p == '\n' && *(p + 1) == '\r'))
+            if ((*p == '\r' && *(p + 1) == '\n') || (*p == '\n' && *(p + 1) == '\r'))
             {
                 p++;
             }
@@ -49,12 +44,11 @@ const char* findLineInBuffer(const char* buffer, const char* target)
     {
         size_t line_len = (size_t)(p - line_start);
 
-        if (target_len <= line_len &&
-            strncmp(line_start, target, target_len) == 0)
+        if (target_len <= line_len && strncmp(line_start, target, target_len) == 0)
         {
             return line_start;
         }
     }
 
-    return NULL;  /* Not found */
+    return NULL; /* Not found */
 }

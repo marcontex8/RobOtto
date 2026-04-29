@@ -35,8 +35,17 @@
 
    
 5. Telemetry
-	objective: collect data at runtime for testing algorithms.
+	objective: collect data at runtime for testing algorithms
+
 	main issues:
 		- avoid disruption of high priority tasks
 		- manage asynchronous UART communication
 		- keep track of the ESP32 communication status
+	
+	structure:
+		set of event-based state machines, with shared events queue
+	
+	key-protocols:
+		- UART + AT (expressif)
+		- Wifi + MQTT
+

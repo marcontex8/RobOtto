@@ -8,6 +8,7 @@
 #ifndef INCLUDE_AT_COMMAND_WRITER_H_
 #define INCLUDE_AT_COMMAND_WRITER_H_
 
+#include "serializer.h"
 #include "robotto_common.h"
 
 int getATMqttPubTelemetryMessage(const RobottoPose *pose,

@@ -14,6 +14,8 @@
 #include "timers.h"
 #include "queue.h"
 
+#include <string.h>
+
 
 typedef enum{
 	TELEMETRY_STATE_OFF,

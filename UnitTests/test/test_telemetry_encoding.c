@@ -3,7 +3,7 @@
 
 #include "unity.h"
 #include "at_command_writer.h"
-
+#include "serializer.h"
 
 void setUp(void) {}
 void tearDown(void) {}

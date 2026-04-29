@@ -1,12 +1,10 @@
 /*
- * roboto_conf.h
- *
- *  Created on: Nov 24, 2025
- *      Author: marco
+ * Copyright (c) 2026 Marco Contessotto
+ * All rights reserved.
  */
 
-#ifndef INCLUDE_ROBOTTO_CONF_H_
-#define INCLUDE_ROBOTTO_CONF_H_
+#ifndef COMMON_INCLUDE_ROBOTTO_CONF_H
+#define COMMON_INCLUDE_ROBOTTO_CONF_H
 
 #include "secrets.h"
 
@@ -52,4 +50,4 @@
 // Commands IDs
 #define TELEMETRY_REQUEST_ID 101
 
-#endif /* INCLUDE_ROBOTTO_CONF_H_ */
+#endif /* COMMON_INCLUDE_ROBOTTO_CONF_H */

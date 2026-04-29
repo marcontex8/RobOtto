@@ -1,10 +1,9 @@
 /*
- * servo.c
- *
- *  Created on: Dec 29, 2025
- *      Author: marco
+ * Copyright (c) 2026 Marco Contessotto
+ * All rights reserved.
  */
 #include "stm32f4xx_hal.h"
+
 
 #include "SEGGER_SYSVIEW.h"
 

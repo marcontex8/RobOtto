@@ -1,12 +1,10 @@
 /*
- * trajectory_planner.h
- *
- *  Created on: Dec 30, 2025
- *      Author: marco
+ * Copyright (c) 2026 Marco Contessotto
+ * All rights reserved.
  */
 
-#ifndef INCLUDE_TRAJECTORY_PLANNER_H_
-#define INCLUDE_TRAJECTORY_PLANNER_H_
+#ifndef LOGIC_INCLUDE_TRAJECTORY_PLANNER_H
+#define LOGIC_INCLUDE_TRAJECTORY_PLANNER_H
 
 #include "robotto_common.h"
 
@@ -19,4 +17,4 @@ void defineNewTargetPose(RobottoPose end);
 
 bool endPoseReached(const RobottoPose* current);
 
-#endif /* INCLUDE_TRAJECTORY_PLANNER_H_ */
+#endif /* LOGIC_INCLUDE_TRAJECTORY_PLANNER_H */

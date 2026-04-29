@@ -1,15 +1,13 @@
 /*
- * odometry.h
- *
- *  Created on: Nov 24, 2025
- *      Author: marco
+ * Copyright (c) 2026 Marco Contessotto
+ * All rights reserved.
  */
 
-#ifndef INCLUDE_ODOMETRY_H_
-#define INCLUDE_ODOMETRY_H_
+#ifndef LOGIC_INCLUDE_ODOMETRY_H
+#define LOGIC_INCLUDE_ODOMETRY_H
 
 #include "robotto_common.h"
 
 void updateOdometry(const WheelsMovementUpdate* wheels_movement_update, const ImuData* imu_data, RobottoPose* estimated_pose);
 
-#endif /* INCLUDE_ODOMETRY_H_ */
+#endif /* LOGIC_INCLUDE_ODOMETRY_H */

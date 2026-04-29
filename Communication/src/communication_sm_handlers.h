@@ -1,5 +1,10 @@
-#ifndef COMMUNICATION_SM_HANDLERS_H_
-#define COMMUNICATION_SM_HANDLERS_H_
+/*
+ * Copyright (c) 2026 Marco Contessotto
+ * All rights reserved.
+ */
+
+#ifndef COMMUNICATION_SRC_COMMUNICATION_SM_HANDLERS_H
+#define COMMUNICATION_SRC_COMMUNICATION_SM_HANDLERS_H
 
 #include "communication_events.h"
 
@@ -10,4 +15,4 @@ void uart_tx_handleEvent(const CommunicationEvent* event);
 void telemetry_handleEvent(const CommunicationEvent* event);
 
 
-#endif /* COMMUNICATION_SM_HANDLERS_H_ */
+#endif /* COMMUNICATION_SRC_COMMUNICATION_SM_HANDLERS_H */

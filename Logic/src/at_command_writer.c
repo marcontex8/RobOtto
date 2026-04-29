@@ -1,11 +1,10 @@
 /*
- * at_command_writer.c
- *
- *  Created on: Jan 16, 2026
- *      Author: marco
+ * Copyright (c) 2026 Marco Contessotto
+ * All rights reserved.
  */
 
 #include <stdio.h>
+
 #include <string.h>
 
 #include "at_command_writer.h"

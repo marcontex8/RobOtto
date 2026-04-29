@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2026 Marco Contessotto
+ * All rights reserved.
+ */
+
 #include "unity.h"
 #include "trajectory_planner.h"
 #include <math.h>

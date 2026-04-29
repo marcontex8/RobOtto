@@ -1,4 +1,9 @@
 
+/*
+ * Copyright (c) 2026 Marco Contessotto
+ * All rights reserved.
+ */
+
 #include "serializer.h"
 #include <string.h>
 

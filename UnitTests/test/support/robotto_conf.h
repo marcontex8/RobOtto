@@ -1,5 +1,10 @@
-#ifndef MOCK_CONF_H_
-#define MOCK_CONF_H_
+/*
+ * Copyright (c) 2026 Marco Contessotto
+ * All rights reserved.
+ */
+
+#ifndef UNITTESTS_TEST_SUPPORT_ROBOTTO_CONF_H
+#define UNITTESTS_TEST_SUPPORT_ROBOTTO_CONF_H
 
 /*
  * THIS IS A MOCK OF THE PARAMETERS USED IN THE LOGIC FUNCTION
@@ -12,4 +17,4 @@
 
 
 
-#endif /* MOCK_CONF_H_ */
+#endif /* UNITTESTS_TEST_SUPPORT_ROBOTTO_CONF_H */

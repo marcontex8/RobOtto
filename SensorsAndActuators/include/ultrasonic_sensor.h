@@ -1,12 +1,10 @@
 /*
- * ultrasonic_sensor.h
- *
- *  Created on: Dec 28, 2025
- *      Author: marco
+ * Copyright (c) 2026 Marco Contessotto
+ * All rights reserved.
  */
 
-#ifndef INCLUDE_ULTRASONIC_SENSOR_H_
-#define INCLUDE_ULTRASONIC_SENSOR_H_
+#ifndef SENSORSANDACTUATORS_INCLUDE_ULTRASONIC_SENSOR_H
+#define SENSORSANDACTUATORS_INCLUDE_ULTRASONIC_SENSOR_H
 
 
 #include "robotto_common.h"
@@ -16,4 +14,4 @@ void triggerSensor(void);
 
 RobottoErrorCode getMeasurementIfReady(float* distance);
 
-#endif /* INCLUDE_ULTRASONIC_SENSOR_H_ */
+#endif /* SENSORSANDACTUATORS_INCLUDE_ULTRASONIC_SENSOR_H */

@@ -1,12 +1,10 @@
 /*
- * motor_driver.h
- *
- *  Created on: Nov 16, 2025
- *      Author: marco
+ * Copyright (c) 2026 Marco Contessotto
+ * All rights reserved.
  */
 
-#ifndef SENSORSANDACTUATORS_INCLUDE_MOTOR_DRIVER_H_
-#define SENSORSANDACTUATORS_INCLUDE_MOTOR_DRIVER_H_
+#ifndef SENSORSANDACTUATORS_INCLUDE_MOTOR_DRIVER_H
+#define SENSORSANDACTUATORS_INCLUDE_MOTOR_DRIVER_H
 
 
 #include "sensors_and_actuators_common.h"
@@ -16,4 +14,4 @@ void initializeMotorDriver();
 
 void setMotorDutyCycle(Wheel wheel, float normalized_duty_cycle);
 
-#endif /* SENSORSANDACTUATORS_INCLUDE_MOTOR_DRIVER_H_ */
+#endif /* SENSORSANDACTUATORS_INCLUDE_MOTOR_DRIVER_H */

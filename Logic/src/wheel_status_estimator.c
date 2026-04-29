@@ -1,8 +1,6 @@
 /*
- * wheel_status_estimator.c
- *
- *  Created on: Nov 7, 2025
- *      Author: marco
+ * Copyright (c) 2026 Marco Contessotto
+ * All rights reserved.
  */
 #include "wheel_status_estimator.h"
 #include <math.h>

@@ -1,9 +1,8 @@
 /*
- * motor_driver.c
- *
- *  Created on: Nov 16, 2025
- *      Author: marco
+ * Copyright (c) 2026 Marco Contessotto
+ * All rights reserved.
  */
+
 
 
 #include <math.h>

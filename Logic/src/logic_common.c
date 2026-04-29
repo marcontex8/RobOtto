@@ -1,8 +1,6 @@
 /*
- * logic_common.c
- *
- *  Created on: Feb 7, 2026
- *      Author: marco
+ * Copyright (c) 2026 Marco Contessotto
+ * All rights reserved.
  */
 #include "logic_common.h"
 #include <math.h>

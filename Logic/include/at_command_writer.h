@@ -1,12 +1,10 @@
 /*
- * at_command_writer.h
- *
- *  Created on: Jan 16, 2026
- *      Author: marco
+ * Copyright (c) 2026 Marco Contessotto
+ * All rights reserved.
  */
 
-#ifndef INCLUDE_AT_COMMAND_WRITER_H_
-#define INCLUDE_AT_COMMAND_WRITER_H_
+#ifndef LOGIC_INCLUDE_AT_COMMAND_WRITER_H
+#define LOGIC_INCLUDE_AT_COMMAND_WRITER_H
 
 #include "serializer.h"
 #include "robotto_common.h"
@@ -19,4 +17,4 @@ int getATMqttPubTelemetryMessage(const RobottoPose *pose,
                       char *out,
                       int max_out_size);
 
-#endif /* AT_COMMAND */
+#endif /* LOGIC_INCLUDE_AT_COMMAND_WRITER_H */

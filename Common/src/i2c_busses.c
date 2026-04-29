@@ -1,8 +1,6 @@
 /*
- * i2c_busses.c
- *
- *  Created on: Nov 24, 2025
- *      Author: marco
+ * Copyright (c) 2026 Marco Contessotto
+ * All rights reserved.
  */
 
 #include "i2c_busses.h"

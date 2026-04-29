@@ -1,12 +1,10 @@
 /*
- * robotto_common.h
- *
- *  Created on: Nov 7, 2025
- *      Author: marco
+ * Copyright (c) 2026 Marco Contessotto
+ * All rights reserved.
  */
 
-#ifndef INC_ROBOTTO_COMMON_H_
-#define INC_ROBOTTO_COMMON_H_
+#ifndef COMMON_INCLUDE_ROBOTTO_COMMON_H
+#define COMMON_INCLUDE_ROBOTTO_COMMON_H
 
 
 #define TickType_t uint32_t
@@ -96,4 +94,4 @@ typedef struct {
 #endif
 
 
-#endif /* INC_ROBOTTO_COMMON_H_ */
+#endif /* COMMON_INCLUDE_ROBOTTO_COMMON_H */

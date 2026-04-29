@@ -1,0 +1,8 @@
+#!/bin/sh
+# Pre-commit hook runner for include guard verification.
+set -e
+
+REPO_ROOT=$(git rev-parse --show-toplevel)
+cd "$REPO_ROOT" || exit 1
+
+python3 ci/check_include_guards.py

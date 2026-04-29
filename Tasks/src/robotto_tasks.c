@@ -1,11 +1,10 @@
 /*
- * robotto_tasks.c
- *
- *  Created on: Nov 8, 2025
- *      Author: marco
+ * Copyright (c) 2026 Marco Contessotto
+ * All rights reserved.
  */
 
 #include "FreeRTOS.h"
+
 #include "task.h"
 #include "queue.h"
 #include "semphr.h"

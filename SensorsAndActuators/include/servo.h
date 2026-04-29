@@ -1,15 +1,13 @@
 /*
- * servo.h
- *
- *  Created on: Dec 29, 2025
- *      Author: marco
+ * Copyright (c) 2026 Marco Contessotto
+ * All rights reserved.
  */
 
-#ifndef INCLUDE_SERVO_H_
-#define INCLUDE_SERVO_H_
+#ifndef SENSORSANDACTUATORS_INCLUDE_SERVO_H
+#define SENSORSANDACTUATORS_INCLUDE_SERVO_H
 
 void initServo();
 
 void setServoAngle(float angle_deg);
 
-#endif /* INCLUDE_SERVO_H_ */
+#endif /* SENSORSANDACTUATORS_INCLUDE_SERVO_H */

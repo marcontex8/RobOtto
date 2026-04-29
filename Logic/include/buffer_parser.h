@@ -1,14 +1,12 @@
 /*
- * buffer_parser.h
- *
- *  Created on: Dec 14, 2025
- *      Author: marco
+ * Copyright (c) 2026 Marco Contessotto
+ * All rights reserved.
  */
 
-#ifndef INCLUDE_BUFFER_PARSER_H_
-#define INCLUDE_BUFFER_PARSER_H_
+#ifndef LOGIC_INCLUDE_BUFFER_PARSER_H
+#define LOGIC_INCLUDE_BUFFER_PARSER_H
 
 const char* findLineInBuffer(const char* buffer, const char* target);
 
 
-#endif /* INCLUDE_BUFFER_PARSER_H_ */
+#endif /* LOGIC_INCLUDE_BUFFER_PARSER_H */

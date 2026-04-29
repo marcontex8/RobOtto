@@ -1,12 +1,10 @@
 /*
- * wheel_status_estimator.h
- *
- *  Created on: Nov 7, 2025
- *      Author: marco
+ * Copyright (c) 2026 Marco Contessotto
+ * All rights reserved.
  */
 
-#ifndef INC_WHEEL_STATUS_ESTIMATOR_H_
-#define INC_WHEEL_STATUS_ESTIMATOR_H_
+#ifndef LOGIC_INCLUDE_WHEEL_STATUS_ESTIMATOR_H
+#define LOGIC_INCLUDE_WHEEL_STATUS_ESTIMATOR_H
 
 #include "FreeRTOS.h"
 #include "task.h"
@@ -28,4 +26,4 @@ typedef struct{
 bool updateWheelStatusEstimation(WheelStatus* wheel_status, float angle, TickType_t tick);
 
 
-#endif /* INC_WHEEL_STATUS_ESTIMATOR_H_ */
+#endif /* LOGIC_INCLUDE_WHEEL_STATUS_ESTIMATOR_H */

@@ -1,12 +1,10 @@
 /*
- * communication_events.h
- *
- *  Created on: Dec 18, 2025
- *      Author: marco
+ * Copyright (c) 2026 Marco Contessotto
+ * All rights reserved.
  */
 
-#ifndef COMMUNICATION_EVENTS_H_
-#define COMMUNICATION_EVENTS_H_
+#ifndef COMMUNICATION_SRC_COMMUNICATION_EVENTS_H
+#define COMMUNICATION_SRC_COMMUNICATION_EVENTS_H
 
 #include <stdint.h>
 #include <stddef.h>
@@ -102,4 +100,4 @@ void triggerCommunicationInitialization();
 
 void handleCommunicationEvent(const CommunicationEvent* event);
 
-#endif /* COMMUNICATION_EVENTS_H_ */
+#endif /* COMMUNICATION_SRC_COMMUNICATION_EVENTS_H */

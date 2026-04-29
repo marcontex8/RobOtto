@@ -1,12 +1,10 @@
 /*
- * i2c_busses.h
- *
- *  Created on: Nov 24, 2025
- *      Author: marco
+ * Copyright (c) 2026 Marco Contessotto
+ * All rights reserved.
  */
 
-#ifndef INCLUDE_I2C_BUSSES_H_
-#define INCLUDE_I2C_BUSSES_H_
+#ifndef COMMON_INCLUDE_I2C_BUSSES_H
+#define COMMON_INCLUDE_I2C_BUSSES_H
 
 
 #include "robotto_common.h"
@@ -22,4 +20,4 @@ void initializeI2CMutexes();
 
 RobottoErrorCode ReadI2C(RobottoI2CDevice device, uint16_t DevAddress, uint16_t MemAddress, uint8_t *pData, uint16_t Size);
 
-#endif /* INCLUDE_I2C_BUSSES_H_ */
+#endif /* COMMON_INCLUDE_I2C_BUSSES_H */

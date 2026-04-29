@@ -1,10 +1,9 @@
 /*
- * robotto_common.c
- *
- *  Created on: Dec 14, 2025
- *      Author: marco
+ * Copyright (c) 2026 Marco Contessotto
+ * All rights reserved.
  */
 #include <string.h>
+
 
 #include "SEGGER_SYSVIEW.h"
 #include "FreeRTOS.h"

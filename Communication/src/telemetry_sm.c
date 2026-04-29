@@ -1,11 +1,10 @@
 /*
- * telemetry_sm.c
- *
- *  Created on: Jan 12, 2026
- *      Author: marco
+ * Copyright (c) 2026 Marco Contessotto
+ * All rights reserved.
  */
 
 #include "robotto_conf.h"
+
 #include "robotto_common.h"
 #include "communication_events.h"
 #include "at_command_writer.h"

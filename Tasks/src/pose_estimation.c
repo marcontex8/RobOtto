@@ -1,10 +1,9 @@
 /*
- * pose_estimation.c
- *
- *  Created on: Nov 23, 2025
- *      Author: marco
+ * Copyright (c) 2026 Marco Contessotto
+ * All rights reserved.
  */
 #include "robotto_common.h"
+
 
 #include "imu_reader.h"
 #include "FreeRTOS.h"

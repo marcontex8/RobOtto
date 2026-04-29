@@ -1,11 +1,10 @@
 /*
- * encoder_reader.c
- *
- *  Created on: Oct 30, 2025
- *      Author: marco
+ * Copyright (c) 2026 Marco Contessotto
+ * All rights reserved.
  */
 
 #include "encoder_reader.h"
+
 #include "i2c_busses.h"
 
 #include <math.h>

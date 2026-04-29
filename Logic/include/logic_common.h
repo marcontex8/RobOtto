@@ -1,13 +1,11 @@
 /*
- * logic_common.h
- *
- *  Created on: Feb 7, 2026
- *      Author: marco
+ * Copyright (c) 2026 Marco Contessotto
+ * All rights reserved.
  */
 
-#ifndef INCLUDE_LOGIC_COMMON_H_
-#define INCLUDE_LOGIC_COMMON_H_
+#ifndef LOGIC_INCLUDE_LOGIC_COMMON_H
+#define LOGIC_INCLUDE_LOGIC_COMMON_H
 
 float wrapToPI(float angle);
 
-#endif /* INCLUDE_LOGIC_COMMON_H_ */
+#endif /* LOGIC_INCLUDE_LOGIC_COMMON_H */

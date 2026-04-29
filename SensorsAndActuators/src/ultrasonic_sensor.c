@@ -1,10 +1,9 @@
 /*
- * ultrasonic_sensor.c
- *
- *  Created on: Dec 28, 2025
- *      Author: marco
+ * Copyright (c) 2026 Marco Contessotto
+ * All rights reserved.
  */
 #include "ultrasonic_sensor.h"
+
 
 #include "main.h"
 

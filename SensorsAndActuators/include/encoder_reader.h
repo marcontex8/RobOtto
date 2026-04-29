@@ -1,12 +1,10 @@
 /*
- * encoder_reader.h
- *
- *  Created on: Oct 30, 2025
- *      Author: marco
+ * Copyright (c) 2026 Marco Contessotto
+ * All rights reserved.
  */
 
-#ifndef INC_ENCODER_READER_H_
-#define INC_ENCODER_READER_H_
+#ifndef SENSORSANDACTUATORS_INCLUDE_ENCODER_READER_H
+#define SENSORSANDACTUATORS_INCLUDE_ENCODER_READER_H
 
 #include <stdbool.h>
 
@@ -28,4 +26,4 @@ typedef struct {
 RobottoErrorCode readAngleRad(Wheel wheel, float* out);
 RobottoErrorCode readFullEncoder(Wheel wheel, EncoderStatus* out);
 
-#endif /* INC_ENCODER_READER_H_ */
+#endif /* SENSORSANDACTUATORS_INCLUDE_ENCODER_READER_H */

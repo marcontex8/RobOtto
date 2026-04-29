@@ -1,11 +1,10 @@
 /*
- * object_detection.c
- *
- *  Created on: Dec 26, 2025
- *      Author: marco
+ * Copyright (c) 2026 Marco Contessotto
+ * All rights reserved.
  */
 #include "robotto_common.h"
 #include "ultrasonic_sensor.h"
+
 #include "servo.h"
 
 #include "SEGGER_SYSVIEW.h"

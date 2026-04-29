@@ -1,10 +1,9 @@
 /*
- * pid_motor_controller.c
- *
- *  Created on: Nov 16, 2025
- *      Author: marco
+ * Copyright (c) 2026 Marco Contessotto
+ * All rights reserved.
  */
 #include "pid_motor_controller.h"
+
 
 // ASSUME FIXED 10ms PERIOD
 #define PERIOD 0.01

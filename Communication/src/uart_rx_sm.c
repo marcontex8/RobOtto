@@ -1,11 +1,10 @@
 /*
- * uart_rx_sm.c
- *
- *  Created on: Dec 18, 2025
- *      Author: marco
+ * Copyright (c) 2026 Marco Contessotto
+ * All rights reserved.
  */
 
 #include "communication_events.h"
+
 #include "communication_queue.h"
 
 #include "stm32f4xx.h"

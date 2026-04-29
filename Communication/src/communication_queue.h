@@ -1,5 +1,10 @@
-#ifndef COMMUNICATION_QUEUE_H_
-#define COMMUNICATION_QUEUE_H_
+/*
+ * Copyright (c) 2026 Marco Contessotto
+ * All rights reserved.
+ */
+
+#ifndef COMMUNICATION_SRC_COMMUNICATION_QUEUE_H
+#define COMMUNICATION_SRC_COMMUNICATION_QUEUE_H
 
 #include "robotto_common.h"
 #include "communication_events.h"
@@ -15,4 +20,4 @@ void triggerCommunicationInitialization();
 
 bool getNextCommunicationEvent(CommunicationEvent* event);
 
-#endif /* COMMUNICATION_QUEUE_H_ */
+#endif /* COMMUNICATION_SRC_COMMUNICATION_QUEUE_H */

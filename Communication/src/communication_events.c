@@ -1,11 +1,10 @@
 /*
- * communication_events.c
- *
- *  Created on: Dec 19, 2025
- *      Author: marco
+ * Copyright (c) 2026 Marco Contessotto
+ * All rights reserved.
  */
 
 #include "communication_events.h"
+
 #include "robotto_common.h"
 #include "communication_sm_handlers.h"
 

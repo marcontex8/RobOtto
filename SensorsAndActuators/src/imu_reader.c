@@ -1,10 +1,9 @@
 /*
- * imu_reader.c
- *
- *  Created on: Nov 19, 2025
- *      Author: marco
+ * Copyright (c) 2026 Marco Contessotto
+ * All rights reserved.
  */
 #include "imu_reader.h"
+
 
 #include "i2c_busses.h"
 #include "stm32f4xx_hal.h"

@@ -1,11 +1,10 @@
 /*
- * trajectory_planner.c
- *
- *  Created on: Dec 30, 2025
- *      Author: marco
+ * Copyright (c) 2026 Marco Contessotto
+ * All rights reserved.
  */
 
 #include "trajectory_planner.h"
+
 #include "robotto_common.h"
 #include "robotto_conf.h"
 

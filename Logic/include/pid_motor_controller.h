@@ -1,12 +1,10 @@
 /*
- * pid_motor_controller.h
- *
- *  Created on: Nov 16, 2025
- *      Author: marco
+ * Copyright (c) 2026 Marco Contessotto
+ * All rights reserved.
  */
 
-#ifndef INC_PID_MOTOR_CONTROLLER_H_
-#define INC_PID_MOTOR_CONTROLLER_H_
+#ifndef LOGIC_INCLUDE_PID_MOTOR_CONTROLLER_H
+#define LOGIC_INCLUDE_PID_MOTOR_CONTROLLER_H
 
 
 #include "robotto_common.h"
@@ -17,4 +15,4 @@ void calculateRequiredDutyCycle(const WheelSpeedSetPoint* speed_set_point, const
 
 void resetController();
 
-#endif /* INC_PID_MOTOR_CONTROLLER_H_ */
+#endif /* LOGIC_INCLUDE_PID_MOTOR_CONTROLLER_H */

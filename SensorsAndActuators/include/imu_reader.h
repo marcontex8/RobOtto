@@ -1,12 +1,10 @@
 /*
- * imu_reader.h
- *
- *  Created on: Nov 19, 2025
- *      Author: marco
+ * Copyright (c) 2026 Marco Contessotto
+ * All rights reserved.
  */
 
-#ifndef INCLUDE_IMU_READER_H_
-#define INCLUDE_IMU_READER_H_
+#ifndef SENSORSANDACTUATORS_INCLUDE_IMU_READER_H
+#define SENSORSANDACTUATORS_INCLUDE_IMU_READER_H
 
 #include "robotto_common.h"
 #include <stdint.h>
@@ -16,4 +14,4 @@ RobottoErrorCode verifyIMUCommunication();
 
 RobottoErrorCode readIMUData(ImuData* out);
 
-#endif /* INCLUDE_IMU_READER_H_ */
+#endif /* SENSORSANDACTUATORS_INCLUDE_IMU_READER_H */

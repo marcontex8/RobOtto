@@ -1,11 +1,10 @@
 /*
- * motor_control.c
- *
- *  Created on: Nov 6, 2025
- *      Author: marco
+ * Copyright (c) 2026 Marco Contessotto
+ * All rights reserved.
  */
 
 #include "FreeRTOS.h"
+
 #include "task.h"
 #include "encoder_reader.h"
 #include "motor_driver.h"

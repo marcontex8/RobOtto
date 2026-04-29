@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2026 Marco Contessotto
+ * All rights reserved.
+ */
+
 #include <stdio.h>
 #include <string.h>
 

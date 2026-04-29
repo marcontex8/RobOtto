@@ -17,7 +17,7 @@ static void assertPoseMqttPublication(const RobottoPose *pose,
 {
     char buffer[256];
     const char *topic = "RobOtto/pose";
-    int length = atMqttPubFromTelemetry(pose, target_pose, speed_set_point, detection_telemetry, topic, buffer, sizeof(buffer));
+    int length = getATMqttPubTelemetryMessage(pose, target_pose, speed_set_point, detection_telemetry, topic, buffer, sizeof(buffer));
 
     char expected_command[256];
     snprintf(expected_command, sizeof(expected_command),
@@ -39,7 +39,7 @@ void test_PoseMqttPublication_Zero()
     pose.x = 0.0f;
     pose.y = 0.0f;
     pose.theta = 0.0f;
-    assertPoseMqttPublication(&pose, &target_pose, &speed_set_point, &detection_telemetry, "AwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+    assertPoseMqttPublication(&pose, &target_pose, &speed_set_point, &detection_telemetry, "AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 }
 
 void test_PoseMqttPublication_NegativeValues()
@@ -62,7 +62,7 @@ void test_PoseMqttPublication_NegativeValues()
     detection_telemetry.timestamp = 77;
     detection_telemetry.distance_m = 1.25f;
     detection_telemetry.servo_angle = -45.0f;
-    assertPoseMqttPublication(&pose, &target_pose, &speed_set_point, &detection_telemetry, "AyoAAAAAAMC/AAAQQAAAYMBkAAAAAACAwAAAsEAAANDAAAAAwAAAQEABTQAAAAAAoD8AADTC");
+    assertPoseMqttPublication(&pose, &target_pose, &speed_set_point, &detection_telemetry, "ASoAAAAAAMC/AAAQQAAAYMBkAAAAAACAwAAAsEAAANDAAAAAwAAAQEABTQAAAAAAoD8AADTC");
 }
 
 void test_PoseMqttPublication_MaxTimestamp()
@@ -85,5 +85,5 @@ void test_PoseMqttPublication_MaxTimestamp()
     detection_telemetry.timestamp = 4000;
     detection_telemetry.distance_m = 2.5f;
     detection_telemetry.servo_angle = 89.0f;
-    assertPoseMqttPublication(&pose, &target_pose, &speed_set_point, &detection_telemetry, "A/////8AAPZCAAA2wgAAAD4HAAAAAACAPwAAAEAAAEBAAAAgQQAAMMEAoA8AAAAAIEAAALJC");
+    assertPoseMqttPublication(&pose, &target_pose, &speed_set_point, &detection_telemetry, "Af////8AAPZCAAA2wgAAAD4HAAAAAACAPwAAAEAAAEBAAAAgQQAAMMEAoA8AAAAAIEAAALJC");
 }

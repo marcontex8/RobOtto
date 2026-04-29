@@ -1,3 +1,5 @@
+# Embedded Project
+
 1. Personal project, not company related
  + no nda, open source, single developer
  - limited resource:
@@ -36,14 +38,5 @@
 	objective: collect data at runtime for testing algorithms.
 	main issues:
 		- avoid disruption of high priority tasks
-		- manage consistently the ESP32 status with the communication status
-	
-	communication stack:
-		Application data struct
-			\
-			  base64 encoding 
-			  				\
-							AT command generation
-
-
- 
+		- manage asynchronous UART communication
+		- keep track of the ESP32 communication status

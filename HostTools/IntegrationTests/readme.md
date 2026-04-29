@@ -4,7 +4,7 @@
 
 ```bash
 cd /home/marco/STM32CubeIDE/workspace_1.19.0/Robotto
-./.venv/bin/python -m unittest discover -s HostTools/tests -p "test_*.py"
+./.venv/bin/python -m unittest discover -s HostTools/IntegrationTests -p "test_*.py"
 ```
 
 ## Manual harwdare in the Loop

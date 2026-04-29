@@ -2,9 +2,11 @@
 # Local configurations
 ############################
 .env
+.venv
 Common/include/secrets.h
 IntegrationTests/.integration_test_env
 HostTools/.test_env/
+Documentation/recordings/
 Documentation/all.md
 networks
 HostTools/MosquittoMQTT/mosquitto.db

@@ -10,7 +10,7 @@
 
 #include "robotto_common.h"
 
-int atMqttPubFromTelemetry(const RobottoPose *pose,
+int getATMqttPubTelemetryMessage(const RobottoPose *pose,
                       const RobottoPose *target_pose,
                       const WheelSpeedSetPoint *speed_set_point,
                       const RobottoDetectionTelemetry *detection_telemetry,

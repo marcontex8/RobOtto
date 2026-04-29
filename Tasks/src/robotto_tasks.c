@@ -40,7 +40,6 @@ void runMotionPlanningStateMachine();
 
 void setCommunicationManagerQueue(QueueHandle_t communication_queue);
 void runCommunicationManagerStateMachine();
-#define COMMUNICATION_MANAGER_PERIOD_MS 100
 #define COMMUNICATION_MANAGER_PRIORITY 2
 
 
@@ -176,13 +175,7 @@ void poseEstimationTask(void *argument)
 void communicationManagerTask(void *argument)
 {
 	setCommunicationManagerQueue(robotto_communication_queue_handle);
-	const TickType_t period = pdMS_TO_TICKS(COMMUNICATION_MANAGER_PERIOD_MS);
-
-	for (;;)
-    {
-		runCommunicationManagerStateMachine();
-		ulTaskNotifyTake(pdTRUE, period);
-	}
+	runCommunicationManagerStateMachine();
 }
 
 

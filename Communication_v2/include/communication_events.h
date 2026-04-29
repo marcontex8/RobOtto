@@ -78,7 +78,7 @@ typedef enum{
 
 // data of EVENT_AT_REQUEST_COMPLETE
 typedef struct{
-	unsigned int request_id; //TODO: at the moment this is not populated
+	unsigned int request_id;
 	ATResponseResult response;
 } ATResponseData;
 

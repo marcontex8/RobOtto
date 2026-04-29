@@ -167,7 +167,7 @@ static int base64Encode(const uint8_t *in, int in_len, char *out, int out_size)
     return out_len;
 }
 
-int atMqttPubFromTelemetry(const RobottoPose *pose,
+int getATMqttPubTelemetryMessage(const RobottoPose *pose,
                       const RobottoPose *target_pose,
                       const WheelSpeedSetPoint *speed_set_point,
                       const RobottoDetectionTelemetry *detection_telemetry,

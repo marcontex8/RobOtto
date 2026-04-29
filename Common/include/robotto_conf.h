@@ -46,4 +46,10 @@
 // MQTT TOPICS
 #define MQTT_TOPIC_TELEMETRY "RobOtto/telemetry"
 
+// AT Command max buffer size
+#define AT_COMMAND_MAX_SIZE 256
+
+// Commands IDs
+#define TELEMETRY_REQUEST_ID 101
+
 #endif /* INCLUDE_ROBOTTO_CONF_H_ */

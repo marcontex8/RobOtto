@@ -7,6 +7,7 @@
 
 #include "robotto_conf.h"
 #include "communication_events.h"
+#include "communication_queue.h"
 
 #include "FreeRTOS.h"
 #include "timers.h"

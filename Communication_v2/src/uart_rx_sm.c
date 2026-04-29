@@ -6,6 +6,7 @@
  */
 
 #include "communication_events.h"
+#include "communication_queue.h"
 
 #include "stm32f4xx.h"
 #include "stm32f4xx_hal_uart.h"

@@ -39,7 +39,7 @@ typedef enum{
 } CommunicationEventId;
 
 
-const char* eventToString(CommunicationEventId event);
+const char* Communication_eventToString(CommunicationEventId event);
 
 
 
@@ -97,21 +97,9 @@ typedef struct{
 	const CommunicationEventData data;
 } CommunicationEvent;
 
-void postNewCommunicationEvent(CommunicationEventId event_id, CommunicationEventData data);
-void postNewCommunicationEventWithNoData(CommunicationEventId event_id);
-void postNewCommunicationEventFromISR(CommunicationEventId event_id, CommunicationEventData data);
-void postNewCommunicationEventFromISRWithNoData(CommunicationEventId event_id);
 
+void triggerCommunicationInitialization();
 
-void at_handleEvent(const CommunicationEvent* event);
-void connection_handleEvent(const CommunicationEvent* event);
-void uart_rx_handleEvent(const CommunicationEvent* event);
-void uart_tx_handleEvent(const CommunicationEvent* event);
-void telemetry_handleEvent(const CommunicationEvent* event);
-
-void setEventsQueue(QueueHandle_t communication_queue);
-
-bool getNextCommunicationEvent(CommunicationEvent* event);
 void handleCommunicationEvent(const CommunicationEvent* event);
 
 #endif /* COMMUNICATION_EVENTS_H_ */

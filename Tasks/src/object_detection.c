@@ -13,16 +13,26 @@
 
 #include "FreeRTOS.h"
 #include "task.h"
-
-#include "detection_manager.h"
+#include "queue.h"
 
 extern TIM_HandleTypeDef htim10;
+extern QueueHandle_t robotto_object_detection_telemetry_queue_handle;
 
 static const char* last_error = NULL;
 
 static float servo_angle = 0.0f;
 static bool servo_direction = true;
 
+void addDetection(TickType_t time, float distance, float servo_angle)
+{
+	RobottoDetectionTelemetry detection = {
+		.timestamp = time,
+		.distance_m = distance,
+		.servo_angle = servo_angle,
+	};
+
+	xQueueOverwrite(robotto_object_detection_telemetry_queue_handle, &detection);
+}
 
 void updateServo()
 {

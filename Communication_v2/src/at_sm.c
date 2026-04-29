@@ -10,6 +10,7 @@
 #include "buffer_parser.h"
 #include "robotto_conf.h"
 #include "robotto_common.h"
+#include "communication_queue.h"
 
 #include <string.h>
 #include <math.h>
@@ -43,12 +44,12 @@ static uint8_t request_buffer[REQUEST_BUFFER_SIZE];
 static TimerHandle_t timer;
 
 
-void timeoutExpired(TimerHandle_t timer_handle)
+static void timeoutExpired(TimerHandle_t timer_handle)
 {
 	postNewCommunicationEventWithNoData(EVENT_AT_REQUEST_TIMEOUT);
 }
 
-void startTimeoutTimer()
+static void startTimeoutTimer()
 {
 	if (timer == NULL || xTimerStart(timer, 0) != pdPASS)
 	{
@@ -56,8 +57,7 @@ void startTimeoutTimer()
 	}
 }
 
-
-void makeNewTxRequest(const CommunicationEventData* data)
+static void makeNewTxRequest(const CommunicationEventData* data)
 {
 	size_t size = strlen(data->at_request.buffer);
 	latest_request = data->at_request.request_id;
@@ -84,15 +84,13 @@ void makeNewTxRequest(const CommunicationEventData* data)
 	startTimeoutTimer();
 }
 
-
-ATState onNewATRequest(const CommunicationEventData* data)
+static ATState onNewATRequest(const CommunicationEventData* data)
 {
 	makeNewTxRequest(data);
 	return AT_STATE_WAITING_RESPONSE;
 }
 
-
-ATState onFirstATRequest(const CommunicationEventData* data)
+static ATState onFirstATRequest(const CommunicationEventData* data)
 {
 	timer = xTimerCreate("AT request timer",
 			pdMS_TO_TICKS(NETWORK_REQUEST_TIMEOUT_S * 1000),
@@ -102,7 +100,7 @@ ATState onFirstATRequest(const CommunicationEventData* data)
 	return onNewATRequest(data);
 }
 
-void copyChunkToLocalBuffer(const uint8_t* source_buffer, size_t size)
+static void copyChunkToLocalBuffer(const uint8_t* source_buffer, size_t size)
 {
 	if(size + reply_buffer_current_length > MAX_REPLY_BUFFER_SIZE)
 	{
@@ -112,7 +110,7 @@ void copyChunkToLocalBuffer(const uint8_t* source_buffer, size_t size)
 	reply_buffer_current_length += size;
 }
 
-void copyDataToLocalBuffer(const CommunicationEventData* data)
+static void copyDataToLocalBuffer(const CommunicationEventData* data)
 {
 	const UartRxData* uart_data = &(data->uart_rx);
 	if(uart_data->first_chunk_start != NULL)
@@ -126,7 +124,7 @@ void copyDataToLocalBuffer(const CommunicationEventData* data)
 	PRINT_LINES_ON_SYSTEMVIEW((const char *)reply_buffer);
 }
 
-ATState onNewExpectedDataReceived(const CommunicationEventData* data)
+static ATState onNewExpectedDataReceived(const CommunicationEventData* data)
 {
 	ATState next_state = AT_STATE_WAITING_RESPONSE;
 
@@ -153,7 +151,7 @@ ATState onNewExpectedDataReceived(const CommunicationEventData* data)
 	return next_state;
 }
 
-ATState onAnyError(const CommunicationEventData* data)
+static ATState onAnyError(const CommunicationEventData* data)
 {
 	ATResponseData at_response_data = {.response = AT_FAILURE};
 	CommunicationEventData data_to_send = {.at_response = at_response_data};
@@ -163,7 +161,7 @@ ATState onAnyError(const CommunicationEventData* data)
 }
 
 
-ATState onConcurrentRequest(const CommunicationEventData* data)
+static ATState onConcurrentRequest(const CommunicationEventData* data)
 {
 	SEGGER_SYSVIEW_Print("New message request while another request was still running. Ignored.");
 	return AT_STATE_WAITING_RESPONSE;

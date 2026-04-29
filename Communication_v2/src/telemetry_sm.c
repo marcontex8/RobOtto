@@ -9,6 +9,7 @@
 #include "robotto_common.h"
 #include "communication_events.h"
 #include "at_command_writer.h"
+#include "communication_queue.h"
 
 #include "FreeRTOS.h"
 #include "timers.h"

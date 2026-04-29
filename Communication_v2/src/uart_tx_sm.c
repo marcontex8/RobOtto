@@ -10,6 +10,7 @@
 #include <string.h>
 
 #include "communication_events.h"
+#include "communication_queue.h"
 
 #include "stm32f4xx.h"
 #include "stm32f4xx_hal_uart.h"
@@ -40,7 +41,7 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
 }
 
 
-UartTxState onUartTxRequest(const CommunicationEventData* data)
+static UartTxState onUartTxRequest(const CommunicationEventData* data)
 {
 	UartTxState next_state = UART_TX_STATUS_IDLE;
 
@@ -59,7 +60,7 @@ UartTxState onUartTxRequest(const CommunicationEventData* data)
 }
 
 
-UartTxState onUartTxComplete(const CommunicationEventData*)
+static UartTxState onUartTxComplete(const CommunicationEventData*)
 {
 	return UART_TX_STATUS_IDLE;
 }

@@ -16,7 +16,7 @@
 #include "i2c_busses.h"
 
 #include "robotto_common.h"
-#include "communication_events.h"
+#include "communication.h"
 
 #include "SEGGER_RTT.h"
 
@@ -69,8 +69,6 @@ QueueHandle_t robotto_pose_queue_handle = NULL;
 QueueHandle_t robotto_motion_telemetry_queue_handle = NULL;
 // From Object Detection to Telemetry
 QueueHandle_t robotto_object_detection_telemetry_queue_handle = NULL;
-// Communication events queue
-QueueHandle_t robotto_communication_queue_handle = NULL;
 
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
@@ -172,15 +170,7 @@ void poseEstimationTask(void *argument)
 }
 
 
-void communicationManagerTask(void *argument)
-{
-	setCommunicationManagerQueue(robotto_communication_queue_handle);
-	runCommunicationManagerStateMachine();
-}
-
-
-
-RobottoErrorCode createQueues()
+RobottoErrorCode createSharedQueues()
 {
 	behavior_queue_handle = xQueueCreate(1, sizeof(RobottoBehavior));
 	if (behavior_queue_handle == NULL)
@@ -218,16 +208,10 @@ RobottoErrorCode createQueues()
 		return ROBOTTO_ERROR;
 	}
 
-	robotto_communication_queue_handle = xQueueCreate(100, sizeof(CommunicationEvent));
-	if (robotto_communication_queue_handle == NULL)
-	{
-		return ROBOTTO_ERROR;
-	}
-
 	return ROBOTTO_OK;
 }
 
-RobottoErrorCode createTasks()
+RobottoErrorCode startTasks()
 {
 	if (xTaskCreate(ledBlinkTask, "LED_BLINK", configMINIMAL_STACK_SIZE,
 			NULL, LED_BLINK_PRIORITY, &led_task_handle) != pdPASS)
@@ -260,8 +244,24 @@ RobottoErrorCode createTasks()
 	{
 		return ROBOTTO_ERROR;
 	}
-	if (xTaskCreate(communicationManagerTask, "COMMUNICATION_MANAGER", 4*configMINIMAL_STACK_SIZE,
+	if (xTaskCreate(Communication_task, "COMMUNICATION_MANAGER", 4*configMINIMAL_STACK_SIZE,
 			NULL, COMMUNICATION_MANAGER_PRIORITY, &communication_manager_handles) != pdPASS)
+	{
+		return ROBOTTO_ERROR;
+	}
+	return ROBOTTO_OK;
+}
+
+RobottoErrorCode initializeModules()
+{
+	initializeI2CMutexes();
+
+	if(ROBOTTO_OK != createSharedQueues())
+	{
+		return ROBOTTO_ERROR;
+	}
+
+	if(ROBOTTO_OK != Communication_initializeCommunication())
 	{
 		return ROBOTTO_ERROR;
 	}
@@ -270,18 +270,15 @@ RobottoErrorCode createTasks()
 
 RobottoErrorCode setupRobotto()
 {
-	initializeI2CMutexes();
-
-	if(ROBOTTO_OK != createQueues())
+	if(ROBOTTO_OK != initializeModules())
 	{
 		return ROBOTTO_ERROR;
 	}
 
-	if(ROBOTTO_OK != createTasks())
+	if(ROBOTTO_OK != startTasks())
 	{
 		return ROBOTTO_ERROR;
 	}
 
 	return ROBOTTO_OK;
 }
-

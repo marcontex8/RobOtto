@@ -5,27 +5,12 @@
  *      Author: marco
  */
 
-
 #include "communication_events.h"
 #include "robotto_common.h"
+#include "communication_sm_handlers.h"
 
-static QueueHandle_t comm_events_queue;
 
-void setEventsQueue(QueueHandle_t communication_queue)
-{
-    if (comm_events_queue == NULL)
-    {
-        comm_events_queue = communication_queue;
-    }
-}
-
-QueueHandle_t getEventsQueue()
-{
-    ROBOTTO_ASSERT_DEBUG(comm_events_queue != NULL);
-    return comm_events_queue;
-}
-
-const char* eventToString(CommunicationEventId event)
+const char* Communication_eventToString(CommunicationEventId event)
 {
     switch (event) {
         case EVENT_UART_TX_REQUEST:   return "UART_TX_REQUEST";
@@ -46,34 +31,6 @@ const char* eventToString(CommunicationEventId event)
     }
 }
 
-void postNewCommunicationEvent(CommunicationEventId event_id, CommunicationEventData data)
-{
-	CommunicationEvent event = {.data = data, .id = event_id};
-	xQueueSendToBack(getEventsQueue(), &event, 0);
-}
-
-void postNewCommunicationEventWithNoData(CommunicationEventId event_id)
-{
-	CommunicationEventData empty_data = {NULL};
-	postNewCommunicationEvent(event_id, empty_data);
-}
-
-void postNewCommunicationEventFromISR(CommunicationEventId event_id, CommunicationEventData data)
-{
-	CommunicationEvent event = {.data = data, .id = event_id};
-	xQueueSendToBackFromISR(getEventsQueue(), &event, 0);
-}
-
-void postNewCommunicationEventFromISRWithNoData(CommunicationEventId event_id)
-{
-	CommunicationEventData empty_data = {NULL};
-	postNewCommunicationEventFromISR(event_id, empty_data);
-}
-
-bool getNextCommunicationEvent(CommunicationEvent* event)
-{
-    return xQueueReceive(getEventsQueue(), event, portMAX_DELAY) == pdTRUE;
-}
 
 
 void handleCommunicationEvent(const CommunicationEvent* event)

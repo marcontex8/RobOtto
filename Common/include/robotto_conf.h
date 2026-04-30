@@ -19,7 +19,6 @@
 // distance between the wheels (width)
 #define WHEELS_DISTANCE 0.186
 
-
 /*************** TASKS PARAMETERS ***************/
 #define WHEELS_CONTROL_PERIOD_MS 10
 #define WHEELS_CONTROL_PRIORITY 10
@@ -39,8 +38,6 @@
 #define LED_BLINK_PRIORITY 1
 
 #define BUTTON_TASK_PRIORITY 1
-
-
 
 /************** NETWORK PARAMETERS **************/
 

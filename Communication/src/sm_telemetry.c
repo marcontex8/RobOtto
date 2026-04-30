@@ -63,12 +63,12 @@ TelemetryState onTelemetryTick(const CommunicationEventData *data)
 
         int written_bytes =
             makeATMQTTPubTelemetryMessage(&aggregated_telemetry.motion_telemetry.pose,
-                                         &aggregated_telemetry.motion_telemetry.target_pose,
-                                         &aggregated_telemetry.motion_telemetry.speed_set_point,
-                                         &aggregated_telemetry.detection_telemetry,
-                                         MQTT_TOPIC_TELEMETRY,
-                                         at_command,
-                                         sizeof(at_command));
+                                          &aggregated_telemetry.motion_telemetry.target_pose,
+                                          &aggregated_telemetry.motion_telemetry.speed_set_point,
+                                          &aggregated_telemetry.detection_telemetry,
+                                          MQTT_TOPIC_TELEMETRY,
+                                          at_command,
+                                          sizeof(at_command));
 
         ROBOTTO_ASSERT_DEBUG(written_bytes > 0);
         ROBOTTO_ASSERT_DEBUG(written_bytes < AT_COMMAND_MAX_SIZE);

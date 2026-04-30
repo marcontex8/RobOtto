@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2026 Marco Contessotto
+ * All rights reserved.
+ */
+
 #include "robotto_shared_queues.h"
 #include "FreeRTOS.h"
 #include "queue.h"
@@ -14,7 +19,6 @@ QueueHandle_t robotto_pose_queue_handle = NULL;
 QueueHandle_t robotto_motion_telemetry_queue_handle = NULL;
 // From Object Detection to Telemetry
 QueueHandle_t robotto_object_detection_telemetry_queue_handle = NULL;
-
 
 RobottoErrorCode createSharedQueues()
 {

@@ -1,15 +1,18 @@
+/*
+ * Copyright (c) 2026 Marco Contessotto
+ * All rights reserved.
+ */
+
 #include "button_task.h"
 #include "robotto_common.h"
 #include "FreeRTOS.h"
 #include "queue.h"
-
 
 #include "stm32f4xx.h"
 #include "stm32f4xx_hal_gpio.h"
 
 extern QueueHandle_t behavior_queue_handle;
 extern TaskHandle_t buttonTaskHandle;
-
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {

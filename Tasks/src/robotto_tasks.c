@@ -30,8 +30,6 @@ TaskHandle_t buttonTaskHandle = NULL;
 TaskHandle_t pose_estimation_handles = NULL;
 TaskHandle_t communication_manager_handles = NULL;
 
-
-
 void ledBlinkTask(void *argument)
 {
     const TickType_t period = pdMS_TO_TICKS(LED_BLINK_PERIOD_MS);
@@ -42,7 +40,6 @@ void ledBlinkTask(void *argument)
         vTaskDelayUntil(&last_wake_time, period);
     }
 }
-
 
 void objectDetectionTask(void *argument)
 {
@@ -91,7 +88,6 @@ void poseEstimationTask(void *argument)
         vTaskDelayUntil(&last_wake_time, period);
     }
 }
-
 
 RobottoErrorCode startTasks()
 {

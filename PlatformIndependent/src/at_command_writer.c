@@ -89,12 +89,12 @@ static int base64Encode(const uint8_t *in, int in_len, char *out, int out_buffer
 }
 
 int makeATMQTTPubTelemetryMessage(const RobottoPose *pose,
-                                 const RobottoPose *target_pose,
-                                 const WheelSpeedSetPoint *speed_set_point,
-                                 const RobottoDetectionTelemetry *detection_telemetry,
-                                 const char *topic,
-                                 char *out,
-                                 int max_out_size)
+                                  const RobottoPose *target_pose,
+                                  const WheelSpeedSetPoint *speed_set_point,
+                                  const RobottoDetectionTelemetry *detection_telemetry,
+                                  const char *topic,
+                                  char *out,
+                                  int max_out_size)
 {
     int off = 0;
 

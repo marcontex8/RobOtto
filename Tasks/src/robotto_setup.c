@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2026 Marco Contessotto
+ * All rights reserved.
+ */
+
 #include "robotto_setup.h"
 #include "robotto_shared_queues.h"
 #include "robotto_tasks.h"

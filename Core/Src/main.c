@@ -123,7 +123,7 @@ int main(void)
   MX_TIM13_Init();
   /* USER CODE BEGIN 2 */
 
-	if (setupRobotto() != ROBOTTO_OK)
+	if (Robotto_setup() != ROBOTTO_OK)
 	{
 		Error_Handler();
 	}

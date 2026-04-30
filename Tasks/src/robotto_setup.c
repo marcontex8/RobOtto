@@ -9,7 +9,7 @@
 #include "communication.h"
 #include "i2c_busses.h"
 
-RobottoErrorCode setupRobotto()
+RobottoErrorCode Robotto_setup()
 {
     initializeI2CMutexes();
 

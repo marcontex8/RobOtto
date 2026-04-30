@@ -8,6 +8,6 @@
 
 #include "robotto_common.h"
 
-RobottoErrorCode setupRobotto();
+RobottoErrorCode Robotto_setup();
 
 #endif /* TASKS_INCLUDE_ROBOTTO_SETUP_H */

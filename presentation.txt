@@ -1,4 +1,4 @@
-# Embedded Project
+# C embedded Project
 
 1. Personal project, not company related
  + no nda, open source, single developer
@@ -48,4 +48,11 @@
 	key-protocols:
 		- UART + AT (expressif)
 		- Wifi + MQTT
+
+6. State Machines
+	telemetry: collect data, serialize and encode to message
+	at: buffer command, send requests, wait for responses and verify outcome
+	uart_tx: initialize DMA sending, notify errors
+	uart_rx: initialize dma ring buffer, notify expected or unexpected data
+	connection: manage connection command chain
 

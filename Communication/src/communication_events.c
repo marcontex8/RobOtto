@@ -5,7 +5,7 @@
 
 #include "communication_events.h"
 
-#include "communication_sm_handlers.h"
+#include "sm_handlers.h"
 #include "robotto_common.h"
 
 const char *Communication_eventToString(CommunicationEventId event)

@@ -3,48 +3,24 @@
  * All rights reserved.
  */
 
-#include "FreeRTOS.h"
+#include "robotto_tasks.h"
 
-#include "queue.h"
+#include "FreeRTOS.h"
 #include "semphr.h"
 #include "task.h"
 
-#include "stm32f4xx.h"
-#include "stm32f4xx_hal_gpio.h"
-
-#include "i2c_busses.h"
-
+#include "robotto_conf.h"
+#include "robotto_shared_queues.h"
+#include "button_task.h"
 #include "communication.h"
-#include "robotto_common.h"
-
-#include "SEGGER_RTT.h"
 
 #include "main.h"
 
-void runWheelsControlStateMachine();
-#define WHEELS_CONTROL_PERIOD_MS 10
-#define WHEELS_CONTROL_PRIORITY 10
-
-void runPoseEstimationStateMachine();
-#define POSE_ESTIMATION_PERIOD_MS 20
-#define POSE_ESTIMATION_PRIORITY 8
-
-void runObjectDetectionStateMachine();
-#define OBJECT_DETECTION_PERIOD_MS 30
-#define OBJECT_DETECTION_PRIORITY 6
-
+// Forward declaration of the tasks functions
 void runMotionPlanningStateMachine();
-#define MOTION_PLANNING_PERIOD_MS 50
-#define MOTION_PLANNING_PRIORITY 4
-
-void setCommunicationManagerQueue(QueueHandle_t communication_queue);
-void runCommunicationManagerStateMachine();
-#define COMMUNICATION_MANAGER_PRIORITY 2
-
-#define LED_BLINK_PERIOD_MS 1000
-#define LED_BLINK_PRIORITY 1
-
-#define BUTTON_TASK_PRIORITY 1
+void runObjectDetectionStateMachine();
+void runWheelsControlStateMachine();
+void runPoseEstimationStateMachine();
 
 TaskHandle_t led_task_handle = NULL;
 TaskHandle_t motor_task_handle = NULL;
@@ -54,38 +30,7 @@ TaskHandle_t buttonTaskHandle = NULL;
 TaskHandle_t pose_estimation_handles = NULL;
 TaskHandle_t communication_manager_handles = NULL;
 
-// From Button to Motion Planning
-QueueHandle_t behavior_queue_handle = NULL;
-// From Motion Planning to Wheels Control
-QueueHandle_t wheels_speed_set_points_queue_handle = NULL;
-// From Wheels Control to Pose Estimation
-QueueHandle_t wheels_status_queue_handle = NULL;
-// From Pose Estimation to Motion Planning
-QueueHandle_t robotto_pose_queue_handle = NULL;
-// From Motion Planning to Telemetry
-QueueHandle_t robotto_motion_telemetry_queue_handle = NULL;
-// From Object Detection to Telemetry
-QueueHandle_t robotto_object_detection_telemetry_queue_handle = NULL;
 
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
-{
-    if (GPIO_Pin == GPIO_PIN_13)
-    {
-        static TickType_t last = 0;
-        TickType_t now = xTaskGetTickCountFromISR();
-
-        if ((now - last) > pdMS_TO_TICKS(50))
-        {
-            BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-
-            vTaskNotifyGiveFromISR(buttonTaskHandle, &xHigherPriorityTaskWoken);
-
-            portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
-        }
-
-        last = now;
-    }
-}
 
 void ledBlinkTask(void *argument)
 {
@@ -98,24 +43,6 @@ void ledBlinkTask(void *argument)
     }
 }
 
-void buttonTask(void *argument)
-{
-    for (;;)
-    {
-        static RobottoBehavior behavior = ROBOTTO_BEHAVIOR_IDLE;
-        ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
-
-        if (ROBOTTO_BEHAVIOR_IDLE == behavior)
-        {
-            behavior = ROBOTTO_BEHAVIOR_RUNNING;
-        }
-        else  // RUNNING
-        {
-            behavior = ROBOTTO_BEHAVIOR_IDLE;
-        }
-        xQueueOverwrite(behavior_queue_handle, &behavior);
-    }
-}
 
 void objectDetectionTask(void *argument)
 {
@@ -165,47 +92,6 @@ void poseEstimationTask(void *argument)
     }
 }
 
-RobottoErrorCode createSharedQueues()
-{
-    behavior_queue_handle = xQueueCreate(1, sizeof(RobottoBehavior));
-    if (behavior_queue_handle == NULL)
-    {
-        return ROBOTTO_ERROR;
-    }
-
-    wheels_speed_set_points_queue_handle = xQueueCreate(1, sizeof(WheelSpeedSetPoint));
-    if (wheels_speed_set_points_queue_handle == NULL)
-    {
-        return ROBOTTO_ERROR;
-    }
-
-    wheels_status_queue_handle = xQueueCreate(5, sizeof(WheelsMovementUpdate));
-    if (wheels_status_queue_handle == NULL)
-    {
-        return ROBOTTO_ERROR;
-    }
-
-    robotto_pose_queue_handle = xQueueCreate(1, sizeof(RobottoPose));
-    if (robotto_pose_queue_handle == NULL)
-    {
-        return ROBOTTO_ERROR;
-    }
-
-    robotto_motion_telemetry_queue_handle = xQueueCreate(1, sizeof(RobottoMotionTelemetry));
-    if (robotto_motion_telemetry_queue_handle == NULL)
-    {
-        return ROBOTTO_ERROR;
-    }
-
-    robotto_object_detection_telemetry_queue_handle =
-        xQueueCreate(1, sizeof(RobottoDetectionTelemetry));
-    if (robotto_object_detection_telemetry_queue_handle == NULL)
-    {
-        return ROBOTTO_ERROR;
-    }
-
-    return ROBOTTO_OK;
-}
 
 RobottoErrorCode startTasks()
 {
@@ -273,36 +159,5 @@ RobottoErrorCode startTasks()
     {
         return ROBOTTO_ERROR;
     }
-    return ROBOTTO_OK;
-}
-
-RobottoErrorCode initializeModules()
-{
-    initializeI2CMutexes();
-
-    if (ROBOTTO_OK != createSharedQueues())
-    {
-        return ROBOTTO_ERROR;
-    }
-
-    if (ROBOTTO_OK != Communication_initializeCommunication())
-    {
-        return ROBOTTO_ERROR;
-    }
-    return ROBOTTO_OK;
-}
-
-RobottoErrorCode setupRobotto()
-{
-    if (ROBOTTO_OK != initializeModules())
-    {
-        return ROBOTTO_ERROR;
-    }
-
-    if (ROBOTTO_OK != startTasks())
-    {
-        return ROBOTTO_ERROR;
-    }
-
     return ROBOTTO_OK;
 }

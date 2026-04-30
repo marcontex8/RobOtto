@@ -19,6 +19,29 @@
 // distance between the wheels (width)
 #define WHEELS_DISTANCE 0.186
 
+
+/*************** TASKS PARAMETERS ***************/
+#define WHEELS_CONTROL_PERIOD_MS 10
+#define WHEELS_CONTROL_PRIORITY 10
+
+#define POSE_ESTIMATION_PERIOD_MS 20
+#define POSE_ESTIMATION_PRIORITY 8
+
+#define OBJECT_DETECTION_PERIOD_MS 30
+#define OBJECT_DETECTION_PRIORITY 6
+
+#define MOTION_PLANNING_PERIOD_MS 50
+#define MOTION_PLANNING_PRIORITY 4
+
+#define COMMUNICATION_MANAGER_PRIORITY 2
+
+#define LED_BLINK_PERIOD_MS 1000
+#define LED_BLINK_PRIORITY 1
+
+#define BUTTON_TASK_PRIORITY 1
+
+
+
 /************** NETWORK PARAMETERS **************/
 
 // provided by "secrets.h"
@@ -45,7 +68,7 @@
 // AT Command max buffer size
 #define AT_COMMAND_MAX_SIZE 256
 
-// Commands IDs
+// Commands IDs (IDs 1-100 are reserved for connection commands)
 #define TELEMETRY_REQUEST_ID 101
 
 #endif /* COMMON_INCLUDE_ROBOTTO_CONF_H */

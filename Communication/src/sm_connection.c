@@ -90,7 +90,7 @@ ConnectionState onConnectionStepATResponse(const CommunicationEventData *data)
         }
         else
         {
-            // re-issue the same current_command_id
+            // this case will re-issue the same current_command_id
         }
     }
 
@@ -136,7 +136,7 @@ static const ConnectionStateTransitionFunctionPtr
             {
                 [EVENT_CONNECTION_DELAY_EXPIRED] = onDelayExpired,
             },
-        [CONNECTION_STATE_CONNECTED] = {},  // shall manage disconnection
+        [CONNECTION_STATE_CONNECTED] = {},  // TODO manage disconnection
 };
 
 void connection_handleEvent(const CommunicationEvent *event)
